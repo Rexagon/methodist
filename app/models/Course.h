@@ -4,9 +4,10 @@
 #include <memory>
 #include <vector>
 
+#include "TreeNode.h"
 #include "Section.h"
 
-class Course
+class Course : public TreeNode
 {
 public:
     Course();
@@ -24,14 +25,15 @@ public:
     void setPracticeHourCount(unsigned int n);
     unsigned int getPracticeHourCount() const;
     
+    void setCreator(const QString& creator);
+    QString getCreator() const;
+    
+    
     void addSection(std::unique_ptr<Section> section);
-    void removeSection(Section* section);
+    void removeSection(const Section* section);
     void removeSection(size_t n);
     Section* getSection(size_t n) const;
-    int getSectionIndex(Section* section) const;
-    
-    size_t getSectionCount() const;
-    std::vector<Section*> getSections() const;
+    int getSectionIndex(const Section* section);
     
 private:
     unsigned int m_id;
@@ -40,7 +42,9 @@ private:
     
     unsigned int m_lectureHourCount;
     unsigned int m_practiceHourCount;
-
+    
+    QString m_creator;
+    
     std::vector<std::unique_ptr<Section>> m_sections;
 };
 

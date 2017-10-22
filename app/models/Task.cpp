@@ -4,7 +4,8 @@
 #include "Section.h"
 
 Task::Task() :
-    m_id(0), m_score(0), m_course(nullptr), m_parent(nullptr)
+    TreeNode(TreeNode::Type::TASK),
+    m_id(0), m_score(0), m_course(nullptr)
 {
 }
 
@@ -125,16 +126,6 @@ int Task::getTestIndex(Test* test) const
     return -1;
 }
 
-void Task::setRelativeNumber(unsigned int number)
-{
-    m_relativeNumber = number;
-}
-
-unsigned int Task::getRelativeNumber() const
-{
-    return m_relativeNumber;
-}
-
 void Task::setCourse(Course* course)
 {
     m_course = course;
@@ -143,14 +134,4 @@ void Task::setCourse(Course* course)
 Course* Task::getCourse() const
 {
     return m_course;
-}
-
-void Task::setParent(Section* section)
-{
-    m_parent = section;
-}
-
-Section* Task::getSection() const
-{
-    return m_parent;
 }

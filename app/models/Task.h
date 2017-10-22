@@ -7,12 +7,13 @@
 #include <QString>
 #include <QRegExp>
 
+#include "TreeNode.h"
 #include "Test.h"
 
 class Course;
 class Section;
 
-class Task
+class Task : public TreeNode
 {
 public:
     Task();
@@ -39,20 +40,15 @@ public:
     void setOutputPattern(const QString& pattern);
     const QRegExp& getOutputRegexp() const;
     
+    void setCourse(Course* course);
+    Course* getCourse() const;
+    
+    
     void addTest(std::unique_ptr<Test> test);
     void removeTest(Test* test);
     void removeTest(size_t n);
     Test* getTest(size_t n) const;
     int getTestIndex(Test* test) const;
-    
-    void setRelativeNumber(unsigned int number);
-    unsigned int getRelativeNumber() const;
-    
-    void setCourse(Course* course);
-    Course* getCourse() const;
-    
-    void setParent(Section* section);
-    Section* getSection() const;
     
 private:
     unsigned int m_id;
@@ -66,12 +62,9 @@ private:
     QRegExp m_inputPattern;
     QRegExp m_outputPattern;
     
-    std::vector<std::unique_ptr<Test>> m_tests;
-    
-    unsigned int m_relativeNumber;
-    
     Course* m_course;
-    Section* m_parent;
+    
+    std::vector<std::unique_ptr<Test>> m_tests;
 };
 
 #endif // TASK_H

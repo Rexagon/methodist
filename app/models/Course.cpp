@@ -1,6 +1,7 @@
 #include "Course.h"
 
 Course::Course() :
+    TreeNode(TreeNode::Type::COURSE),
     m_id(0), m_lectureHourCount(0), m_practiceHourCount(0)
 {
 }
@@ -50,12 +51,23 @@ unsigned int Course::getPracticeHourCount() const
     return m_practiceHourCount;
 }
 
+void Course::setCreator(const QString& creator)
+{
+    m_creator = creator;
+}
+
+QString Course::getCreator() const
+{
+    return m_creator;
+}
+
 void Course::addSection(std::unique_ptr<Section> section)
 {
+    section->setCourse(this);
     m_sections.push_back(std::move(section));
 }
 
-void Course::removeSection(Section* section)
+void Course::removeSection(const Section* section)
 {
     for (auto it = m_sections.begin(); it != m_sections.end(); ++it) {
         if (it->get() == section) {
@@ -77,12 +89,11 @@ Section* Course::getSection(size_t n) const
     if (n < m_sections.size()) {
         return m_sections[n].get();
     }
-    else {
-        return nullptr;
-    }
+    
+    return nullptr;
 }
 
-int Course::getSectionIndex(Section* section) const
+int Course::getSectionIndex(const Section* section)
 {
     for (size_t i = 0; i < m_sections.size(); ++i) {
         if (m_sections[i].get() == section) {
@@ -92,21 +103,3 @@ int Course::getSectionIndex(Section* section) const
     
     return -1;
 }
-
-size_t Course::getSectionCount() const
-{
-    return m_sections.size();
-}
-
-std::vector<Section*> Course::getSections() const
-{
-    std::vector<Section*> sections(m_sections.size());
-    
-    for (size_t i = 0; i < m_sections.size(); ++i) {
-        sections[i] = m_sections[i].get();
-    }
-    
-    return sections;
-}
-
-
