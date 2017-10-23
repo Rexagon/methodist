@@ -21,25 +21,47 @@ MainWindow::MainWindow(QWidget* parent) :
         this->setCurrentCourse(m_coursesModel->getCourse(n));
     });
     
+    // Request data
+    updateData();
+}
+
+MainWindow::~MainWindow()
+{
+    m_ui.reset(nullptr);
+}
+
+void MainWindow::updateData()
+{
+    // Test data
     
-     // Test data //
-    ///////////////
-    
+    // Course 1
     std::unique_ptr<Course> course1 = std::make_unique<Course>();
     course1->setName("Разработка и отладка приложений вслепую");
     course1->setLectureHourCount(100);
     course1->setPracticeHourCount(1);
     course1->setCreator("Ivan");
     
-    for (int i = 0; i < 20; ++i) {
+    int maxi = rand() % 15;
+    for (int i = 0; i < maxi; ++i) {
         std::unique_ptr<Section> section = std::make_unique<Section>();
         
         section->setName(QString("Раздел ") + QString::number(i + 1));
         
-        for (int j = 0; j < 20; ++j) {
+        int maxj = rand() % 15;
+        for (int j = 0; j < maxj; ++j) {
             std::unique_ptr<Section> subsection = std::make_unique<Section>();
             
             subsection->setName(QString("Подраздел ") + QString::number(i + 1) + QString(".")+ QString::number(j + 1));
+            
+            int maxk = rand() % 5;
+            for (int k = 0; k < maxk; ++k) {
+                std::unique_ptr<Task> task = std::make_unique<Task>();
+                
+                task->setName(QString("Задача ") + QString::number(k + 1));
+                
+                subsection->addChild(task.get());
+                subsection->addTask(std::move(task));
+            }
             
             section->addChild(subsection.get());
             course1->addSection(std::move(subsection));
@@ -51,18 +73,13 @@ MainWindow::MainWindow(QWidget* parent) :
     
     m_coursesModel->addCourse(std::move(course1));
     
-    
+    // Course 2
     std::unique_ptr<Course> course2 = std::make_unique<Course>();
     course2->setName("Итеративные способы разработки для чайников");
     course2->setLectureHourCount(1);
     course2->setPracticeHourCount(50);
     course2->setCreator("Ivan");
     m_coursesModel->addCourse(std::move(course2));
-}
-
-MainWindow::~MainWindow()
-{
-    m_ui.reset(nullptr);
 }
 
 void MainWindow::setCurrentCourse(Course* course)

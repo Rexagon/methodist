@@ -33,3 +33,6 @@ HEADERS	+= \
 
 FORMS	+= \
     windows/MainWindow.ui
+
+RESOURCES += \
+    resources.qrc

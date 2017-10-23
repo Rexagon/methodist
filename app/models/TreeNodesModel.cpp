@@ -1,5 +1,8 @@
 #include "TreeNodesModel.h"
 
+#include <QIcon>
+#include <QFont>
+
 #include <iostream>
 
 TreeNodesModel::TreeNodesModel(QObject* parent) :
@@ -13,7 +16,13 @@ TreeNodesModel::~TreeNodesModel()
 
 int TreeNodesModel::rowCount(const QModelIndex& parent) const
 {
-    return getItem(parent)->getChildCount();
+    if (parent.isValid()) {
+        const TreeNode* parentNode = static_cast<const TreeNode*>(parent.internalPointer());
+        return parentNode->getChildCount();
+    }
+    else {
+        return 1;
+    }
 }
 
 int TreeNodesModel::columnCount(const QModelIndex& parent) const
@@ -21,66 +30,97 @@ int TreeNodesModel::columnCount(const QModelIndex& parent) const
     return 1;
 }
 
-QModelIndex TreeNodesModel::index(int row, int column, const QModelIndex& parentIndex) const
+QModelIndex TreeNodesModel::index(int row, int column, const QModelIndex& parent) const
 {    
-    if (parentIndex.isValid() && parentIndex.column() != 0) {
+    if (!hasIndex(row, column, parent)) {
         return QModelIndex();
     }
-
-    TreeNode* item = getItem(parentIndex)->getChild(row);
-    if (item == nullptr) {
-        return QModelIndex();
+    
+    if (parent.isValid()) {
+        TreeNode* parentNode = static_cast<TreeNode*>(parent.internalPointer());
+        return createIndex(row, column, parentNode->getChild(row));
     }
-    else {
-        return createIndex(row, column, item);
+    else {        
+        return createIndex(row, column, m_course);
     }
 }
 
-QModelIndex TreeNodesModel::parent(const QModelIndex& childIndex) const
+QModelIndex TreeNodesModel::parent(const QModelIndex& child) const
 {    
-    if (!childIndex.isValid()) {
+    if (!child.isValid()) {
         return QModelIndex();
     }
 
-    TreeNode* item = getItem(childIndex)->getParent();
-
-    if (item == m_course) {
+    TreeNode* childNode = static_cast<TreeNode*>(child.internalPointer());
+    TreeNode* parentNode = childNode->getParent();
+    if (parentNode != nullptr) {
+        return createIndex(childNode->getRelativeNumber(), 0, parentNode);
+    }
+    else {
         return QModelIndex();
     }
-
-    return createIndex(item->getRelativeNumber(), 0, item);
 }
 
 QVariant TreeNodesModel::data(const QModelIndex& index, int role) const
 {    
-    TreeNode* item = getItem(index);
-    
-    if (item == nullptr || !index.isValid() || (role != Qt::DisplayRole && role != Qt::EditRole) || index.column() != 0) {
+    if (!index.isValid()) {
         return QVariant();
     }
     
-    switch (item->getType()) {
-    case TreeNode::Type::COURSE:
-        return reinterpret_cast<Course*>(item)->getName();
-        
-    case TreeNode::Type::SECTION:
-        return reinterpret_cast<Section*>(item)->getName();
-
-    case TreeNode::Type::TASK:
-        return reinterpret_cast<Task*>(item)->getName();        
-        
-    default:
+    const TreeNode* item = static_cast<TreeNode*>(index.internalPointer()); 
+    
+    if (item == nullptr || !index.isValid()) {
         return QVariant();
     }
-}
-
-QVariant TreeNodesModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        return m_course->getName();
+    
+    if (role == Qt::DisplayRole) {
+        switch (item->getType()) {
+        case TreeNode::Type::COURSE:
+            return reinterpret_cast<const Course*>(item)->getName();
+            
+        case TreeNode::Type::SECTION:
+            return reinterpret_cast<const Section*>(item)->getName();
+    
+        case TreeNode::Type::TASK:
+            return reinterpret_cast<const Task*>(item)->getName();
+        }
+    }
+    else if (role == Qt::DecorationRole) {
+        switch (item->getType()) {
+        case TreeNode::Type::COURSE:
+            return QIcon(":/images/course.png");
+            
+        case TreeNode::Type::SECTION:
+            return QIcon(":/images/section.png");
+    
+        case TreeNode::Type::TASK:
+            return QIcon(":/images/task.png");
+        }
+    }
+    else if (role == Qt::FontRole) {
+        if (item->getType() == TreeNode::Type::COURSE) {
+            QFont font;
+            font.setBold(true);
+            return font;
+        }
     }
     
     return QVariant();
+}
+
+Qt::ItemFlags TreeNodesModel::flags(const QModelIndex& index) const
+{
+    if (!index.isValid()) {
+        return 0;
+    }
+    
+    const TreeNode* item = static_cast<TreeNode*>(index.internalPointer()); 
+    if (item->getParent() == nullptr) {
+        return Qt::ItemIsEnabled;
+    }
+    else {
+        return QAbstractItemModel::flags(index);
+    }
 }
 
 void TreeNodesModel::setCourse(Course* course)
@@ -90,18 +130,6 @@ void TreeNodesModel::setCourse(Course* course)
 
 Course* TreeNodesModel::getCourse() const
 {
-    return m_course;
-}
-
-TreeNode* TreeNodesModel::getItem(const QModelIndex& index) const
-{
-    if (index.isValid()) {
-        TreeNode* item = static_cast<TreeNode*>(index.internalPointer());
-        if (item != nullptr) {
-            return item;
-        }
-    }
-    
     return m_course;
 }
 

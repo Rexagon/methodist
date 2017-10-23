@@ -5,7 +5,7 @@
 
 Task::Task() :
     TreeNode(TreeNode::Type::TASK),
-    m_id(0), m_score(0), m_course(nullptr)
+    m_id(0), m_score(0), m_course(nullptr), m_section(nullptr)
 {
 }
 
@@ -134,4 +134,14 @@ void Task::setCourse(Course* course)
 Course* Task::getCourse() const
 {
     return m_course;
+}
+
+void Task::setSection(Section* section)
+{
+    m_section = section;
+}
+
+Section*Task::getSection()
+{
+    return m_section;
 }

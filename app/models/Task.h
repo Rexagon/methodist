@@ -43,6 +43,9 @@ public:
     void setCourse(Course* course);
     Course* getCourse() const;
     
+    void setSection(Section* section);
+    Section* getSection();
+    
     
     void addTest(std::unique_ptr<Test> test);
     void removeTest(Test* test);
@@ -63,6 +66,7 @@ private:
     QRegExp m_outputPattern;
     
     Course* m_course;
+    Section* m_section;
     
     std::vector<std::unique_ptr<Test>> m_tests;
 };

@@ -19,6 +19,8 @@ public:
     ~MainWindow();
 
 private:
+    void updateData();
+    
     void setCurrentCourse(Course* course);
     
     void setInfoType(const QString& type);

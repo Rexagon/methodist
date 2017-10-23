@@ -1,6 +1,9 @@
 #ifndef SECTION_H
 #define SECTION_H
 
+#include <memory>
+#include <vector>
+
 #include <QString>
 
 #include "TreeNode.h"
@@ -23,12 +26,21 @@ public:
     void setCourse(Course* course);
     Course* getCourse() const;
     
+    
+    void addTask(std::unique_ptr<Task> task);
+    void removeTask(const Task* task);
+    void removeTask(size_t n);
+    Task* getTask(size_t n) const;
+    int getTaskIndex(const Task* task);
+    
 private:
     unsigned int m_id;
     
     QString m_name;
     
     Course* m_course;
+    
+    std::vector<std::unique_ptr<Task>> m_tasks;
 };
 
 #endif // SECTION_H
