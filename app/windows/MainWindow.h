@@ -21,15 +21,18 @@ public:
 private:
     void updateData();
     
-    void setCurrentCourse(Course* course);
+    void updateInfoPanel(TreeNode* node);
     
-    void setInfoType(const QString& type);
-    void setInfoTitle(const QString& title);
+    enum Page {
+        DEFAULT,
+        COURSE_TREE,
+        COURSE_EDIT,
+    } m_currentPage;
     
-    std::unique_ptr<CoursesModel> m_coursesModel;
-    std::unique_ptr<TreeNodesModel> m_treeNodesModel;
+    std::unique_ptr<CoursesModel> m_coursesListModel;
+    std::unique_ptr<TreeNodesModel> m_courseTreeModel;
     
-    Course* m_currentCourse;
+    TreeNode* m_selectedNode;
     
     std::unique_ptr<Ui::MainWindow> m_ui;
 };

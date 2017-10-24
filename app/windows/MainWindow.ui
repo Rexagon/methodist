@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="workspaceSplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -56,7 +56,7 @@
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QWidget" name="sideMenu" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -71,7 +71,7 @@
        </property>
        <property name="styleSheet">
         <string notr="true">QWidget {
-	background-color:rgb(91, 91, 91);
+	background-color:rgb(113, 114, 119);
 }
 
 QScrollBar:vertical {
@@ -82,19 +82,19 @@ QScrollBar:vertical {
 }
 
 QScrollBar::handle:vertical {
-	background: rgb(130, 130, 130);
+	background-color: rgb(162, 164, 172);
     min-height: 0px;
 }
 
 QScrollBar::add-page:vertical {
-	background: rgb(91, 91, 91);
+	background-color:rgb(113, 114, 119);
     height: 0px;
     subcontrol-position: bottom;
     subcontrol-origin: margin;
 }
 
 QScrollBar::sub-page:vertical {
-	background: rgb(91, 91, 91);
+	background-color:rgb(113, 114, 119);
     height: 0 px;
     subcontrol-position: top;
     subcontrol-origin: margin;
@@ -108,16 +108,16 @@ QLabel {
 QPushButton {
 	color: white;
 	border: 0px;
-	background-color: rgb(110, 110, 110);
+	background-color: rgb(96, 97, 102);
 	padding: 5px 20px 5px 5px;
 }
 
 QPushButton:hover {
-	background-color: rgb(154, 154, 154);
+	background-color: rgb(122, 124, 130);
 }
 
 QPushButton:pressed {
-	background-color: rgb(212, 212, 212);
+	background-color: rgb(162, 164, 172);
 }
 
 QListView {
@@ -127,17 +127,18 @@ QListView {
 QListView::item {
 	border: 0px;
 	padding: 5px;
-	background-color: rgb(100, 100, 100);
+	background-color: rgb(96, 97, 102);
 	margin-top: 10px;
 	color: white;
 }
 
 QListView::item:hover {
-	background-color: rgb(120, 120, 120);
+	background-color: rgb(122, 124, 130);
 }
 
 QListView::item:selected {
-	background-color: rgb(37, 91, 132);
+	color:black;
+	background-color: white;
 }</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
@@ -148,7 +149,7 @@ QListView::item:selected {
          <number>0</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
          <number>0</number>
@@ -160,7 +161,7 @@ QListView::item:selected {
          <number>0</number>
         </property>
         <item row="0" column="2">
-         <widget class="QPushButton" name="btnAddCourse">
+         <widget class="QPushButton" name="addCourseButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -182,7 +183,7 @@ QListView::item:selected {
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="lblCoursesTitle">
+         <widget class="QLabel" name="coursesListTitle">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -200,7 +201,7 @@ QListView::item:selected {
          </widget>
         </item>
         <item row="1" column="0" colspan="3">
-         <widget class="QListView" name="lstCourses">
+         <widget class="QListView" name="coursesList">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -228,7 +229,7 @@ QListView::item:selected {
         </item>
        </layout>
       </widget>
-      <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QStackedWidget" name="mainWorkspace">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -268,7 +269,7 @@ QListView::item:selected {
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="pageCourse">
+       <widget class="QWidget" name="pageCourseTree">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -289,7 +290,7 @@ QListView::item:selected {
           <number>0</number>
          </property>
          <item row="1" column="0">
-          <widget class="QSplitter" name="splitter_2">
+          <widget class="QSplitter" name="infoSplitter">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -302,7 +303,7 @@ QListView::item:selected {
            <property name="childrenCollapsible">
             <bool>false</bool>
            </property>
-           <widget class="QTreeView" name="trvCourse">
+           <widget class="QTreeView" name="courseTree">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>1</horstretch>
@@ -384,7 +385,7 @@ QScrollBar::sub-page:vertical {
              <bool>false</bool>
             </attribute>
            </widget>
-           <widget class="QWidget" name="pnlInfo" native="true">
+           <widget class="QWidget" name="infoPanel" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -404,15 +405,25 @@ QScrollBar::sub-page:vertical {
              </size>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
-             <item row="4" column="0">
-              <widget class="QPushButton" name="btnDeleteNode">
+             <item row="5" column="0">
+              <widget class="QPushButton" name="addSectionButton">
                <property name="text">
-                <string>Удалить</string>
+                <string>Добавить раздел</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QPushButton" name="editNodeButton">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>Изменить</string>
                </property>
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="lblNodeType">
+              <widget class="QLabel" name="nodeType">
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -423,31 +434,15 @@ QScrollBar::sub-page:vertical {
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QPushButton" name="btnChangeNode">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
+             <item row="7" column="0">
+              <widget class="QPushButton" name="deleteNodeButton">
                <property name="text">
-                <string>Изменить</string>
+                <string>Удалить</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="lblNodeTitle">
+              <widget class="QLabel" name="nodeTitle">
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
@@ -461,36 +456,184 @@ QScrollBar::sub-page:vertical {
                </property>
               </widget>
              </item>
+             <item row="3" column="0">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="0">
+              <widget class="QStackedWidget" name="infoPanelPages">
+               <widget class="QWidget" name="courseInfo">
+                <layout class="QFormLayout" name="formLayout">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="courseInfoLectureHoursLabel">
+                   <property name="text">
+                    <string>Лекц. часы</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="courseInfoLectureHours">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="courseInfoPracticeHoursLabel">
+                   <property name="text">
+                    <string>Практ. часы</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="courseInfoPracticeHours">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="courseInfoCreatorLabel">
+                   <property name="text">
+                    <string>Создатель</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="courseInfoCreator">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="sectionInfo"/>
+               <widget class="QWidget" name="taskInfo"/>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="addTaskButton">
+               <property name="text">
+                <string>Добавить задание</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_2"/>
+       <widget class="QWidget" name="pageCourseEdit">
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="8" column="0">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="8" column="4">
+          <widget class="QPushButton" name="acceptCourseChangesButton">
+           <property name="text">
+            <string>Сохранить</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QPushButton" name="rejectCourseChangesButton">
+           <property name="text">
+            <string>Отменить</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="5">
+          <widget class="QWidget" name="courseEdit" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="courseEditNameLabel">
+              <property name="text">
+               <string>Название курса</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="courseEditName"/>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="courseEditLectureHoursLabel">
+              <property name="text">
+               <string>Количество лекционных часов</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="courseEditLectureHours"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="courseEditPracticeHoursLabel">
+              <property name="text">
+               <string>Количество практических часов</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="courseEditPracticeHours"/>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1007</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>Справка</string>
-    </property>
-    <addaction name="action"/>
-    <addaction name="separator"/>
-    <addaction name="action_3"/>
-   </widget>
-   <addaction name="menu"/>
   </widget>
   <action name="action">
    <property name="text">

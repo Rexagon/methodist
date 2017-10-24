@@ -5,20 +5,62 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), 
-    m_currentCourse(nullptr), m_ui(nullptr)
+    m_selectedNode(nullptr), m_ui(nullptr), m_currentPage(DEFAULT)
 {
     m_ui = std::make_unique<Ui::MainWindow>();
     m_ui->setupUi(this);
     
-    m_ui->pnlInfo->hide();
+    m_ui->infoPanel->hide();
+    m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
     
-    m_coursesModel = std::make_unique<CoursesModel>(this);
-    m_ui->lstCourses->setModel(m_coursesModel.get());
+    m_coursesListModel = std::make_unique<CoursesModel>(this);
+    m_ui->coursesList->setModel(m_coursesListModel.get());
     
     // Actions
-    connect(m_ui->lstCourses, QListView::pressed, this, [this](const QModelIndex& index) {
-        size_t n = static_cast<size_t>(index.row());
-        this->setCurrentCourse(m_coursesModel->getCourse(n));
+    connect(m_ui->coursesList, &QListView::pressed, this, [this](const QModelIndex& index) {
+        m_currentPage = COURSE_TREE;
+        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+        
+        Course* course = m_coursesListModel->getCourse(static_cast<size_t>(index.row()));
+        
+        if (course != nullptr) {
+            m_courseTreeModel = std::make_unique<TreeNodesModel>(this);
+            m_courseTreeModel->setCourse(course);
+            m_ui->courseTree->setModel(m_courseTreeModel.get());
+            m_ui->courseTree->setExpanded(m_courseTreeModel->index(0, 0), true);
+        }
+        
+        updateInfoPanel(course);
+    });
+    
+    connect(m_ui->courseTree, &QTreeView::pressed, this, [this](const QModelIndex& index) {
+        TreeNode* item = reinterpret_cast<TreeNode*>(index.internalPointer());
+        updateInfoPanel(item);        
+    });
+    
+    connect(m_ui->editNodeButton, &QPushButton::pressed, this, [this]() {
+        if (m_selectedNode == nullptr) {
+            return;
+        }
+        
+        switch (m_selectedNode->getType()) {
+        case TreeNode::Type::COURSE:
+            m_currentPage = COURSE_EDIT;
+            break;
+            
+        case TreeNode::Type::SECTION:
+            break;
+            
+        case TreeNode::Type::TASK:
+            break;
+        }
+        
+        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+    });
+    
+    connect(m_ui->rejectCourseChangesButton, &QPushButton::pressed, this, [this]() {
+        m_currentPage = COURSE_TREE;
+        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
     });
     
     // Request data
@@ -71,7 +113,7 @@ void MainWindow::updateData()
         course1->addSection(std::move(section));
     }
     
-    m_coursesModel->addCourse(std::move(course1));
+    m_coursesListModel->addCourse(std::move(course1));
     
     // Course 2
     std::unique_ptr<Course> course2 = std::make_unique<Course>();
@@ -79,34 +121,52 @@ void MainWindow::updateData()
     course2->setLectureHourCount(1);
     course2->setPracticeHourCount(50);
     course2->setCreator("Ivan");
-    m_coursesModel->addCourse(std::move(course2));
+    m_coursesListModel->addCourse(std::move(course2));
 }
 
-void MainWindow::setCurrentCourse(Course* course)
+void MainWindow::updateInfoPanel(TreeNode* node)
 {
-    m_currentCourse = course;
-    if (course == nullptr) {
-        m_ui->pnlInfo->hide();
+    m_selectedNode = node;
+    
+    if (node == nullptr) {
+        m_ui->infoPanel->hide();
     }
     else {
-        m_ui->pnlInfo->show();        
-        setInfoType("Курс");
-        setInfoTitle(course->getName());
+        m_ui->infoPanel->show();
         
-        m_treeNodesModel.reset(nullptr);
-        m_treeNodesModel = std::make_unique<TreeNodesModel>(this);
-        m_treeNodesModel->setCourse(course);
-        m_ui->trvCourse->setModel(m_treeNodesModel.get());
-        m_ui->trvCourse->expandAll();
+        m_ui->infoPanelPages->setCurrentIndex(static_cast<int>(node->getType()));
+        
+        switch (node->getType()) {
+        case TreeNode::Type::COURSE:
+        {
+            Course* course = reinterpret_cast<Course*>(node);
+            m_ui->nodeType->setText("Курс");
+            m_ui->nodeTitle->setText(course->getName());
+            
+            m_ui->courseInfoLectureHours->setText(QString::number(course->getLectureHourCount()));
+            m_ui->courseInfoPracticeHours->setText(QString::number(course->getPracticeHourCount()));
+            m_ui->courseInfoCreator->setText(course->getCreator());
+            break;
+        }
+            
+            
+        case TreeNode::Type::SECTION:
+        {
+            Section* section = reinterpret_cast<Section*>(node);
+            m_ui->nodeType->setText("Раздел");
+            m_ui->nodeTitle->setText(section->getName());
+            break;
+        }
+            
+        
+        case TreeNode::Type::TASK:
+        {
+            Task* task = reinterpret_cast<Task*>(node);
+            m_ui->nodeType->setText("Задача");
+            m_ui->nodeTitle->setText(task->getName());
+            break;
+        }
+            
+        }
     }
-}
-
-void MainWindow::setInfoType(const QString& type)
-{
-    m_ui->lblNodeType->setText(type);
-}
-
-void MainWindow::setInfoTitle(const QString& title)
-{
-    m_ui->lblNodeTitle->setText(title);
 }
