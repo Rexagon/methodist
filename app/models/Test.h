@@ -22,9 +22,9 @@ public:
     
     void setRequired(bool required);
     bool isRequired() const;
-    
-    void setRelativeNumber(unsigned int number);
-    unsigned int getRelativeNumber() const;
+
+    void setScore(unsigned int score);
+    unsigned int getScore() const;
     
     void setTask(Task* task);
     Task* getTask() const;
@@ -36,8 +36,7 @@ private:
     QString m_outputData;
 
     bool m_isRequired;
-    
-    unsigned int m_relativeNumber;
+    unsigned int m_score;
     
     Task* m_task;
 };

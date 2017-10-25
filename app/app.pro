@@ -19,7 +19,8 @@ SOURCES += \
     models/Test.cpp \
     models/CoursesModel.cpp \
     models/TreeNode.cpp \
-    models/TreeNodesModel.cpp
+    models/TreeNodesModel.cpp \
+    models/TestsModel.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -29,7 +30,8 @@ HEADERS	+= \
     models/Test.h \
     models/CoursesModel.h \
     models/TreeNode.h \
-    models/TreeNodesModel.h
+    models/TreeNodesModel.h \
+    models/TestsModel.h
 
 FORMS	+= \
     windows/MainWindow.ui

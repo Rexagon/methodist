@@ -5,21 +5,21 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), 
-    m_selectedNode(nullptr), m_ui(nullptr), m_currentPage(DEFAULT)
+    m_selectedNode(nullptr), m_ui(nullptr)
 {
     m_ui = std::make_unique<Ui::MainWindow>();
     m_ui->setupUi(this);
     
     m_ui->infoPanel->hide();
-    m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+    m_ui->mainWorkspace->setCurrentIndex(Page::DEFAULT);
+    m_ui->infoPanelButtons->setCurrentIndex(0);
     
     m_coursesListModel = std::make_unique<CoursesModel>(this);
     m_ui->coursesList->setModel(m_coursesListModel.get());
     
     // Actions
     connect(m_ui->coursesList, &QListView::pressed, this, [this](const QModelIndex& index) {
-        m_currentPage = COURSE_TREE;
-        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+        m_ui->mainWorkspace->setCurrentIndex(Page::COURSE_TREE);
         
         Course* course = m_coursesListModel->getCourse(static_cast<size_t>(index.row()));
         
@@ -42,27 +42,42 @@ MainWindow::MainWindow(QWidget* parent) :
         if (m_selectedNode == nullptr) {
             return;
         }
-        
-        switch (m_selectedNode->getType()) {
-        case TreeNode::Type::COURSE:
-            m_currentPage = COURSE_EDIT;
-            break;
-            
-        case TreeNode::Type::SECTION:
-            break;
-            
-        case TreeNode::Type::TASK:
-            break;
+
+        if (m_selectedNode->getType() == TreeNode::Type::TASK) {
+            m_ui->workspace->setCurrentIndex(1);
+            m_ui->openTestsButton->setVisible(true);
+
+            m_testModel = std::make_unique<TestsModel>(this);
+            m_testModel->setTask(reinterpret_cast<Task*>(m_selectedNode));
+
+            m_ui->testsTable->setModel(m_testModel.get());
         }
         
-        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+        setInfoPanelEditable(true);
+    });
+
+    connect(m_ui->rejectChangesButton, &QPushButton::pressed, this, [this]() {
+        if (m_selectedNode->getType() == TreeNode::Type::TASK) {
+            m_ui->workspace->setCurrentIndex(0);
+            m_ui->openTestsButton->setVisible(false);
+        }
+
+        m_ui->workspace->setCurrentIndex(0);
+        setInfoPanelEditable(false);
+    });
+
+    connect(m_ui->openTestsButton, &QPushButton::pressed, this, [this]() {
+        if (m_selectedNode->getType() == TreeNode::Type::TASK) {
+            m_ui->workspace->setCurrentIndex(2);
+            m_ui->infoPanelButtons->setCurrentIndex(2);
+        }
     });
     
-    connect(m_ui->rejectCourseChangesButton, &QPushButton::pressed, this, [this]() {
-        m_currentPage = COURSE_TREE;
-        m_ui->mainWorkspace->setCurrentIndex(m_currentPage);
+    connect(m_ui->closeTestsButton, &QPushButton::pressed, this, [this]() {
+        m_ui->workspace->setCurrentIndex(1);
+        m_ui->infoPanelButtons->setCurrentIndex(1);
     });
-    
+
     // Request data
     updateData();
 }
@@ -141,11 +156,12 @@ void MainWindow::updateInfoPanel(TreeNode* node)
         {
             Course* course = reinterpret_cast<Course*>(node);
             m_ui->nodeType->setText("Курс");
-            m_ui->nodeTitle->setText(course->getName());
-            
-            m_ui->courseInfoLectureHours->setText(QString::number(course->getLectureHourCount()));
-            m_ui->courseInfoPracticeHours->setText(QString::number(course->getPracticeHourCount()));
-            m_ui->courseInfoCreator->setText(course->getCreator());
+            m_ui->courseEditName->setPlainText(course->getName());
+            m_ui->courseEditLectureHours->setText(QString::number(course->getLectureHourCount()));
+            m_ui->courseEditPracticeHours->setText(QString::number(course->getPracticeHourCount()));
+
+            m_ui->addSectionButton->setVisible(true);
+            m_ui->addTaskButton->setVisible(false);
             break;
         }
             
@@ -154,7 +170,10 @@ void MainWindow::updateInfoPanel(TreeNode* node)
         {
             Section* section = reinterpret_cast<Section*>(node);
             m_ui->nodeType->setText("Раздел");
-            m_ui->nodeTitle->setText(section->getName());
+            m_ui->sectionEditName->setPlainText(section->getName());
+
+            m_ui->addSectionButton->setVisible(true);
+            m_ui->addTaskButton->setVisible(true);
             break;
         }
             
@@ -163,10 +182,34 @@ void MainWindow::updateInfoPanel(TreeNode* node)
         {
             Task* task = reinterpret_cast<Task*>(node);
             m_ui->nodeType->setText("Задача");
-            m_ui->nodeTitle->setText(task->getName());
+            m_ui->taskEditName->setPlainText(task->getName());
+
+            m_ui->addSectionButton->setVisible(false);
+            m_ui->addTaskButton->setVisible(false);
             break;
         }
             
         }
     }
+}
+
+void MainWindow::setInfoPanelEditable(bool editable)
+{
+    // Course properties
+    m_ui->courseEditName->setEnabled(editable);
+    m_ui->courseEditLectureHours->setEnabled(editable);
+    m_ui->courseEditPracticeHours->setEnabled(editable);
+
+    // Section properties
+    m_ui->sectionEditName->setEnabled(editable);
+
+    // Task properties
+    m_ui->taskEditName->setEnabled(editable);
+    m_ui->taskEditScore->setEnabled(editable);
+    m_ui->taskEditText->setEnabled(editable);
+    m_ui->taskEditSource->setEnabled(editable);
+
+
+    m_ui->infoPanelButtons->setCurrentIndex(static_cast<int>(editable));
+    m_ui->courseTree->setEnabled(!editable);
 }

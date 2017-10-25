@@ -3,7 +3,7 @@
 #include "Task.h"
 
 Test::Test() :
-    m_id(0), m_isRequired(true), m_relativeNumber(0), m_task(nullptr)
+    m_id(0), m_isRequired(true), m_score(0), m_task(nullptr)
 {   
 }
 
@@ -51,14 +51,14 @@ bool Test::isRequired() const
     return m_isRequired;
 }
 
-void Test::setRelativeNumber(unsigned int number)
+void Test::setScore(unsigned int score)
 {
-    m_relativeNumber = number;
+    m_score = score;
 }
 
-unsigned int Test::getRelativeNumber() const
+unsigned int Test::getScore() const
 {
-    return m_relativeNumber;
+    return m_score;
 }
 
 void Test::setTask(Task* task)

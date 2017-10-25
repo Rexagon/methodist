@@ -28,8 +28,8 @@ public:
     void setText(const QString& text);
     QString getText() const;
     
-    void setCode(const QString& code);
-    QString getCode() const;
+    void setSource(const QString& code);
+    QString getSource() const;
     
     void setScore(unsigned int score);
     unsigned int getScore() const;

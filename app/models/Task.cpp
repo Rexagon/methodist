@@ -43,12 +43,12 @@ QString Task::getText() const
     return m_text;
 }
 
-void Task::setCode(const QString& code)
+void Task::setSource(const QString& code)
 {
     m_code = code;
 }
 
-QString Task::getCode() const
+QString Task::getSource() const
 {
     return m_code;
 }
