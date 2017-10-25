@@ -62,6 +62,9 @@ QVariant TestsModel::headerData(int section, Qt::Orientation orientation, int ro
                 return QString("Баллы");
             }
         }
+        else if (orientation == Qt::Vertical) {
+            return section;
+        }
     }
 
     return QVariant();

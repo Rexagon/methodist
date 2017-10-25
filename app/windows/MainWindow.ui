@@ -316,9 +316,21 @@ QScrollBar:vertical {
     margin: 0px;
 }
 
+QScrollBar:horizontal {
+    border: 0px;
+    background-color:rgb(161, 161, 161);
+    height:10px;
+    margin: 0px;
+}
+
 QScrollBar::handle:vertical {
 	background: rgb(130, 130, 130);
-    min-height: 0px;
+    min-width: 0px;
+}
+
+QScrollBar::handle:horizontal {
+	background: rgb(130, 130, 130);
+    min-width: 0px;
 }
 
 QScrollBar::add-page:vertical {
@@ -328,10 +340,24 @@ QScrollBar::add-page:vertical {
     subcontrol-origin: margin;
 }
 
+QScrollBar::add-page:horizontal {
+	background: white;
+    width: 0px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
 QScrollBar::sub-page:vertical {
 	background: white;
     height: 0 px;
     subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-page:horizontal {
+	background: white;
+    width: 0 px;
+    subcontrol-position: left;
     subcontrol-origin: margin;
 }</string>
             </property>
@@ -434,9 +460,9 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>-166</y>
+                   <y>-140</y>
                    <width>427</width>
-                   <height>790</height>
+                   <height>782</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
