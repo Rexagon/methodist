@@ -4,7 +4,7 @@
 #include "Section.h"
 
 Task::Task() :
-    TreeNode(TreeNode::Type::TASK),
+    CourseNode(CourseNode::Type::TASK),
     m_id(0), m_score(0), m_course(nullptr), m_section(nullptr)
 {
 }
@@ -141,7 +141,7 @@ void Task::setSection(Section* section)
     m_section = section;
 }
 
-Section*Task::getSection()
+Section* Task::getSection()
 {
     return m_section;
 }

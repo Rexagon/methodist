@@ -1,22 +1,22 @@
-#include "TreeNode.h"
+#include "CourseNode.h"
 
 #include <iostream>
 
-TreeNode::TreeNode(TreeNode::Type type) :
+CourseNode::CourseNode(CourseNode::Type type) :
     m_type(type), m_parent(nullptr)
 {
 }
 
-TreeNode::~TreeNode()
+CourseNode::~CourseNode()
 {
 }
 
-TreeNode::Type TreeNode::getType() const
+CourseNode::Type CourseNode::getType() const
 {
     return m_type;
 }
 
-int TreeNode::getRelativeNumber() const
+int CourseNode::getRelativeNumber() const
 {
     if (m_parent == nullptr) {
         return 0;
@@ -26,23 +26,23 @@ int TreeNode::getRelativeNumber() const
     }
 }
 
-void TreeNode::setParent(TreeNode* parent)
+void CourseNode::setParent(CourseNode* parent)
 {
     m_parent = parent;
 }
 
-TreeNode* TreeNode::getParent() const
+CourseNode* CourseNode::getParent() const
 {
     return m_parent;
 }
 
-void TreeNode::addChild(TreeNode* child)
+void CourseNode::addChild(CourseNode* child)
 {
     m_children.push_back(child);
     child->setParent(this);
 }
 
-void TreeNode::removeChild(const TreeNode* child)
+void CourseNode::removeChild(const CourseNode* child)
 {
     for (auto it = m_children.begin(); it != m_children.end(); ++it) {
         if (*it == child) {
@@ -52,14 +52,14 @@ void TreeNode::removeChild(const TreeNode* child)
     }
 }
 
-void TreeNode::removeChild(size_t n)
+void CourseNode::removeChild(size_t n)
 {
     if (n < m_children.size()) {
         m_children.erase(m_children.begin() + n);
     }
 }
 
-TreeNode* TreeNode::getChild(size_t n) const
+CourseNode* CourseNode::getChild(size_t n) const
 {
     if (n < m_children.size()) {
         return m_children[n];
@@ -69,7 +69,7 @@ TreeNode* TreeNode::getChild(size_t n) const
     }
 }
 
-int TreeNode::getChildIndex(const TreeNode* child) const
+int CourseNode::getChildIndex(const CourseNode* child) const
 {
     for (size_t i = 0; i < m_children.size(); ++i) {
         if (m_children[i] == child) {
@@ -80,12 +80,12 @@ int TreeNode::getChildIndex(const TreeNode* child) const
     return -1;
 }
 
-size_t TreeNode::getChildCount() const
+size_t CourseNode::getChildCount() const
 {
     return m_children.size();
 }
 
-std::vector<TreeNode*> TreeNode::getChildren() const
+std::vector<CourseNode*> CourseNode::getChildren() const
 {
     return m_children;
 }

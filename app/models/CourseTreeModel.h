@@ -1,17 +1,17 @@
-#ifndef TREENODESMODEL_H
-#define TREENODESMODEL_H
+#ifndef COURSETREEMODEL_H
+#define COURSETREEMODEL_H
 
 #include <QAbstractItemModel>
 
-#include "Course.h"
+#include "../objects/Course.h"
 
-class TreeNodesModel : public QAbstractItemModel
+class CourseTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
     
 public:
-    TreeNodesModel(QObject *parent = nullptr);
-    ~TreeNodesModel();
+    CourseTreeModel(QObject *parent = nullptr);
+    ~CourseTreeModel();
     
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -27,9 +27,8 @@ public:
     Course* getCourse() const;    
     
 private:
-    TreeNode* getItem(const QModelIndex& index) const;
     
     Course* m_course;
 };
 
-#endif // TREENODESMODEL_H
+#endif // COURSETREEMODEL_H

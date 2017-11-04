@@ -1,17 +1,17 @@
-#ifndef COURSESMODEL_H
-#define COURSESMODEL_H
+#ifndef COURSESLISTMODEL_H
+#define COURSESLISTMODEL_H
 
 #include <QAbstractListModel>
 
-#include "Course.h"
+#include "../objects/Course.h"
 
-class CoursesModel : public QAbstractListModel
+class CoursesListModel : public QAbstractListModel
 {
     Q_OBJECT
     
 public:
-    CoursesModel(QObject* parent = nullptr);
-    ~CoursesModel();
+    CoursesListModel(QObject* parent = nullptr);
+    ~CoursesListModel();
     
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     
@@ -27,4 +27,4 @@ private:
     std::vector<std::unique_ptr<Course>> m_courses;
 };
 
-#endif // COURSESMODEL_H
+#endif // COURSESLISTMODEL

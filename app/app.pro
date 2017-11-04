@@ -13,25 +13,25 @@ MOC_DIR = obj
 SOURCES += \
     main.cpp \
     windows/MainWindow.cpp \
-    models/Course.cpp \
-    models/Section.cpp \
-    models/Task.cpp \
-    models/Test.cpp \
-    models/CoursesModel.cpp \
-    models/TreeNode.cpp \
-    models/TreeNodesModel.cpp \
-    models/TestsModel.cpp
+    models/CoursesListModel.cpp \
+    models/CourseTreeModel.cpp \
+    models/TestsTableModel.cpp \
+    objects/Course.cpp \
+    objects/CourseNode.cpp \
+    objects/Section.cpp \
+    objects/Task.cpp \
+    objects/Test.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
-    models/Course.h \
-    models/Section.h \
-    models/Task.h \
-    models/Test.h \
-    models/CoursesModel.h \
-    models/TreeNode.h \
-    models/TreeNodesModel.h \
-    models/TestsModel.h
+    models/CoursesListModel.h \
+    models/CourseTreeModel.h \
+    models/TestsTableModel.h \
+    objects/Course.h \
+    objects/CourseNode.h \
+    objects/Section.h \
+    objects/Task.h \
+    objects/Test.h \
 
 FORMS	+= \
     windows/MainWindow.ui

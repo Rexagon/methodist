@@ -3,5 +3,7 @@
         <file>images/course.png</file>
         <file>images/section.png</file>
         <file>images/task.png</file>
+        <file>images/plus.png</file>
+        <file>images/reload.png</file>
     </qresource>
 </RCC>

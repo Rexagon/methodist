@@ -1,21 +1,21 @@
-#include "CoursesModel.h"
+#include "CoursesListModel.h"
 
-CoursesModel::CoursesModel(QObject* parent) :
+CoursesListModel::CoursesListModel(QObject* parent) :
     QAbstractListModel(parent)
 {
 }
 
-CoursesModel::~CoursesModel()
+CoursesListModel::~CoursesListModel()
 {
     m_courses.clear();
 }
 
-int CoursesModel::rowCount(const QModelIndex& parent) const
+int CoursesListModel::rowCount(const QModelIndex& parent) const
 {
     return m_courses.size();
 }
 
-QVariant CoursesModel::data(const QModelIndex& index, int role) const
+QVariant CoursesListModel::data(const QModelIndex& index, int role) const
 {
     if (role == Qt::DisplayRole && index.row() < m_courses.size()) {
         Course* course = m_courses[index.row()].get();
@@ -26,12 +26,12 @@ QVariant CoursesModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-void CoursesModel::addCourse(std::unique_ptr<Course> course)
+void CoursesListModel::addCourse(std::unique_ptr<Course> course)
 {
     m_courses.push_back(std::move(course));
 }
 
-void CoursesModel::removeCourse(const Course* course)
+void CoursesListModel::removeCourse(const Course* course)
 {
     for (auto it = m_courses.begin(); it != m_courses.end(); ++it) {
         if (it->get() == course) {
@@ -41,14 +41,14 @@ void CoursesModel::removeCourse(const Course* course)
     }
 }
 
-void CoursesModel::removeCourse(size_t n)
+void CoursesListModel::removeCourse(size_t n)
 {
     if (n < m_courses.size()) {
         m_courses.erase(m_courses.begin() + n);
     }
 }
 
-Course*CoursesModel::getCourse(size_t n) const
+Course* CoursesListModel::getCourse(size_t n) const
 {
     if (n < m_courses.size()) {
         return m_courses[n].get();
@@ -57,7 +57,7 @@ Course*CoursesModel::getCourse(size_t n) const
     return nullptr;
 }
 
-int CoursesModel::getCourseIndex(const Course* course)
+int CoursesListModel::getCourseIndex(const Course* course)
 {
     for (size_t i = 0; i < m_courses.size(); ++i) {
         if (m_courses[i].get() == course) {

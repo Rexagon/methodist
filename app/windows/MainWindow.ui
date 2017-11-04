@@ -29,7 +29,16 @@
     </sizepolicy>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -73,7 +82,6 @@
 QScrollBar:vertical {
     border: 0px;
     background-color:rgb(161, 161, 161);
-    width:10px;
     margin: 0px;
 }
 
@@ -105,7 +113,7 @@ QPushButton {
 	color: white;
 	border: 0px;
 	background-color: rgb(96, 97, 102);
-	padding: 5px 20px 5px 5px;
+	padding: 5px;
 }
 
 QPushButton:hover {
@@ -156,25 +164,21 @@ QListView::item:selected {
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="addCourseButton">
+        <item row="0" column="3">
+         <widget class="QPushButton" name="pushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>86</width>
-            <height>0</height>
-           </size>
-          </property>
           <property name="text">
-           <string>Новый курс</string>
+           <string/>
           </property>
-          <property name="flat">
-           <bool>false</bool>
+          <property name="icon">
+           <iconset>
+            <normalon>:/images/reload.png</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -196,7 +200,7 @@ QListView::item:selected {
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="3">
+        <item row="1" column="0" colspan="4">
          <widget class="QListView" name="coursesList">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -220,6 +224,24 @@ QListView::item:selected {
           </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normalon>:/images/plus.png</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -270,7 +292,16 @@ QListView::item:selected {
          <enum>Qt::LeftToRight</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <property name="spacing">
@@ -363,7 +394,16 @@ QScrollBar::sub-page:horizontal {
             </property>
             <widget class="QWidget" name="workspaceTree">
              <layout class="QVBoxLayout" name="verticalLayout_6">
-              <property name="margin">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
@@ -460,9 +500,9 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>-140</y>
-                   <width>427</width>
-                   <height>782</height>
+                   <y>0</y>
+                   <width>147</width>
+                   <height>774</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -564,7 +604,16 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
               <property name="spacing">
                <number>0</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
@@ -608,15 +657,31 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
 	color: black;
 }
 
-QLineEdit, QPlainTextEdit {
+QLineEdit, QPlainTextEdit, QSpinBox {
 	border: 1px solid gray;
 	border-radius: 0px;
 	background-color: white;
 }
 
-QPlainTextEdit::disabled, QLineEdit::disabled {
+QPlainTextEdit::disabled, QLineEdit::disabled, QSpinBox::disabled {
 	background-color: rgb(240, 240, 240);
-}</string>
+}
+
+QPushButton {
+	color: white;
+	border: 0px;
+	background-color: rgb(96, 97, 102);
+	padding: 5px;
+}
+
+QPushButton:hoverr {
+	background-color: rgb(122, 124, 130);
+}
+
+QPushButton:pressed {
+	background-color: rgb(162, 164, 172);
+}
+</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
              <item row="0" column="0">
@@ -636,9 +701,21 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
+               <property name="currentIndex">
+                <number>2</number>
+               </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -681,12 +758,18 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="courseEditLectureHours">
+                  <widget class="QSpinBox" name="courseEditLectureHours">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
-                   <property name="readOnly">
-                    <bool>false</bool>
+                   <property name="frame">
+                    <bool>true</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
                    </property>
                   </widget>
                  </item>
@@ -698,12 +781,12 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="courseEditPracticeHours">
+                  <widget class="QSpinBox" name="courseEditPracticeHours">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
-                   <property name="readOnly">
-                    <bool>false</bool>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
                    </property>
                   </widget>
                  </item>
@@ -724,7 +807,16 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                </widget>
                <widget class="QWidget" name="sectionInfo">
                 <layout class="QVBoxLayout" name="verticalLayout_2">
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -779,7 +871,16 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                </widget>
                <widget class="QWidget" name="taskInfo">
                 <layout class="QVBoxLayout" name="verticalLayout_3">
-                 <property name="margin">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
                  <item>
@@ -819,9 +920,12 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="taskEditScore">
+                  <widget class="QSpinBox" name="taskEditScore">
                    <property name="enabled">
                     <bool>false</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
                    </property>
                   </widget>
                  </item>
@@ -851,6 +955,9 @@ QPlainTextEdit::disabled, QLineEdit::disabled {
              </item>
              <item row="3" column="0">
               <widget class="QStackedWidget" name="infoPanelButtons">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
                <widget class="QWidget" name="readOnlyInfo">
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>

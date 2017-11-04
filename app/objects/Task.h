@@ -7,13 +7,13 @@
 #include <QString>
 #include <QRegExp>
 
-#include "TreeNode.h"
+#include "CourseNode.h"
 #include "Test.h"
 
 class Course;
 class Section;
 
-class Task : public TreeNode
+class Task : public CourseNode
 {
 public:
     Task();

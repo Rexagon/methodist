@@ -3,7 +3,7 @@
 #include "Course.h"
 
 Section::Section() :
-    TreeNode(TreeNode::Type::SECTION),
+    CourseNode(CourseNode::Type::SECTION),
     m_course(nullptr)
 {
 }
@@ -66,7 +66,7 @@ void Section::removeTask(size_t n)
     }
 }
 
-Task*Section::getTask(size_t n) const
+Task* Section::getTask(size_t n) const
 {
     if (n < m_tasks.size()) {
         return m_tasks[n].get();

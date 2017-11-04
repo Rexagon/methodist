@@ -1,7 +1,7 @@
 #include "Course.h"
 
 Course::Course() :
-    TreeNode(TreeNode::Type::COURSE),
+    CourseNode(CourseNode::Type::COURSE),
     m_id(0), m_lectureHourCount(0), m_practiceHourCount(0)
 {
 }

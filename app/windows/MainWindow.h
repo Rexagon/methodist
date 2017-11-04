@@ -3,9 +3,9 @@
 
 #include <QMainWindow>
 
-#include "models/CoursesModel.h"
-#include "models/TreeNodesModel.h"
-#include "models/TestsModel.h"
+#include "models/CoursesListModel.h"
+#include "models/CourseTreeModel.h"
+#include "models/TestsTableModel.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,7 +22,7 @@ public:
 private:
     void updateData();
     
-    void updateInfoPanel(TreeNode* node);
+    void updateInfoPanel(CourseNode* node);
 
     void setInfoPanelEditable(bool editable);
     
@@ -34,11 +34,11 @@ private:
         PAGE_COUNT
     };
     
-    std::unique_ptr<CoursesModel> m_coursesListModel;
-    std::unique_ptr<TreeNodesModel> m_courseTreeModel;
-    std::unique_ptr<TestsModel> m_testModel;
+    std::unique_ptr<CoursesListModel> m_coursesListModel;
+    std::unique_ptr<CourseTreeModel> m_courseTreeModel;
+    std::unique_ptr<TestsTableModel> m_testsTableModel;
 
-    TreeNode* m_selectedNode;
+    CourseNode* m_selectedNode;
     
     std::unique_ptr<Ui::MainWindow> m_ui;
 };

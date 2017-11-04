@@ -1,15 +1,15 @@
-#ifndef TESTSMODEL_H
-#define TESTSMODEL_H
+#ifndef TESTSTABLEMODEL_H
+#define TESTSTABLEMODEL_H
 
 #include <QAbstractTableModel>
 
-#include "Task.h"
+#include "../objects/Task.h"
 
-class TestsModel : public QAbstractTableModel
+class TestsTableModel : public QAbstractTableModel
 {
 public:
-    TestsModel(QObject* parent = nullptr);
-    ~TestsModel();
+    TestsTableModel(QObject* parent = nullptr);
+    ~TestsTableModel();
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -24,4 +24,4 @@ public:
     Task* m_task;
 };
 
-#endif // TESTSMODEL_H
+#endif // TESTSTABLEMODEL_H

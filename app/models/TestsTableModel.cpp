@@ -1,27 +1,25 @@
-#include "TestsModel.h"
+#include "TestsTableModel.h"
 
-TestsModel::TestsModel(QObject* parent) :
+TestsTableModel::TestsTableModel(QObject* parent) :
     QAbstractTableModel(parent), m_task(nullptr)
 {
-
 }
 
-TestsModel::~TestsModel()
+TestsTableModel::~TestsTableModel()
 {
-
 }
 
-int TestsModel::rowCount(const QModelIndex& parent) const
+int TestsTableModel::rowCount(const QModelIndex& parent) const
 {
     return m_task->getChildCount();
 }
 
-int TestsModel::columnCount(const QModelIndex& parent) const
+int TestsTableModel::columnCount(const QModelIndex& parent) const
 {
     return 4;
 }
 
-QVariant TestsModel::data(const QModelIndex& index, int role) const
+QVariant TestsTableModel::data(const QModelIndex& index, int role) const
 {
     if (role == Qt::DisplayRole) {
         Test* test = m_task->getTest(index.row());
@@ -44,7 +42,7 @@ QVariant TestsModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-QVariant TestsModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TestsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal) {
@@ -70,12 +68,12 @@ QVariant TestsModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-void TestsModel::setTask(Task* task)
+void TestsTableModel::setTask(Task* task)
 {
     m_task = task;
 }
 
-Task* TestsModel::getTask() const
+Task* TestsTableModel::getTask() const
 {
     return m_task;
 }

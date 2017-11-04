@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
-#include "TreeNode.h"
+#include "CourseNode.h"
 #include "Section.h"
 
-class Course : public TreeNode
+class Course : public CourseNode
 {
 public:
     Course();

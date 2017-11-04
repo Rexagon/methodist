@@ -6,12 +6,12 @@
 
 #include <QString>
 
-#include "TreeNode.h"
+#include "CourseNode.h"
 #include "Task.h"
 
 class Course;
 
-class Section : public TreeNode
+class Section : public CourseNode
 {
 public:
     Section();
