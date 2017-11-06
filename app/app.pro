@@ -20,7 +20,15 @@ SOURCES += \
     objects/CourseNode.cpp \
     objects/Section.cpp \
     objects/Task.cpp \
-    objects/Test.cpp
+    objects/Test.cpp \
+    controllers/SideMenuController.cpp \
+    controllers/CourseTreeController.cpp \
+    controllers/Controller.cpp \
+    stuff/ModelManager.cpp \
+    controllers/InfoPanelController.cpp \
+    controllers/CourseEditController.cpp \
+    controllers/SectionEditController.cpp \
+    controllers/TaskEditController.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -32,6 +40,14 @@ HEADERS	+= \
     objects/Section.h \
     objects/Task.h \
     objects/Test.h \
+    controllers/SideMenuController.h \
+    controllers/CourseTreeController.h \
+    controllers/Controller.h \
+    stuff/ModelManager.h \
+    controllers/InfoPanelController.h \
+    controllers/CourseEditController.h \
+    controllers/SectionEditController.h \
+    controllers/TaskEditController.h
 
 FORMS	+= \
     windows/MainWindow.ui

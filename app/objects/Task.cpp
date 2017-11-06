@@ -73,16 +73,6 @@ const QRegExp& Task::getInputRegexp() const
     return m_inputPattern;
 }
 
-void Task::setOutputPattern(const QString& pattern)
-{
-    m_outputPattern.setPattern(pattern);
-}
-
-const QRegExp& Task::getOutputRegexp() const
-{
-    return m_outputPattern;
-}
-
 void Task::addTest(std::unique_ptr<Test> test)
 {
     m_tests.push_back(std::move(test));

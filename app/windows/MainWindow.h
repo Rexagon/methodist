@@ -3,9 +3,12 @@
 
 #include <QMainWindow>
 
-#include "models/CoursesListModel.h"
-#include "models/CourseTreeModel.h"
-#include "models/TestsTableModel.h"
+#include "controllers/CourseTreeController.h"
+#include "controllers/InfoPanelController.h"
+#include "controllers/SideMenuController.h"
+#include "controllers/CourseEditController.h"
+#include "controllers/SectionEditController.h"
+#include "controllers/TaskEditController.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,25 +23,12 @@ public:
     ~MainWindow();
 
 private:
-    void updateData();
-    
-    void updateInfoPanel(CourseNode* node);
-
-    void setInfoPanelEditable(bool editable);
-    
-    enum Page {
-        DEFAULT,
-        COURSE_TREE,
-        TASK_EDIT,
-
-        PAGE_COUNT
-    };
-    
-    std::unique_ptr<CoursesListModel> m_coursesListModel;
-    std::unique_ptr<CourseTreeModel> m_courseTreeModel;
-    std::unique_ptr<TestsTableModel> m_testsTableModel;
-
-    CourseNode* m_selectedNode;
+    std::unique_ptr<CourseTreeController> m_courseTreeController;
+    std::unique_ptr<InfoPanelController> m_infoPanelController;
+    std::unique_ptr<SideMenuController> m_sideMenuController;
+    std::unique_ptr<CourseEditController> m_courseEditController;
+    std::unique_ptr<SectionEditController> m_sectionEditController;
+    std::unique_ptr<TaskEditController> m_taskEditController;
     
     std::unique_ptr<Ui::MainWindow> m_ui;
 };

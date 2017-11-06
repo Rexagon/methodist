@@ -1,4 +1,4 @@
-#include "CourseTreeModel.h".h"
+#include "CourseTreeModel.h"
 
 #include <QIcon>
 #include <QFont>
@@ -25,7 +25,7 @@ int CourseTreeModel::rowCount(const QModelIndex& parent) const
     }
 }
 
-int CourseTreeModel::columnCount(const QModelIndex& parent) const
+int CourseTreeModel::columnCount(const QModelIndex&) const
 {
     return 1;
 }
@@ -106,21 +106,6 @@ QVariant CourseTreeModel::data(const QModelIndex& index, int role) const
     }
     
     return QVariant();
-}
-
-Qt::ItemFlags CourseTreeModel::flags(const QModelIndex& index) const
-{
-    if (!index.isValid()) {
-        return 0;
-    }
-    
-    const CourseNode* item = static_cast<CourseNode*>(index.internalPointer()); 
-    if (item->getParent() == nullptr) {
-        return Qt::ItemIsEnabled;
-    }
-    else {
-        return QAbstractItemModel::flags(index);
-    }
 }
 
 void CourseTreeModel::setCourse(Course* course)

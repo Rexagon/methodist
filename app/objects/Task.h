@@ -37,9 +37,6 @@ public:
     void setInputPattern(const QString& pattern);
     const QRegExp& getInputRegexp() const;
     
-    void setOutputPattern(const QString& pattern);
-    const QRegExp& getOutputRegexp() const;
-    
     void setCourse(Course* course);
     Course* getCourse() const;
     

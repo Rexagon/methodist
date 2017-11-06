@@ -165,7 +165,7 @@ QListView::item:selected {
          <number>0</number>
         </property>
         <item row="0" column="3">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="addCourseButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -228,7 +228,7 @@ QListView::item:selected {
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="refreshCoursesButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -392,6 +392,9 @@ QScrollBar::sub-page:horizontal {
     subcontrol-origin: margin;
 }</string>
             </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
             <widget class="QWidget" name="workspaceTree">
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <property name="leftMargin">
@@ -452,6 +455,9 @@ QTreeView::item:selected {
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
+                <property name="dragEnabled">
+                 <bool>false</bool>
+                </property>
                 <property name="rootIsDecorated">
                  <bool>false</bool>
                 </property>
@@ -500,9 +506,9 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>0</y>
-                   <width>147</width>
-                   <height>774</height>
+                   <y>-94</y>
+                   <width>456</width>
+                   <height>718</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -533,6 +539,9 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                   <property name="bottomMargin">
                    <number>9</number>
                   </property>
+                  <item row="5" column="0" colspan="2">
+                   <widget class="QPlainTextEdit" name="taskEditInputPattern"/>
+                  </item>
                   <item row="3" column="0" colspan="2">
                    <widget class="QTextEdit" name="taskEditSource">
                     <property name="minimumSize">
@@ -543,17 +552,17 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="taskEditTextLabel">
-                    <property name="text">
-                     <string>Текст задачи</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="2" column="0">
                    <widget class="QLabel" name="taskEditSourceLabel">
                     <property name="text">
                      <string>Исходный код</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="taskEditTextLabel">
+                    <property name="text">
+                     <string>Текст задачи</string>
                     </property>
                    </widget>
                   </item>
@@ -573,23 +582,10 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="5" column="0" colspan="2">
-                   <widget class="QPlainTextEdit" name="taskEditInputPattern"/>
-                  </item>
-                  <item row="7" column="0" colspan="2">
-                   <widget class="QPlainTextEdit" name="taskEditOutputPattern"/>
-                  </item>
                   <item row="4" column="0" colspan="2">
                    <widget class="QLabel" name="taskEditInputPatternLabel">
                     <property name="text">
                      <string>Шаблон входных данных</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="0" colspan="2">
-                   <widget class="QLabel" name="taskEditOutputPatternLabel">
-                    <property name="text">
-                     <string>Шаблон выходных данных</string>
                     </property>
                    </widget>
                   </item>
@@ -693,6 +689,13 @@ QPushButton:pressed {
                </property>
                <property name="text">
                 <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -944,22 +947,29 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
+               <widget class="QWidget" name="testInfo"/>
               </widget>
              </item>
              <item row="3" column="0">
               <widget class="QStackedWidget" name="infoPanelButtons">
                <property name="currentIndex">
-                <number>1</number>
+                <number>3</number>
                </property>
-               <widget class="QWidget" name="readOnlyInfo">
+               <widget class="QWidget" name="defaultButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <spacer name="verticalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
                  <item>
                   <widget class="QPushButton" name="addTaskButton">
                    <property name="text">
@@ -993,7 +1003,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="editInfo">
+               <widget class="QWidget" name="courseEditButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -1003,7 +1013,69 @@ QPushButton:pressed {
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>20</width>
-                     <height>40</height>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="saveCourseChangesButton">
+                   <property name="text">
+                    <string>Сохранить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="cancelCourseChangesButton">
+                   <property name="text">
+                    <string>Отменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="sectionEditButtons">
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <spacer name="verticalSpacer_6">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="saveSectionChangesButton">
+                   <property name="text">
+                    <string>Сохранить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="cancelSectionChangesButton">
+                   <property name="text">
+                    <string>Отменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="taskEditButtons">
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <item>
+                  <spacer name="verticalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>16777215</height>
                     </size>
                    </property>
                   </spacer>
@@ -1016,14 +1088,14 @@ QPushButton:pressed {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="acceptChangesButton">
+                  <widget class="QPushButton" name="saveTaskChangesButton">
                    <property name="text">
                     <string>Сохранить</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="rejectChangesButton">
+                  <widget class="QPushButton" name="cancelTaskChangesButton">
                    <property name="text">
                     <string>Отменить</string>
                    </property>
@@ -1031,7 +1103,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="testsEdit">
+               <widget class="QWidget" name="testsEditButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
                   <spacer name="verticalSpacer_5">
@@ -1041,7 +1113,7 @@ QPushButton:pressed {
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>20</width>
-                     <height>40</height>
+                     <height>16777215</height>
                     </size>
                    </property>
                   </spacer>
@@ -1062,9 +1134,6 @@ QPushButton:pressed {
           </widget>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="pageCourseEdit">
-        <layout class="QGridLayout" name="gridLayout_6"/>
        </widget>
       </widget>
      </widget>
