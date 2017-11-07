@@ -28,7 +28,9 @@ SOURCES += \
     controllers/InfoPanelController.cpp \
     controllers/CourseEditController.cpp \
     controllers/SectionEditController.cpp \
-    controllers/TaskEditController.cpp
+    controllers/TaskEditController.cpp \
+    controllers/TestsTableController.cpp \
+    controllers/TestEditController.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -47,7 +49,9 @@ HEADERS	+= \
     controllers/InfoPanelController.h \
     controllers/CourseEditController.h \
     controllers/SectionEditController.h \
-    controllers/TaskEditController.h
+    controllers/TaskEditController.h \
+    controllers/TestsTableController.h \
+    controllers/TestEditController.h
 
 FORMS	+= \
     windows/MainWindow.ui

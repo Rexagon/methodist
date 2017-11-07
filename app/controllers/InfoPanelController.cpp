@@ -41,6 +41,10 @@ void InfoPanelController::propose()
     m_ui->taskEditName->setEnabled(false);
     m_ui->taskEditScore->setEnabled(false);
     
+    // Test properties
+    m_ui->testEditInputData->setEnabled(false);
+    m_ui->testEditScore->setEnabled(false);
+    
     setVisible(true);
 }
 

@@ -24,7 +24,7 @@ signals:
     
 private:    
     Course* m_currentCourse;
-    CourseNode* m_currentCourseNode;
+    CourseNode* m_selectedCourseNode;
 };
 
 #endif // COURSETREECONTROLLER_H

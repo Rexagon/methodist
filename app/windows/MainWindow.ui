@@ -506,8 +506,8 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>-94</y>
-                   <width>456</width>
+                   <y>0</y>
+                   <width>139</width>
                    <height>718</height>
                   </rect>
                  </property>
@@ -705,7 +705,7 @@ QPushButton:pressed {
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>2</number>
+                <number>3</number>
                </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">
@@ -947,13 +947,73 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="testInfo"/>
+               <widget class="QWidget" name="testInfo">
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QLabel" name="testEditInputDataLabel">
+                   <property name="text">
+                    <string>TextLabel</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPlainTextEdit" name="testEditInputData">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="testEditScoreLabel">
+                   <property name="text">
+                    <string>TextLabel</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="testEditScore">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="emptyInfo"/>
               </widget>
              </item>
              <item row="3" column="0">
               <widget class="QStackedWidget" name="infoPanelButtons">
                <property name="currentIndex">
-                <number>3</number>
+                <number>5</number>
                </property>
                <widget class="QWidget" name="defaultButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1103,7 +1163,38 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="testsEditButtons">
+               <widget class="QWidget" name="testEditButtons">
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <spacer name="verticalSpacer_10">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>204</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="saveTestChangesButton">
+                   <property name="text">
+                    <string>Сохранить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="cancelTestChangesButton">
+                   <property name="text">
+                    <string>Отменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="testsTableButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
                   <spacer name="verticalSpacer_5">
@@ -1117,6 +1208,13 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addTestButton">
+                   <property name="text">
+                    <string>Добавить тест</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="closeTestsButton">

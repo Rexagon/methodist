@@ -25,6 +25,11 @@ void TaskEditController::propose()
     m_ui->taskEditScore->setEnabled(true);
 }
 
+Task* TaskEditController::getCurrentTask()
+{
+    return m_currentTask;
+}
+
 void TaskEditController::setTask(Task* task)
 {
     if (task == nullptr) {

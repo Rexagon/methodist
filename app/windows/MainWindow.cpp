@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget* parent) :
     m_courseEditController = std::make_unique<CourseEditController>(m_ui.get(), this);
     m_sectionEditController = std::make_unique<SectionEditController>(m_ui.get(), this);
     m_taskEditController = std::make_unique<TaskEditController>(m_ui.get(), this);
+    m_testEditController = std::make_unique<TestEditController>(m_ui.get(), this);
+    m_testsTableController = std::make_unique<TestsTableController>(m_ui.get(), this);
     
     // Actions
     connect(m_sideMenuController.get(), &SideMenuController::courseSelected, this, [this](Course* course) {
@@ -41,17 +43,14 @@ MainWindow::MainWindow(QWidget* parent) :
         switch (node->getType()) {
         case CourseNode::Type::COURSE:
             m_courseEditController->setCourse(reinterpret_cast<Course*>(node));
-            m_courseEditController->propose();
             break;
             
         case CourseNode::Type::SECTION:
             m_sectionEditController->setSection(reinterpret_cast<Section*>(node));
-            m_sectionEditController->propose();
             break;
             
         case CourseNode::Type::TASK:
             m_taskEditController->setTask(reinterpret_cast<Task*>(node));
-            m_taskEditController->propose();
             break;
         }
     });
@@ -66,6 +65,18 @@ MainWindow::MainWindow(QWidget* parent) :
     
     connect(m_taskEditController.get(), &TaskEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
+    });
+    
+    connect(m_taskEditController.get(), &TaskEditController::testsOpened, this, [this]() {
+       m_testsTableController->setTask(m_taskEditController->getCurrentTask()); 
+    });
+    
+    connect(m_testsTableController.get(), &TestsTableController::testSelected, this, [this](Test* test) {
+       m_testEditController->setTest(test); 
+    });
+    
+    connect(m_testsTableController.get(), &TestsTableController::backButtonPressed, this, [this]() {
+       m_taskEditController->propose(); 
     });
 }
 

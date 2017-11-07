@@ -15,13 +15,15 @@ public:
     
     void propose() override;
     
+    Task* getCurrentTask();
+    
 public slots:
     void setTask(Task* task);
     
 signals:
+    void testsOpened();
     void changesSaved();
     void changesCanceled();
-    void testsOpened();
     
 private:
     Task* m_currentTask;
