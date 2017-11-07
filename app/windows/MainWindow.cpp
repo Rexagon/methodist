@@ -30,6 +30,17 @@ MainWindow::MainWindow(QWidget* parent) :
         m_courseTreeController->setCourse(course);
     });
     
+    connect(m_sideMenuController.get(), &SideMenuController::courseAdded, this, [this]() {
+        CoursesListModel* model = ModelManager::getCoursesListModel();
+        
+       std::unique_ptr<Course> course = std::make_unique<Course>();       
+       course->setName("Новый курс " + QString::number(model->getCourseCount()));
+       Course* coursePtr = course.get();
+       model->addCourse(std::move(course));
+       m_sideMenuController->selectCourse(coursePtr);
+       m_courseEditController->setCourse(coursePtr);
+    });
+    
     connect(m_courseTreeController.get(), &CourseTreeController::courseNodeSelected, this, [this](CourseNode* node) {
         m_infoPanelController->setCourseNode(node);
     });
@@ -52,6 +63,55 @@ MainWindow::MainWindow(QWidget* parent) :
         case CourseNode::Type::TASK:
             m_taskEditController->setTask(reinterpret_cast<Task*>(node));
             break;
+        }
+    });
+    
+    connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, [this]() {
+        CourseNode* node = m_courseTreeController->getSelectedCourseNode();
+        if (node == nullptr) {
+            return;
+        }
+        
+        Course* currentCourse = m_courseTreeController->getCurrentCourse();
+        
+        switch (node->getType()) {
+            case CourseNode::Type::COURSE:
+            {
+                ModelManager::getCoursesListModel()->removeCourse(currentCourse);
+                m_sideMenuController->deselectAll();
+                m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
+                break;
+            }
+                
+            case CourseNode::Type::SECTION:
+            {
+                Section* section = reinterpret_cast<Section*>(node);
+                Section* parent = reinterpret_cast<Section*>(section->getParent());
+                
+                if (parent == nullptr) {
+                    section->getCourse()->removeSection(section);
+                }
+                else {
+                    parent->removeChild(node);
+                }
+                
+                break;
+            }
+                
+            case CourseNode::Type::TASK:
+            {
+                Task* task = reinterpret_cast<Task*>(node);
+                Section* parent = task->getSection();
+                parent->removeChild(node);
+                parent->removeTask(task);
+                
+                break;
+            }
+        }
+        
+        if (node->getType() != CourseNode::Type::COURSE) {
+            ModelManager::getCourseTreeModel(currentCourse)->update();
+            m_courseTreeController->setCourse(currentCourse);
         }
     });
     
@@ -85,27 +145,3 @@ MainWindow::~MainWindow()
     ModelManager::close();
     m_ui.reset(nullptr);
 }
-
-
-/*void MainWindow::setInfoPanelEditable(bool editable)
-{
-    // Course properties
-    m_ui->courseEditName->setEnabled(editable);
-    m_ui->courseEditLectureHours->setEnabled(editable);
-    m_ui->courseEditPracticeHours->setEnabled(editable);
-
-    // Section properties
-    m_ui->sectionEditName->setEnabled(editable);
-
-    // Task properties
-    m_ui->taskEditName->setEnabled(editable);
-    m_ui->taskEditScore->setEnabled(editable);
-    m_ui->taskEditText->setEnabled(editable);
-    m_ui->taskEditSource->setEnabled(editable);
-
-
-    m_ui->infoPanelButtons->setCurrentIndex(static_cast<int>(editable));
-    m_ui->courseTree->setEnabled(!editable);
-    
-    m_ui->coursesList->setEnabled(!editable);
-}*/

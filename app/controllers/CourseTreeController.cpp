@@ -24,6 +24,11 @@ void CourseTreeController::propose()
     m_ui->workspace->setCurrentIndex(WORKSPACE_TREE);
 }
 
+Course* CourseTreeController::getCurrentCourse()
+{
+    return m_currentCourse;
+}
+
 CourseNode* CourseTreeController::getSelectedCourseNode()
 {
     return m_selectedCourseNode;
@@ -31,7 +36,7 @@ CourseNode* CourseTreeController::getSelectedCourseNode()
 
 void CourseTreeController::setCourse(Course* course)
 {    
-    if (course != nullptr && m_currentCourse != course) {
+    if (course != nullptr) {
         CourseTreeModel* treeModel = ModelManager::getCourseTreeModel(course);
         
         m_ui->courseTree->setModel(treeModel);

@@ -40,5 +40,3 @@ void CourseEditController::setCourse(Course* course)
     
     propose();
 }
-
-

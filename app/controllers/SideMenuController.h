@@ -14,6 +14,7 @@ public:
     
 public slots:
     void selectCourse(Course* course);
+    void deselectAll();
     
 signals:
     void courseAdded();

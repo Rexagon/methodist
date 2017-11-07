@@ -83,6 +83,7 @@ QScrollBar:vertical {
     border: 0px;
     background-color:rgb(161, 161, 161);
     margin: 0px;
+	width: 10px;
 }
 
 QScrollBar::handle:vertical {
@@ -165,7 +166,7 @@ QListView::item:selected {
          <number>0</number>
         </property>
         <item row="0" column="3">
-         <widget class="QPushButton" name="addCourseButton">
+         <widget class="QPushButton" name="refreshCoursesButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -228,7 +229,7 @@ QListView::item:selected {
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="refreshCoursesButton">
+         <widget class="QPushButton" name="addCourseButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>

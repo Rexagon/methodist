@@ -31,6 +31,14 @@ void SideMenuController::selectCourse(Course* course)
     CoursesListModel* model = ModelManager::getCoursesListModel();
     int index = model->getCourseIndex(course);
     if (index != -1) {
-        m_ui->coursesList->selectionModel()->select(model->index(index), QItemSelectionModel::SelectionFlag::Select);
+        m_ui->coursesList->selectionModel()->select(model->index(index), 
+                QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        
+        emit courseSelected(course);
     }
+}
+
+void SideMenuController::deselectAll()
+{
+    m_ui->coursesList->selectionModel()->clearSelection();
 }

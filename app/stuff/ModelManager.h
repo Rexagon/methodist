@@ -25,6 +25,8 @@ private:
     static std::unique_ptr<CoursesListModel> m_coursesListModel;
     static std::unique_ptr<CourseTreeModel> m_courseTreeModel;
     static std::unique_ptr<TestsTableModel> m_testsTableModel;
+    
+    static std::vector<std::unique_ptr<Course>> m_courses;
 };
 
 #endif // MODELMANAGER_H

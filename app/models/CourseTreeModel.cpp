@@ -14,6 +14,11 @@ CourseTreeModel::~CourseTreeModel()
 {
 }
 
+void CourseTreeModel::update()
+{
+    emit layoutChanged();
+}
+
 int CourseTreeModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.isValid()) {
