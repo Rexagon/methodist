@@ -14,6 +14,8 @@ public:
     
     void propose() override;
     
+    CourseNode* getCurrentCourseNode();
+    
 public slots:
     void setCourseNode(CourseNode* node);
     

@@ -31,9 +31,9 @@ public:
     
     void addSection(std::unique_ptr<Section> section);
     void removeSection(const Section* section);
-    void removeSection(size_t n);
     Section* getSection(size_t n) const;
     int getSectionIndex(const Section* section);
+    size_t getSectionCount() const;
     
 private:
     unsigned int m_id;

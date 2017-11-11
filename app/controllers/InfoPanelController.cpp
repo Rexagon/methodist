@@ -48,6 +48,11 @@ void InfoPanelController::propose()
     setVisible(true);
 }
 
+CourseNode*InfoPanelController::getCurrentCourseNode()
+{
+    return m_currentCourseNode;
+}
+
 void InfoPanelController::setCourseNode(CourseNode* node)
 {
     if (node == nullptr) {

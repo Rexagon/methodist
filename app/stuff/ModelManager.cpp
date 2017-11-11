@@ -49,15 +49,12 @@ CoursesListModel* ModelManager::getCoursesListModel()
                     
                     task->setName(QString("Задача ") + QString::number(k + 1));
                     
-                    subsection->addChild(task.get());
                     subsection->addTask(std::move(task));
                 }
                 
-                section->addChild(subsection.get());
-                course1->addSection(std::move(subsection));
+                section->addSubsection(std::move(subsection));
             }
             
-            course1->addChild(section.get());
             course1->addSection(std::move(section));
         }
         

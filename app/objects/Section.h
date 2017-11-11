@@ -27,11 +27,17 @@ public:
     Course* getCourse() const;
     
     
+    void addSubsection(std::unique_ptr<Section> subsection);
+    void removeSubsection(const Section* subsection);
+    Section* getSubsection(size_t n) const;
+    int getSubsectionIndex(const Section* subsection);
+    size_t getSubsectionCount() const;
+    
     void addTask(std::unique_ptr<Task> task);
     void removeTask(const Task* task);
-    void removeTask(size_t n);
     Task* getTask(size_t n) const;
     int getTaskIndex(const Task* task);
+    size_t getTaskCount() const;
     
 private:
     unsigned int m_id;
@@ -40,6 +46,7 @@ private:
     
     Course* m_course;
     
+    std::vector<std::unique_ptr<Section>> m_subsections;
     std::vector<std::unique_ptr<Task>> m_tasks;
 };
 

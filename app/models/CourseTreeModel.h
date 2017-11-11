@@ -21,6 +21,8 @@ public:
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex &index) const override;
     
+    QModelIndex getIndex(CourseNode* node);
+    
     QVariant data(const QModelIndex& index, int role) const override;
     
     void setCourse(Course* course);

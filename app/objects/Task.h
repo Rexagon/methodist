@@ -46,9 +46,9 @@ public:
     
     void addTest(std::unique_ptr<Test> test);
     void removeTest(Test* test);
-    void removeTest(size_t n);
     Test* getTest(size_t n) const;
     int getTestIndex(Test* test) const;
+    size_t getTestCount() const;
     
 private:
     unsigned int m_id;

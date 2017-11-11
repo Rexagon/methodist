@@ -2,6 +2,8 @@
 
 #include <ui_MainWindow.h>
 
+#include <stack>
+
 #include "../stuff/ModelManager.h"
 
 CourseTreeController::CourseTreeController(Ui::MainWindow* ui, QObject* parent) :
@@ -41,13 +43,32 @@ void CourseTreeController::setCourse(Course* course)
         
         m_ui->courseTree->setModel(treeModel);
         m_ui->courseTree->setExpanded(treeModel->index(0, 0), true);
-        
-        m_selectedCourseNode = reinterpret_cast<CourseNode*>(course);
-        m_ui->courseTree->selectionModel()->select(treeModel->index(0, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-        emit courseNodeSelected(m_selectedCourseNode);
     }
     
     m_currentCourse = course;
     
+    selectCourseNode(course);
+    
     propose();
+}
+
+void CourseTreeController::selectCourseNode(CourseNode* node)
+{
+    CourseTreeModel* treeModel = ModelManager::getCourseTreeModel(m_currentCourse);
+    
+    QModelIndex index = treeModel->getIndex(node);
+    m_selectedCourseNode = node;
+    m_ui->courseTree->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);  
+    
+    CourseNode* parent = node;
+    while ((parent = parent->getParent()) != nullptr) {
+        m_ui->courseTree->expand(treeModel->getIndex(parent));
+    }
+    
+    emit courseNodeSelected(m_selectedCourseNode);
+}
+
+void CourseTreeController::deselectAll()
+{
+    m_ui->courseTree->selectionModel()->clearSelection();
 }

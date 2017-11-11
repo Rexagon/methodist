@@ -19,6 +19,8 @@ public:
     
 public slots:
     void setCourse(Course* course);
+    void selectCourseNode(CourseNode* node);
+    void deselectAll();
     
 signals:
     void courseNodeSelected(CourseNode* node);

@@ -52,13 +52,6 @@ void CourseNode::removeChild(const CourseNode* child)
     }
 }
 
-void CourseNode::removeChild(size_t n)
-{
-    if (n < m_children.size()) {
-        m_children.erase(m_children.begin() + n);
-    }
-}
-
 CourseNode* CourseNode::getChild(size_t n) const
 {
     if (n < m_children.size()) {
@@ -88,4 +81,14 @@ size_t CourseNode::getChildCount() const
 std::vector<CourseNode*> CourseNode::getChildren() const
 {
     return m_children;
+}
+
+void CourseNode::setModelIndex(const QModelIndex& index)
+{
+    m_index = index;
+}
+
+QModelIndex CourseNode::getModelIndex() const
+{
+    return m_index;
 }

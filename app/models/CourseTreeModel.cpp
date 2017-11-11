@@ -66,6 +66,15 @@ QModelIndex CourseTreeModel::parent(const QModelIndex& child) const
     }
 }
 
+QModelIndex CourseTreeModel::getIndex(CourseNode* node)
+{
+    if (node == nullptr) {
+        return QModelIndex();
+    }
+    
+    return createIndex(node->getRelativeNumber(), 0, node);
+}
+
 QVariant CourseTreeModel::data(const QModelIndex& index, int role) const
 {    
     if (!index.isValid()) {

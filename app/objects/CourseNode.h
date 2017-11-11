@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <QModelIndex>
+
 class CourseNode
 {
 public:
@@ -22,12 +24,14 @@ public:
     
     void addChild(CourseNode* child);
     void removeChild(const CourseNode* child);
-    void removeChild(size_t n);
     CourseNode* getChild(size_t n) const;
     int getChildIndex(const CourseNode* child) const;
     
     size_t getChildCount() const;
     std::vector<CourseNode*> getChildren() const;
+    
+    void setModelIndex(const QModelIndex& index);
+    QModelIndex getModelIndex() const;
     
 protected:
     CourseNode(Type type);
@@ -39,6 +43,7 @@ private:
     void setParent(CourseNode* parent);
     
     Type m_type;
+    QModelIndex m_index;
 };
 
 #endif // COURSENODE_H

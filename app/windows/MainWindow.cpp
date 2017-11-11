@@ -33,20 +33,63 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(m_sideMenuController.get(), &SideMenuController::courseAdded, this, [this]() {
         CoursesListModel* model = ModelManager::getCoursesListModel();
         
-       std::unique_ptr<Course> course = std::make_unique<Course>();       
-       course->setName("Новый курс " + QString::number(model->getCourseCount()));
-       Course* coursePtr = course.get();
-       model->addCourse(std::move(course));
-       m_sideMenuController->selectCourse(coursePtr);
-       m_courseEditController->setCourse(coursePtr);
+        std::unique_ptr<Course> course = std::make_unique<Course>();       
+        course->setName("Новый курс " + QString::number(model->getCourseCount() + 1));
+        Course* coursePtr = course.get();
+        model->addCourse(std::move(course));
+        m_sideMenuController->selectCourse(coursePtr);
+        m_courseEditController->setCourse(coursePtr);
     });
     
     connect(m_courseTreeController.get(), &CourseTreeController::courseNodeSelected, this, [this](CourseNode* node) {
         m_infoPanelController->setCourseNode(node);
     });
     
+    connect(m_infoPanelController.get(), &InfoPanelController::addSectionButtonPressed, this, [this]() {
+        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+        if (node == nullptr || node->getType() == CourseNode::Type::TASK) {
+            return;
+        }
+        
+        std::unique_ptr<Section> newSection = std::make_unique<Section>();
+        Section* sectionPtr = newSection.get();
+        
+        if (node->getType() == CourseNode::Type::COURSE) {
+            Course* course = reinterpret_cast<Course*>(node);
+            newSection->setName("Новый раздел " + QString::number(course->getSectionCount() + 1));
+            course->addSection(std::move(newSection));
+        }
+        else {
+            Section* section = reinterpret_cast<Section*>(node);
+            newSection->setName("Новый подраздел " + QString::number(section->getSubsectionCount() + 1));
+            section->addSubsection(std::move(newSection));
+        }
+        
+        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
+        m_courseTreeController->selectCourseNode(sectionPtr);
+        m_sectionEditController->setSection(sectionPtr);
+    });
+    
+    connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, [this]() {
+        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+        if (node == nullptr || node->getType() != CourseNode::Type::SECTION) {
+            return;
+        }
+        
+        std::unique_ptr<Task> newTask = std::make_unique<Task>();
+        Task* taskPtr = newTask.get();
+        
+        Section* section = reinterpret_cast<Section*>(node);
+        newTask->setName("Новая задача " + QString::number(section->getTaskCount() + 1));
+        section->addTask(std::move(newTask));
+        
+        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
+        m_courseTreeController->selectCourseNode(taskPtr);
+        m_taskEditController->setTask(taskPtr);
+    });
+    
     connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, [this]() {
-        CourseNode* node = m_courseTreeController->getSelectedCourseNode();
+        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
         if (node == nullptr) {
             return;
         }
@@ -67,14 +110,15 @@ MainWindow::MainWindow(QWidget* parent) :
     });
     
     connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, [this]() {
-        CourseNode* node = m_courseTreeController->getSelectedCourseNode();
+        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
         if (node == nullptr) {
             return;
         }
         
         Course* currentCourse = m_courseTreeController->getCurrentCourse();
+        CourseNode::Type type = node->getType();
         
-        switch (node->getType()) {
+        switch (type) {
             case CourseNode::Type::COURSE:
             {
                 ModelManager::getCoursesListModel()->removeCourse(currentCourse);
@@ -86,13 +130,15 @@ MainWindow::MainWindow(QWidget* parent) :
             case CourseNode::Type::SECTION:
             {
                 Section* section = reinterpret_cast<Section*>(node);
-                Section* parent = reinterpret_cast<Section*>(section->getParent());
+                CourseNode* parent = section->getParent();
                 
-                if (parent == nullptr) {
-                    section->getCourse()->removeSection(section);
+                m_courseTreeController->selectCourseNode(parent);
+                
+                if (parent->getType() == CourseNode::Type::COURSE) {
+                    currentCourse->removeSection(section);
                 }
                 else {
-                    parent->removeChild(node);
+                    reinterpret_cast<Section*>(parent)->removeSubsection(section);
                 }
                 
                 break;
@@ -102,16 +148,17 @@ MainWindow::MainWindow(QWidget* parent) :
             {
                 Task* task = reinterpret_cast<Task*>(node);
                 Section* parent = task->getSection();
-                parent->removeChild(node);
+                
+                m_courseTreeController->selectCourseNode(parent);
+                
                 parent->removeTask(task);
                 
                 break;
             }
         }
         
-        if (node->getType() != CourseNode::Type::COURSE) {
+        if (type != CourseNode::Type::COURSE) {
             ModelManager::getCourseTreeModel(currentCourse)->update();
-            m_courseTreeController->setCourse(currentCourse);
         }
     });
     

@@ -64,6 +64,7 @@ QString Course::getCreator() const
 void Course::addSection(std::unique_ptr<Section> section)
 {
     section->setCourse(this);
+    addChild(section.get());
     m_sections.push_back(std::move(section));
 }
 
@@ -71,16 +72,10 @@ void Course::removeSection(const Section* section)
 {
     for (auto it = m_sections.begin(); it != m_sections.end(); ++it) {
         if (it->get() == section) {
+            removeChild(section);
             m_sections.erase(it);
             return;
         }
-    }
-}
-
-void Course::removeSection(size_t n)
-{
-    if (n < m_sections.size()) {
-        m_sections.erase(m_sections.begin() + n);
     }
 }
 
@@ -102,4 +97,9 @@ int Course::getSectionIndex(const Section* section)
     }
     
     return -1;
+}
+
+size_t Course::getSectionCount() const
+{
+    return m_sections.size();
 }

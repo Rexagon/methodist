@@ -88,13 +88,6 @@ void Task::removeTest(Test* test)
     }
 }
 
-void Task::removeTest(size_t n)
-{
-    if (n < m_tests.size()) {
-        m_tests.erase(m_tests.begin() + n);
-    }
-}
-
 Test* Task::getTest(size_t n) const
 {
     if (n < m_tests.size()) {
@@ -114,6 +107,11 @@ int Task::getTestIndex(Test* test) const
     }
     
     return -1;
+}
+
+size_t Task::getTestCount() const
+{
+    return m_tests.size();
 }
 
 void Task::setCourse(Course* course)
