@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../stuff/ModelManager.h"
+#include "../stuff/NetworkManager.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), m_ui(nullptr)
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QWidget* parent) :
     m_ui = std::make_unique<Ui::MainWindow>();
     m_ui->setupUi(this);
     ModelManager::init(this);
+    
+    NetworkManager* network = new NetworkManager("ws://176.9.191.187:55577", this);
     
     m_ui->infoPanel->hide();
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);

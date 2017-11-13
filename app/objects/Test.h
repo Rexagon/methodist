@@ -22,6 +22,9 @@ public:
     
     void setRequired(bool required);
     bool isRequired() const;
+    
+    void setSample(bool sample);
+    bool isSample() const;
 
     void setScore(unsigned int score);
     unsigned int getScore() const;
@@ -36,6 +39,7 @@ private:
     QString m_outputData;
 
     bool m_isRequired;
+    bool m_isSample;
     unsigned int m_score;
     
     Task* m_task;

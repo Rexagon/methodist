@@ -394,7 +394,7 @@ QScrollBar::sub-page:horizontal {
 }</string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="workspaceTree">
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -508,8 +508,8 @@ QTreeView::item:selected {
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>718</height>
+                   <width>438</width>
+                   <height>716</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -540,10 +540,14 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                   <property name="bottomMargin">
                    <number>9</number>
                   </property>
-                  <item row="5" column="0" colspan="2">
-                   <widget class="QPlainTextEdit" name="taskEditInputPattern"/>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="taskEditTextLabel">
+                    <property name="text">
+                     <string>Текст задачи</string>
+                    </property>
+                   </widget>
                   </item>
-                  <item row="3" column="0" colspan="2">
+                  <item row="5" column="0" colspan="2">
                    <widget class="QTextEdit" name="taskEditSource">
                     <property name="minimumSize">
                      <size>
@@ -551,19 +555,17 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                       <height>300</height>
                      </size>
                     </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="taskEditSourceLabel">
-                    <property name="text">
-                     <string>Исходный код</string>
+                    <property name="font">
+                     <font>
+                      <family>Consolas</family>
+                     </font>
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="taskEditTextLabel">
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="taskEditSourceLabel">
                     <property name="text">
-                     <string>Текст задачи</string>
+                     <string>Исходный код</string>
                     </property>
                    </widget>
                   </item>
@@ -583,10 +585,81 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0" colspan="2">
-                   <widget class="QLabel" name="taskEditInputPatternLabel">
+                  <item row="3" column="0" colspan="2">
+                   <widget class="QTableView" name="taskEditSamplesTable">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>Consolas</family>
+                     </font>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QHeaderView::section {
+    background-color: white;
+    padding: 3px;
+    border-style: none;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+}
+
+QHeaderView::section:horizontal
+{
+    border-top: 1px solid gray;
+}
+
+QHeaderView::section:horizontal:first
+{
+	border-left: 1px solid gray;
+}
+
+QTableView
+{
+    gridline-color: gray;
+	outline: 0;
+}
+</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="sizeAdjustPolicy">
+                     <enum>QAbstractScrollArea::AdjustToContents</enum>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="tabKeyNavigation">
+                     <bool>false</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::NoSelection</enum>
+                    </property>
+                    <attribute name="horizontalHeaderHighlightSections">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderHighlightSections">
+                     <bool>false</bool>
+                    </attribute>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="2">
+                   <widget class="QLabel" name="taskEditSamplesLabel">
                     <property name="text">
-                     <string>Шаблон входных данных</string>
+                     <string>Пример</string>
                     </property>
                    </widget>
                   </item>
@@ -706,7 +779,7 @@ QPushButton:pressed {
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>2</number>
                </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">

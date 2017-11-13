@@ -40,12 +40,13 @@ class Controller : public QObject
     Q_OBJECT
     
 public:
-    Controller(Ui::MainWindow* ui, QObject* parent = nullptr);
     virtual ~Controller();
     
     virtual void propose();
     
 protected:
+    Controller(Ui::MainWindow* ui, QObject* parent = nullptr);
+    
     Ui::MainWindow* m_ui;
 };
 

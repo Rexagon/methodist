@@ -4,6 +4,7 @@ QObject* ModelManager::m_parent = nullptr;
 std::unique_ptr<CoursesListModel> ModelManager::m_coursesListModel = nullptr;
 std::unique_ptr<CourseTreeModel> ModelManager::m_courseTreeModel = nullptr;
 std::unique_ptr<TestsTableModel> ModelManager::m_testsTableModel = nullptr;
+std::unique_ptr<SamplesTableModel> ModelManager::m_samplesTableModel = nullptr;
 
 void ModelManager::init(QObject* parent)
 {
@@ -15,6 +16,7 @@ void ModelManager::close()
     m_coursesListModel.reset();
     m_courseTreeModel.reset();
     m_testsTableModel.reset();
+    m_samplesTableModel.reset();
 }
 
 CoursesListModel* ModelManager::getCoursesListModel()
@@ -31,7 +33,7 @@ CoursesListModel* ModelManager::getCoursesListModel()
         course1->setPracticeHourCount(1);
         course1->setCreator("Ivan");
         
-        int maxi = rand() % 15;
+        int maxi = 4 + rand() % 11;
         for (int i = 0; i < maxi; ++i) {
             std::unique_ptr<Section> section = std::make_unique<Section>();
             
@@ -48,6 +50,13 @@ CoursesListModel* ModelManager::getCoursesListModel()
                     std::unique_ptr<Task> task = std::make_unique<Task>();
                     
                     task->setName(QString("Задача ") + QString::number(k + 1));
+                    
+                    std::unique_ptr<Test> test = std::make_unique<Test>();
+                    test->setInputData("a b c d");
+                    test->setOutputData("1");
+                    test->setScore(5);
+                    test->setSample(true);
+                    task->addTest(std::move(test));
                     
                     subsection->addTask(std::move(task));
                 }
@@ -90,4 +99,13 @@ TestsTableModel* ModelManager::getTestsTableModel(Task* task)
     }
     
     return m_testsTableModel.get();
+}
+
+SamplesTableModel* ModelManager::getSamplesTableModel()
+{
+    if (m_samplesTableModel == nullptr) {
+        m_samplesTableModel = std::make_unique<SamplesTableModel>(m_parent);
+    }
+    
+    return m_samplesTableModel.get();
 }

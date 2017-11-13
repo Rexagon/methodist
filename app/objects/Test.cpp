@@ -51,6 +51,16 @@ bool Test::isRequired() const
     return m_isRequired;
 }
 
+void Test::setSample(bool sample)
+{
+    m_isSample = sample;
+}
+
+bool Test::isSample() const
+{
+    return m_isSample;
+}
+
 void Test::setScore(unsigned int score)
 {
     m_score = score;
