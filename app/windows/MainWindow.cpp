@@ -6,14 +6,22 @@
 #include "../stuff/ModelManager.h"
 #include "../stuff/NetworkManager.h"
 
+#include "../stuff/Log.h"
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), m_ui(nullptr)
 {
+    Log::write("Interface initialization started");
+    
     m_ui = std::make_unique<Ui::MainWindow>();
     m_ui->setupUi(this);
     ModelManager::init(this);
     
+    Log::write("Interface initialization finished");
+    
     NetworkManager* network = new NetworkManager("ws://176.9.191.187:55577", this);
+    
+    Log::write("Controllers initialization started");
     
     m_ui->infoPanel->hide();
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
@@ -188,6 +196,14 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(m_testsTableController.get(), &TestsTableController::backButtonPressed, this, [this]() {
        m_taskEditController->propose(); 
     });
+    
+    Log::write("Controllers initialization finished");
+    
+    network->sendRequest(Request({
+        //{"ser_task", "6"},
+        {"user_login", "test_login"},
+        {"user_pasw", "test_passw"},
+    }, this));
 }
 
 MainWindow::~MainWindow()
