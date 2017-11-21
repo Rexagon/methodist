@@ -5,7 +5,6 @@
 #include <memory>
 
 #include <QString>
-#include <QRegExp>
 
 #include "CourseNode.h"
 #include "Test.h"
@@ -28,14 +27,17 @@ public:
     void setText(const QString& text);
     QString getText() const;
     
+    void setInputData(const QString& text);
+    QString getInputData() const;
+    
+    void setOutputData(const QString& text);
+    QString getOutputData() const;
+    
     void setSource(const QString& code);
     QString getSource() const;
     
     void setScore(unsigned int score);
     unsigned int getScore() const;
-    
-    void setInputPattern(const QString& pattern);
-    const QRegExp& getInputRegexp() const;
     
     void setCourse(Course* course);
     Course* getCourse() const;
@@ -55,12 +57,11 @@ private:
     
     QString m_name;
     QString m_text;
+    QString m_inputData;
+    QString m_outputData;
     QString m_code;
     
     unsigned int m_score;
-    
-    QRegExp m_inputPattern;
-    QRegExp m_outputPattern;
     
     Course* m_course;
     Section* m_section;

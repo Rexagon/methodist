@@ -200,7 +200,7 @@ MainWindow::MainWindow(QWidget* parent) :
     Log::write("Controllers initialization finished");
     
     network->sendRequest(Request({
-        //{"ser_task", "6"},
+        {"ser_task", "12"},
         {"user_login", "test_login"},
         {"user_pasw", "test_passw"},
     }, this));

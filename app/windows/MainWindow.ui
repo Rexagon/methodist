@@ -507,9 +507,9 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>0</y>
+                   <y>-413</y>
                    <width>438</width>
-                   <height>716</height>
+                   <height>1066</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -547,7 +547,7 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="5" column="0" colspan="2">
+                  <item row="9" column="0" colspan="2">
                    <widget class="QTextEdit" name="taskEditSource">
                     <property name="minimumSize">
                      <size>
@@ -562,7 +562,7 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0">
+                  <item row="8" column="0">
                    <widget class="QLabel" name="taskEditSourceLabel">
                     <property name="text">
                      <string>Исходный код</string>
@@ -574,7 +574,7 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>300</height>
+                      <height>200</height>
                      </size>
                     </property>
                     <property name="undoRedoEnabled">
@@ -585,7 +585,7 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="0" colspan="2">
+                  <item row="7" column="0" colspan="2">
                    <widget class="QTableView" name="taskEditSamplesTable">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
@@ -656,10 +656,56 @@ QTableView
                     </attribute>
                    </widget>
                   </item>
-                  <item row="2" column="0" colspan="2">
+                  <item row="6" column="0" colspan="2">
                    <widget class="QLabel" name="taskEditSamplesLabel">
                     <property name="text">
                      <string>Пример</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="2">
+                   <widget class="QLabel" name="taskEditInputDataLabel">
+                    <property name="text">
+                     <string>Входные данные</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="taskEditOutputDataLabel">
+                    <property name="text">
+                     <string>Выходные данные</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QTextBrowser" name="taskEditInputData">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>200</height>
+                     </size>
+                    </property>
+                    <property name="undoRedoEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="readOnly">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QTextBrowser" name="taskEditOutputData">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>200</height>
+                     </size>
+                    </property>
+                    <property name="undoRedoEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="readOnly">
+                     <bool>false</bool>
                     </property>
                    </widget>
                   </item>

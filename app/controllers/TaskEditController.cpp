@@ -51,6 +51,8 @@ void TaskEditController::setTask(Task* task)
     m_ui->taskEditName->setPlainText(task->getName());
     m_ui->taskEditScore->setValue(task->getScore());
     m_ui->taskEditText->setPlainText(task->getText());
+    m_ui->taskEditInputData->setPlainText(task->getInputData());
+    m_ui->taskEditOutputData->setPlainText(task->getOutputData());
     m_ui->taskEditSource->setPlainText(task->getSource());
     
     propose();

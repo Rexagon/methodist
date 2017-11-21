@@ -43,6 +43,26 @@ QString Task::getText() const
     return m_text;
 }
 
+void Task::setInputData(const QString& text)
+{
+    m_inputData = text;
+}
+
+QString Task::getInputData() const
+{
+    return m_inputData;
+}
+
+void Task::setOutputData(const QString& text)
+{
+    m_outputData = text;
+}
+
+QString Task::getOutputData() const
+{
+    return m_outputData;
+}
+
 void Task::setSource(const QString& code)
 {
     m_code = code;
@@ -61,16 +81,6 @@ void Task::setScore(unsigned int score)
 unsigned int Task::getScore() const
 {
     return m_score;
-}
-
-void Task::setInputPattern(const QString& pattern)
-{
-    m_inputPattern.setPattern(pattern);
-}
-
-const QRegExp& Task::getInputRegexp() const
-{
-    return m_inputPattern;
 }
 
 void Task::addTest(std::unique_ptr<Test> test)
