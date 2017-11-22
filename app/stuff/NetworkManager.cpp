@@ -15,7 +15,7 @@ NetworkManager::NetworkManager(const QString& url, QObject* parent) :
     connect(&m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError error)>(&QWebSocket::error), this, 
             [this](QAbstractSocket::SocketError error)
     {
-        Log::write(m_socket.errorString().toStdString());
+        throw SocketErrorException(m_socket.errorString(), this);
     });
     
     connect(&m_socket, &QWebSocket::disconnected, this, [this]() {
