@@ -12,7 +12,7 @@ Request::Request(const std::vector<Element>& elements, QObject* parent) :
 {
     QDomElement root = m_data.createElement("cmd");
     m_data.appendChild(root);
-    
+
     for (const auto& element : elements) {
         addElement(element.name, element.value);
     }

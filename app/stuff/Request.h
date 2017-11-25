@@ -16,9 +16,14 @@ public:
         Element(const QString& name, const QString& value) :
             name(name), value(value)
         {}
-        
+
+        Element(const QString &name, const std::vector<Element>& children) :
+            name(name), value(""), children(children)
+        {}
+
         QString name;
         QString value;
+        std::vector<Element> children;
     };
     
     Request(QObject* parent = nullptr);
