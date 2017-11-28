@@ -34,7 +34,8 @@ SOURCES += \
     stuff/NetworkManager.cpp \
     models/SamplesTableModel.cpp \
     stuff/Log.cpp \
-    stuff/Request.cpp
+    stuff/Request.cpp \
+    stuff/RequestElement.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -59,7 +60,8 @@ HEADERS	+= \
     stuff/NetworkManager.h \
     models/SamplesTableModel.h \
     stuff/Log.h \
-    stuff/Request.h
+    stuff/Request.h \
+    stuff/RequestElement.h
 
 FORMS	+= \
     windows/MainWindow.ui

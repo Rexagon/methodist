@@ -1,5 +1,7 @@
 #include "NetworkManager.h"
 
+#include <QDomDocument>
+
 #include "Log.h"
 
 NetworkManager::NetworkManager(const QString& url, QObject* parent) :
@@ -53,5 +55,21 @@ void NetworkManager::binaryMessageHandler(const QByteArray& message)
 
 void NetworkManager::textMessageHandler(const QString& message)
 {
-    Log::write("T:", message.toStdString());
+    //Log::write("T:", message.toStdWString());
+    
+    QDomDocument document("cmd");
+    document.setContent(message);
+    
+    Log::write(document.toString(4).toLatin1().toStdString());
+        
+    QDomNodeList sqlXML = document.elementsByTagName("sql_xml");
+    
+    Log::write(sqlXML.at(0).nodeValue().size());
+    
+    if (sqlXML.size() != 0) {
+        QDomDocument resultXML("XML");
+        resultXML.setContent(sqlXML.at(0).nodeValue());
+        
+        Log::write(resultXML.toString(4).toLatin1().toStdString());
+    }
 }

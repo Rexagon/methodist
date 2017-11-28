@@ -7,6 +7,8 @@
 
 #include <QString>
 
+std::wostream& operator<<(std::wostream& stream, const std::string & string);
+
 class Log
 {
 public:
@@ -26,13 +28,13 @@ public:
 			writeToStream(m_file, arg, args...);
 		}
 		if (m_target == Targets::CONSOLE || m_target == Targets::ALL) {
-			writeToStream(std::cout, arg, args...);
+			writeToStream(std::wcout, arg, args...);
 		}
 	}
     
-private:
+private:    
 	template<class Arg, class... Args>
-	static void writeToStream(std::ostream& out, Arg&& arg, Args&&... args)
+	static void writeToStream(std::wostream& out, Arg&& arg, Args&&... args)
 	{
 		out << getDate() << std::forward<Arg>(arg);
 		using dummy = int[];
@@ -43,7 +45,7 @@ private:
 
 	static const std::string getDate();
 
-	static std::ofstream m_file;
+	static std::wofstream m_file;
 	static Targets m_target;
 };
 

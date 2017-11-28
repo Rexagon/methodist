@@ -200,8 +200,10 @@ MainWindow::MainWindow(QWidget* parent) :
     Log::write("Controllers initialization finished");
     
     network->sendRequest(Request({
-        {"sql_temp_id", "405"},
-        {"cmd_type", "5"}
+        {"cmd_type", "16"},
+        {"arm_task_id", "test"},
+        //{"sql_operator", "INSERT INTO course (course_name, lecture_hours, pracrice_hours) VALUES ('wer', 10, 5)"}
+        {"sql_select", "SELECT * FROM course"}
     }, this));
 }
 

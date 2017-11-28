@@ -1,6 +1,6 @@
 #include "Log.h"
 
-std::ofstream Log::m_file;
+std::wofstream Log::m_file;
 Log::Targets Log::m_target;
 
 void Log::create(const std::string & path, Targets target)
