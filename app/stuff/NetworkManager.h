@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include "Request.h"
+#include "Response.h"
 
 #include "Log.h"
 

@@ -35,7 +35,8 @@ SOURCES += \
     models/SamplesTableModel.cpp \
     stuff/Log.cpp \
     stuff/Request.cpp \
-    stuff/RequestElement.cpp
+    stuff/RequestElement.cpp \
+    stuff/Response.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -61,7 +62,8 @@ HEADERS	+= \
     models/SamplesTableModel.h \
     stuff/Log.h \
     stuff/Request.h \
-    stuff/RequestElement.h
+    stuff/RequestElement.h \
+    stuff/Response.h
 
 FORMS	+= \
     windows/MainWindow.ui

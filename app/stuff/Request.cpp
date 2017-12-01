@@ -4,15 +4,8 @@
 
 const QString Request::m_dataRootName = "cmd";
 
-Request::Request(QObject* parent) :
-    QObject(parent), m_data(m_dataRootName)
-{
-    QDomElement root = m_data.createElement(m_dataRootName);
-    m_data.appendChild(root);
-}
-
-Request::Request(const std::vector<RequestElement>& elements, QObject* parent) :
-    QObject(parent), m_data(m_dataRootName)
+Request::Request(const std::vector<RequestElement>& elements) :
+    m_data(m_dataRootName)
 {
     QDomElement root = m_data.createElement(m_dataRootName);
     m_data.appendChild(root);

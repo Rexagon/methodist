@@ -6,13 +6,30 @@
 
 #include "RequestElement.h"
 
-class Request : public QObject
+enum CommandType
 {
-    Q_OBJECT
+    SQL_TEMPLATE_INSERT = 2,
+    SQL_TEMPLATE_UPDATE = 3,
+    SQL_TEMPLATE_DELETE = 4,
+    SQL_TEMPLATE_OPERATOR = 5,
+    SQL_TEMPLATE_QUERY_XML = 6,
+    SQL_TEMPLATE_QUERY_BLOB = 7,
+    TRANSACTION = 8,
+    COMMIT = 9,
+    ROLLBACK = 10,
+    TASK_TESTING = 11,
+    USER_REGISTER = 12,
+    USER_LOGIN = 13,
     
+    SQL_OPERATOR = 15,
+    SQL_QUERY_XML = 16
+};
+
+class Request
+{
 public:
-    Request(QObject* parent = nullptr);
-    Request(const std::vector<RequestElement>& elements, QObject* parent = nullptr);
+    Request(const std::vector<RequestElement>& elements);
+    Request(CommandType command, const QString& task, const std::vector<RequestElement>& elements);
     ~Request();
     
     bool hasElement(const QString& name) const;
