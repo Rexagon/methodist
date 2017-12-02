@@ -1,24 +1,39 @@
 #include "Request.h"
 
 #include <stack>
+#include <map>
 
 const QString Request::m_dataRootName = "cmd";
+size_t Request::m_currentId = 0;
 
-Request::Request(const std::vector<RequestElement>& elements) :
-    m_data(m_dataRootName)
+Request::Request(CommandType command, const QString& task, const std::vector<Element>& elements) :
+    m_task(task), m_taskId(m_currentId++)
 {
     QDomElement root = m_data.createElement(m_dataRootName);
     m_data.appendChild(root);
+    
+    std::map<QString, QString> reservedElements = {
+        {"cmd_type", QString::number(command) },
+        {"arm_task", task },
+        {"arm_task_id", QString::number(m_taskId) }
+    };
+    
+    for (const auto& e : reservedElements) {
+        addElement(e.first, e.second, &root);
+    }
 
     std::stack<std::pair<QDomElement, size_t>> rootsStack;
     
-    std::stack<const RequestElement*> elementsStack;
+    std::stack<const Element*> elementsStack;
     for (auto it = elements.rbegin(); it != elements.rend(); ++it) {
-        elementsStack.push(&(*it));
+        QString elementName = it->getName();
+        if (reservedElements.find(elementName) == reservedElements.end()) {
+            elementsStack.push(&(*it));
+        }
     }
     
     while(!elementsStack.empty()) {
-        const RequestElement* element = elementsStack.top();
+        const Element* element = elementsStack.top();
         elementsStack.pop();
         
         QDomElement parent;
@@ -54,17 +69,29 @@ Request::~Request()
     
 }
 
-bool Request::hasElement(const QString& name) const
-{
-    return m_data.elementsByTagName(name).size() != 0;
-}
-
-QString Request::getElement(const QString& name) const
-{
-    return "";
-}
-
 QString Request::getData() const
 {
     return m_data.toString(0);
+}
+
+QString Request::getTask() const
+{
+    return m_task;
+}
+
+size_t Request::getTaskId() const
+{
+    return m_taskId;
+}
+
+void Request::addElement(const QString& name, const QString& value, QDomElement* parent)
+{
+    if (parent == nullptr) {
+        return;
+    }
+    
+    QDomElement node = m_data.createElement(name);
+    parent->appendChild(node);
+    
+    node.appendChild(m_data.createTextNode(value));
 }

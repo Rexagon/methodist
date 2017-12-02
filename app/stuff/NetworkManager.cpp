@@ -40,24 +40,33 @@ NetworkManager::~NetworkManager()
     m_socket.close();
 }
 
-void NetworkManager::sendRequest(const Request& request)
+void NetworkManager::send(const Request& request)
 {
-    Log::write(request.getData().toStdString());
+    Log::write("Send request to server. [id:", request.getTaskId(), "]");
     m_socket.sendTextMessage(request.getData());
+}
+
+void NetworkManager::send(const Request& request, std::function<void (const Response&)> f)
+{
+    Log::write("Send request to server. [id:", request.getTaskId(), "]");
+    m_socket.sendTextMessage(request.getData());
+    
+    m_responseHandlers[request.getTaskId()] = f;
 }
 
 void NetworkManager::binaryMessageHandler(const QByteArray& message)
 {
-    Log::write("B:", message.toStdString());
+    //TODO: handle binary messages
 }
 
 void NetworkManager::textMessageHandler(const QString& message)
 {
-    Log::write("Got message from server. Size", message.size());
-    
     Response response(message);
+    Log::write("Got response from server. [id:", response.getTaskId(), "]");
     
-    Log::write("Task:", response.getTask().toLatin1().toStdString());
-    Log::write("Task id:", response.getTaskId());
-    Log::write("Rows:", response.getRowCount());
+    auto it = m_responseHandlers.find(response.getTaskId());
+    if (it != m_responseHandlers.end()) {
+        it->second(response);
+        m_responseHandlers.erase(it);
+    }
 }

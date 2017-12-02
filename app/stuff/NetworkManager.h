@@ -5,10 +5,10 @@
 #include <QEventLoop>
 #include <QObject>
 
+#include <map>
+
 #include "Request.h"
 #include "Response.h"
-
-#include "Log.h"
 
 class NetworkManager : public QObject
 {
@@ -38,7 +38,8 @@ public:
     NetworkManager(const QString& url, QObject* parent = nullptr);
     ~NetworkManager();
     
-    void sendRequest(const Request& request);
+    void send(const Request& request);
+    void send(const Request& request, std::function<void(const Response&)> f);
     
 private:
     void binaryMessageHandler(const QByteArray& message);
@@ -46,6 +47,8 @@ private:
     
     QWebSocket m_socket;
     QEventLoop m_synchronizationLoop;
+    
+    std::map<size_t, std::function<void(const Response&)>> m_responseHandlers;
 };
 
 #endif // NETWORK_H

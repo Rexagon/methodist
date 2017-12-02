@@ -62,7 +62,6 @@ HEADERS	+= \
     models/SamplesTableModel.h \
     stuff/Log.h \
     stuff/Request.h \
-    stuff/RequestElement.h \
     stuff/Response.h
 
 FORMS	+= \

@@ -1,10 +1,10 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include <QObject>
+#include <QString>
 #include <QDomDocument>
 
-#include "RequestElement.h"
+#include <vector>
 
 enum CommandType
 {
@@ -28,19 +28,48 @@ enum CommandType
 class Request
 {
 public:
-    Request(const std::vector<RequestElement>& elements);
-    Request(CommandType command, const QString& task, const std::vector<RequestElement>& elements);
+    class Element
+    {    
+    public:
+        Element(const QString& name) : m_name(name) {}
+        Element(const QString& name, int value) : m_name(name), m_value(QString::number(value)) {}
+        Element(const QString& name, size_t value) : m_name(name), m_value(QString::number(value)) {}
+        Element(const QString& name, const QString& value) : m_name(name), m_value(value) {}
+        Element(const QString& name, const std::vector<Element>& children) : m_name(name), m_children(children) {}
+        
+        void setName(const QString& name) { m_name = name; }
+        QString getName() const { return m_name; }
+    
+        void setValue(const QString& value) { m_value = value; }
+        QString getValue() const { return m_value; }
+        
+        void addChild(const Element& element) { m_children.push_back(element); }
+        const std::vector<Element>& getChildren() const { return m_children; }
+        size_t getChildrenCount() const { return m_children.size(); }
+        bool hasChildren() const { return !m_children.empty(); }
+        
+    private:
+        QString m_name;
+        QString m_value;
+        std::vector<Element> m_children;
+    };
+    
+    Request(CommandType command, const QString& task, const std::vector<Element>& elements);
     ~Request();
     
-    bool hasElement(const QString& name) const;
-    QString getElement(const QString& name) const;
+    QString getTask() const;
+    size_t getTaskId() const;
     
     QString getData() const;
     
 private:
-    static const QString m_dataRootName;
+    void addElement(const QString& name, const QString& value, QDomElement* parent);
     
-    QString m_taskId;
+    static const QString m_dataRootName;
+    static size_t m_currentId;
+    
+    QString m_task;
+    size_t m_taskId;
     QDomDocument m_data;
 };
 
