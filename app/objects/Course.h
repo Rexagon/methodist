@@ -19,11 +19,14 @@ public:
     void setName(const QString& name);
     QString getName() const;
     
-    void setLectureHourCount(unsigned int n);
-    unsigned int getLectureHourCount() const;
+    void setLectureHourCount(size_t n);
+    size_t getLectureHourCount() const;
     
-    void setPracticeHourCount(unsigned int n);
-    unsigned int getPracticeHourCount() const;
+    void setPracticeHourCount(size_t n);
+    size_t getPracticeHourCount() const;
+    
+    void setLaboratoryHourCount(size_t n);
+    size_t getLaboratoryHourCount() const;
     
     void setCreator(const QString& creator);
     QString getCreator() const;
@@ -40,8 +43,9 @@ private:
     
     QString m_name;
     
-    unsigned int m_lectureHourCount;
-    unsigned int m_practiceHourCount;
+    size_t m_lectureHourCount;
+    size_t m_practiceHourCount;
+    size_t m_laboratoryHourCount;
     
     QString m_creator;
     

@@ -64,6 +64,16 @@ public:
             return m_data.find(name) != m_data.end();
         }
         
+        std::vector<QString> getColumns() const
+        {
+            std::vector<QString> result(m_data.size());
+            size_t i = 0;
+            for (auto it = m_data.begin(); it != m_data.end(); ++it, ++i) {
+                result[i] = it->first;
+            }
+            return result;
+        }
+        
     private:
         std::map<QString, Cell> m_data;
     };
@@ -76,11 +86,15 @@ public:
     Row getRow(size_t index) const;
     size_t getRowCount() const;
     
-    void map(std::function<void(size_t, const Row&)> f);
+    bool hasError() const;
+    QString getError() const;
+    
+    void map(std::function<void(size_t, const Row&)> f) const;
     
 private:
     QString m_task;
     size_t m_taskId;
+    QString m_error;
     
     std::vector<Row> m_data;
 };

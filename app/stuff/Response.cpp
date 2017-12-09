@@ -1,6 +1,7 @@
 #include "Response.h"
 
 #include <QDomDocument>
+#include <QDebug>
 
 #include "Log.h"
 
@@ -11,12 +12,16 @@ Response::Response(const QString& message)
     
     m_task = document.elementsByTagName("arm_task").at(0).firstChild().nodeValue();
     m_taskId = document.elementsByTagName("arm_task_id").at(0).firstChild().nodeValue().toUInt();
+    m_error = document.elementsByTagName("error_text").at(0).firstChild().nodeValue();
         
+    Log::write(document.toString(4).toLatin1().toStdString());
+    
     QDomNodeList xmlData = document.elementsByTagName("sql_xml");
     
     if (xmlData.size() != 0) {
         QDomDocument data("XML");
         data.setContent(xmlData.at(0).firstChild().nodeValue());
+        
         
         QDomNodeList rowsData = data.firstChild().childNodes();
         for (int i = 0; i < rowsData.size(); ++i) {
@@ -70,7 +75,17 @@ size_t Response::getRowCount() const
     return m_data.size();
 }
 
-void Response::map(std::function<void (size_t, const Row&)> f)
+bool Response::hasError() const
+{
+    return m_error.size() != 0;
+}
+
+QString Response::getError() const
+{
+    return m_error;
+}
+
+void Response::map(std::function<void (size_t, const Row&)> f) const
 {
     for (size_t i = 0; i < m_data.size(); ++i) {
         f(i, m_data[i]);

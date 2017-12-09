@@ -3,23 +3,21 @@
 
 #include <QWebSocket>
 #include <QEventLoop>
-#include <QObject>
 
+#include <memory>
 #include <map>
 
 #include "Request.h"
 #include "Response.h"
 
-class NetworkManager : public QObject
+class NetworkManager
 {
-    Q_OBJECT
-    
 public:
     class SocketErrorException : public std::exception
     {
     public:
-        SocketErrorException(const QString& errorMessage, NetworkManager* manager) :
-            m_errorMessage(errorMessage), m_manager(manager)
+        SocketErrorException(const QString& errorMessage) :
+            m_errorMessage(errorMessage)
         {}
 
         virtual ~SocketErrorException() noexcept {}
@@ -28,27 +26,24 @@ public:
             return m_errorMessage.toLatin1().data();
         }
 
-        NetworkManager* getManager() const { return m_manager; }
-
     private:
         QString m_errorMessage;
-        NetworkManager* m_manager;
     };
 
-    NetworkManager(const QString& url, QObject* parent = nullptr);
-    ~NetworkManager();
+    static void init(const QString& url);
+    static void close();
     
-    void send(const Request& request);
-    void send(const Request& request, std::function<void(const Response&)> f);
+    static void send(const Request& request);
+    static void send(const Request& request, std::function<void(const Response&)> f);
     
 private:
-    void binaryMessageHandler(const QByteArray& message);
-    void textMessageHandler(const QString& message);
+    static void binaryMessageHandler(const QByteArray& message);
+    static void textMessageHandler(const QString& message);
     
-    QWebSocket m_socket;
-    QEventLoop m_synchronizationLoop;
+    static std::unique_ptr<QWebSocket> m_socket;
+    static std::unique_ptr<QEventLoop> m_synchronizationLoop;
     
-    std::map<size_t, std::function<void(const Response&)>> m_responseHandlers;
+    static std::map<size_t, std::function<void(const Response&)>> m_responseHandlers;
 };
 
 #endif // NETWORK_H

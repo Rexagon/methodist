@@ -33,6 +33,7 @@ void InfoPanelController::propose()
     m_ui->courseEditName->setEnabled(false);
     m_ui->courseEditLectureHours->setEnabled(false);
     m_ui->courseEditPracticeHours->setEnabled(false);
+    m_ui->courseEditLaboratoryHours->setEnabled(false);
 
     // Section properties
     m_ui->sectionEditName->setEnabled(false);

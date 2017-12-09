@@ -12,6 +12,7 @@ public:
     CourseEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~CourseEditController();
     
+    void saveChanges();
     void propose() override;
     
 public slots:

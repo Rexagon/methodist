@@ -82,13 +82,3 @@ std::vector<CourseNode*> CourseNode::getChildren() const
 {
     return m_children;
 }
-
-void CourseNode::setModelIndex(const QModelIndex& index)
-{
-    m_index = index;
-}
-
-QModelIndex CourseNode::getModelIndex() const
-{
-    return m_index;
-}

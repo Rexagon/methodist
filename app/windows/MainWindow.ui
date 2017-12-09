@@ -507,7 +507,7 @@ QTreeView::item:selected {
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>-413</y>
+                   <y>0</y>
                    <width>438</width>
                    <height>1066</height>
                   </rect>
@@ -825,7 +825,7 @@ QPushButton:pressed {
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>2</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">
@@ -910,6 +910,26 @@ QPushButton:pressed {
                    </property>
                    <property name="buttonSymbols">
                     <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="courseEditLaboratoryHoursLabel">
+                   <property name="text">
+                    <string>Кол-во лабораторных часов</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="courseEditLaboratoryHours">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
                    </property>
                   </widget>
                  </item>
@@ -1133,7 +1153,7 @@ QPushButton:pressed {
              <item row="3" column="0">
               <widget class="QStackedWidget" name="infoPanelButtons">
                <property name="currentIndex">
-                <number>5</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="defaultButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_4">

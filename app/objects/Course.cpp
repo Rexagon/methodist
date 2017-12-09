@@ -31,24 +31,34 @@ QString Course::getName() const
     return m_name;
 }
 
-void Course::setLectureHourCount(unsigned int n)
+void Course::setLectureHourCount(size_t n)
 {
     m_lectureHourCount = n;
 }
 
-unsigned int Course::getLectureHourCount() const
+size_t Course::getLectureHourCount() const
 {
     return m_lectureHourCount;
 }
 
-void Course::setPracticeHourCount(unsigned int n)
+void Course::setPracticeHourCount(size_t n)
 {
     m_practiceHourCount = n;
 }
 
-unsigned int Course::getPracticeHourCount() const
+size_t Course::getPracticeHourCount() const
 {
     return m_practiceHourCount;
+}
+
+void Course::setLaboratoryHourCount(size_t n)
+{
+    m_laboratoryHourCount = n;
+}
+
+size_t Course::getLaboratoryHourCount() const
+{
+    return m_laboratoryHourCount;
 }
 
 void Course::setCreator(const QString& creator)

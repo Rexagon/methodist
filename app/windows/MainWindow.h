@@ -25,6 +25,11 @@ public:
     ~MainWindow();
 
 private:
+    void addCourse();
+    void addSection();
+    void addTask();
+    void addTest();
+    
     std::unique_ptr<CourseTreeController> m_courseTreeController;
     std::unique_ptr<InfoPanelController> m_infoPanelController;
     std::unique_ptr<SideMenuController> m_sideMenuController;

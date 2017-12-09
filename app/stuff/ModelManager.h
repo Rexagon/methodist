@@ -16,6 +16,8 @@ public:
     static void init(QObject* parent = nullptr);
     static void close();
     
+    static void update();
+    
     static CoursesListModel* getCoursesListModel();
     static CourseTreeModel* getCourseTreeModel(Course* course);
     static TestsTableModel* getTestsTableModel(Task* task);
@@ -28,8 +30,6 @@ private:
     static std::unique_ptr<CourseTreeModel> m_courseTreeModel;
     static std::unique_ptr<TestsTableModel> m_testsTableModel;
     static std::unique_ptr<SamplesTableModel> m_samplesTableModel;
-    
-    static std::vector<std::unique_ptr<Course>> m_courses;
 };
 
 #endif // MODELMANAGER_H

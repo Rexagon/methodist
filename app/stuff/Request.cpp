@@ -13,6 +13,7 @@ Request::Request(CommandType command, const QString& task, const std::vector<Ele
     m_data.appendChild(root);
     
     std::map<QString, QString> reservedElements = {
+        {"arm_id", QString::number(2) },
         {"cmd_type", QString::number(command) },
         {"arm_task", task },
         {"arm_task_id", QString::number(m_taskId) }

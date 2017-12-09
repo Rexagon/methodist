@@ -35,7 +35,6 @@ SOURCES += \
     models/SamplesTableModel.cpp \
     stuff/Log.cpp \
     stuff/Request.cpp \
-    stuff/RequestElement.cpp \
     stuff/Response.cpp
 
 HEADERS	+= \

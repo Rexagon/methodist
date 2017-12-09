@@ -2,6 +2,8 @@
 
 #include <ui_MainWindow.h>
 
+#include "../stuff/NetworkManager.h"
+
 CourseEditController::CourseEditController(Ui::MainWindow* ui, QObject* parent) :
     Controller(ui, parent), m_currentCourse(nullptr)
 {
@@ -11,6 +13,38 @@ CourseEditController::CourseEditController(Ui::MainWindow* ui, QObject* parent) 
 
 CourseEditController::~CourseEditController()
 {
+}
+
+void CourseEditController::saveChanges()
+{
+    if (m_currentCourse == nullptr) {
+        return;
+    }
+    
+    QString name = m_ui->courseEditName->toPlainText();
+    size_t lectureHours = m_ui->courseEditLectureHours->value();
+    size_t practiceHours = m_ui->courseEditPracticeHours->value();
+    size_t laboratoryHours = m_ui->courseEditLaboratoryHours->value();
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_edit", 
+    {
+        {"sql_operator", "UPDATE course SET "
+         "course_name='" +          name + "', "
+         "lecture_hours=" + QString::number(lectureHours) + ", "
+         "pracrice_hours=" + QString::number(practiceHours) + ", "
+         "laboratore_hours=" + QString::number(laboratoryHours) + " "
+         "WHERE rowid=" + QString::number(m_currentCourse->getId())}
+    }), [this, name, lectureHours, practiceHours, laboratoryHours](const Response& response)
+    {
+        if (m_currentCourse == nullptr) {
+            throw std::runtime_error("Course deleted, while updating");
+        }
+        
+        m_currentCourse->setName(name);
+        m_currentCourse->setLectureHourCount(lectureHours);
+        m_currentCourse->setPracticeHourCount(practiceHours);
+        m_currentCourse->setLaboratoryHourCount(laboratoryHours);
+    });
 }
 
 void CourseEditController::propose()
@@ -23,6 +57,7 @@ void CourseEditController::propose()
     m_ui->courseEditName->setEnabled(true);
     m_ui->courseEditLectureHours->setEnabled(true);
     m_ui->courseEditPracticeHours->setEnabled(true);
+    m_ui->courseEditLaboratoryHours->setEnabled(true);
 }
 
 void CourseEditController::setCourse(Course* course)
@@ -37,6 +72,7 @@ void CourseEditController::setCourse(Course* course)
     m_ui->courseEditName->setPlainText(course->getName());
     m_ui->courseEditLectureHours->setValue(course->getLectureHourCount());
     m_ui->courseEditPracticeHours->setValue(course->getPracticeHourCount());
+    m_ui->courseEditLaboratoryHours->setValue(course->getLaboratoryHourCount());
     
     propose();
 }

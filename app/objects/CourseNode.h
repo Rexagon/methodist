@@ -30,9 +30,6 @@ public:
     size_t getChildCount() const;
     std::vector<CourseNode*> getChildren() const;
     
-    void setModelIndex(const QModelIndex& index);
-    QModelIndex getModelIndex() const;
-    
 protected:
     CourseNode(Type type);
     
@@ -43,7 +40,6 @@ private:
     void setParent(CourseNode* parent);
     
     Type m_type;
-    QModelIndex m_index;
 };
 
 #endif // COURSENODE_H

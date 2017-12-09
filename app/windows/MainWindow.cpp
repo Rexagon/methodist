@@ -12,14 +12,11 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), m_ui(nullptr)
 {
     Log::write("Interface initialization started");
-    
     m_ui = std::make_unique<Ui::MainWindow>();
     m_ui->setupUi(this);
-    ModelManager::init(this);
-    
     Log::write("Interface initialization finished");
     
-    NetworkManager* network = new NetworkManager("ws://176.9.191.187:55577", this);
+    NetworkManager::init("ws://176.9.191.187:55577");
     
     Log::write("Controllers initialization started");
     
@@ -36,69 +33,27 @@ MainWindow::MainWindow(QWidget* parent) :
     m_testEditController = std::make_unique<TestEditController>(m_ui.get(), this);
     m_testsTableController = std::make_unique<TestsTableController>(m_ui.get(), this);
     
-    // Actions
+    // Actions: select elements
     connect(m_sideMenuController.get(), &SideMenuController::courseSelected, this, [this](Course* course) {
         m_courseTreeController->setCourse(course);
-    });
-    
-    connect(m_sideMenuController.get(), &SideMenuController::courseAdded, this, [this]() {
-        CoursesListModel* model = ModelManager::getCoursesListModel();
-        
-        std::unique_ptr<Course> course = std::make_unique<Course>();       
-        course->setName("Новый курс " + QString::number(model->getCourseCount() + 1));
-        Course* coursePtr = course.get();
-        model->addCourse(std::move(course));
-        m_sideMenuController->selectCourse(coursePtr);
-        m_courseEditController->setCourse(coursePtr);
     });
     
     connect(m_courseTreeController.get(), &CourseTreeController::courseNodeSelected, this, [this](CourseNode* node) {
         m_infoPanelController->setCourseNode(node);
     });
     
-    connect(m_infoPanelController.get(), &InfoPanelController::addSectionButtonPressed, this, [this]() {
-        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-        if (node == nullptr || node->getType() == CourseNode::Type::TASK) {
-            return;
-        }
-        
-        std::unique_ptr<Section> newSection = std::make_unique<Section>();
-        Section* sectionPtr = newSection.get();
-        
-        if (node->getType() == CourseNode::Type::COURSE) {
-            Course* course = reinterpret_cast<Course*>(node);
-            newSection->setName("Новый раздел " + QString::number(course->getSectionCount() + 1));
-            course->addSection(std::move(newSection));
-        }
-        else {
-            Section* section = reinterpret_cast<Section*>(node);
-            newSection->setName("Новый подраздел " + QString::number(section->getSubsectionCount() + 1));
-            section->addSubsection(std::move(newSection));
-        }
-        
-        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
-        m_courseTreeController->selectCourseNode(sectionPtr);
-        m_sectionEditController->setSection(sectionPtr);
+    connect(m_testsTableController.get(), &TestsTableController::testSelected, this, [this](Test* test) {
+       m_testEditController->setTest(test); 
     });
+
+    // Actions: add elements
+    connect(m_sideMenuController.get(), &SideMenuController::courseAdded, this, &MainWindow::addCourse);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, [this]() {
-        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-        if (node == nullptr || node->getType() != CourseNode::Type::SECTION) {
-            return;
-        }
-        
-        std::unique_ptr<Task> newTask = std::make_unique<Task>();
-        Task* taskPtr = newTask.get();
-        
-        Section* section = reinterpret_cast<Section*>(node);
-        newTask->setName("Новая задача " + QString::number(section->getTaskCount() + 1));
-        section->addTask(std::move(newTask));
-        
-        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
-        m_courseTreeController->selectCourseNode(taskPtr);
-        m_taskEditController->setTask(taskPtr);
-    });
+    connect(m_infoPanelController.get(), &InfoPanelController::addSectionButtonPressed, this, &MainWindow::addSection);
     
+    connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, &MainWindow::addTask);
+    
+    // Actions: info panel ui logic
     connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, [this]() {
         CourseNode* node = m_infoPanelController->getCurrentCourseNode();
         if (node == nullptr) {
@@ -132,9 +87,15 @@ MainWindow::MainWindow(QWidget* parent) :
         switch (type) {
             case CourseNode::Type::COURSE:
             {
-                ModelManager::getCoursesListModel()->removeCourse(currentCourse);
-                m_sideMenuController->deselectAll();
-                m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
+                NetworkManager::send(Request(SQL_OPERATOR, "course_delete", {
+                    {"sql_operator", "DELETE FROM course WHERE rowid=" + QString::number(currentCourse->getId())}
+                }), [this, currentCourse](const Response& response)
+                {
+                    ModelManager::getCoursesListModel()->removeCourse(currentCourse);
+                    m_sideMenuController->deselectAll();
+                    m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);                    
+                });
+                
                 break;
             }
                 
@@ -173,6 +134,11 @@ MainWindow::MainWindow(QWidget* parent) :
         }
     });
     
+    connect(m_courseEditController.get(), &CourseEditController::changesSaved, this, [this]() {
+        m_courseEditController->saveChanges();
+        m_infoPanelController->propose();
+    });
+    
     connect(m_courseEditController.get(), &CourseEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
     });
@@ -189,24 +155,133 @@ MainWindow::MainWindow(QWidget* parent) :
        m_testsTableController->setTask(m_taskEditController->getCurrentTask()); 
     });
     
-    connect(m_testsTableController.get(), &TestsTableController::testSelected, this, [this](Test* test) {
-       m_testEditController->setTest(test); 
-    });
-    
     connect(m_testsTableController.get(), &TestsTableController::backButtonPressed, this, [this]() {
        m_taskEditController->propose(); 
     });
     
     Log::write("Controllers initialization finished");
     
-    network->send(Request(SQL_QUERY_XML, "test", {
-        //{"sql_operator", "INSERT INTO course (course_name, lecture_hours, pracrice_hours) VALUES ('wer', 10, 5)"}
-        {"sql_select", "SELECT * FROM course"}
-    }));
+    /*
+    NetworkManager::send(Request(SQL_OPERATOR, "remove_trash", {
+        {"sql_operator", "DELETE FROM section *"}
+    }), [this](const Response& response) 
+    {
+        qDebug() << "asd" << response.getError();
+    });
+    */
+    
+    ModelManager::init(this);
 }
 
 MainWindow::~MainWindow()
 {
     ModelManager::close();
+    NetworkManager::close();
     m_ui.reset(nullptr);
+}
+
+void MainWindow::addCourse()
+{
+    CoursesListModel* model = ModelManager::getCoursesListModel();
+    
+    QString courseName = "Новый курс " + QString::number(model->getCourseCount() + 1);
+    
+    QString query = "INSERT INTO course (course_name) VALUES ('" + courseName + "')";
+    //query += " RETURNING rowid";
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_add", {
+        {"sql_operator", query}
+    }), [this, model, courseName](const Response& response)
+    {
+        std::unique_ptr<Course> course = std::make_unique<Course>();       
+        Course* coursePtr = course.get();
+        course->setName(courseName);
+        
+        model->addCourse(std::move(course));
+        
+        m_sideMenuController->selectCourse(coursePtr);
+        m_courseEditController->setCourse(coursePtr); 
+    });
+}
+
+void MainWindow::addSection()
+{
+    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+    if (node == nullptr || node->getType() == CourseNode::Type::TASK) {
+        return;
+    }
+    
+    CourseNode::Type nodeType = node->getType();
+    
+    QString sectionName;
+    QString query = "INSERT INTO section ";
+    
+    if (nodeType == CourseNode::Type::COURSE) {
+        Course* course = reinterpret_cast<Course*>(node);
+        sectionName = "Новый раздел " + QString::number(course->getSectionCount() + 1);
+        query += "(course_id, section_name) VALUES ("+QString::number(course->getId())+",'"+sectionName +"')";
+    }
+    else {
+        Section* section = reinterpret_cast<Section*>(node);
+        sectionName = "Новый подраздел " + QString::number(section->getSubsectionCount() + 1);
+        query += "(course_id, section_name, parent_section_id) VALUES ("+QString::number(section->getCourse()->getId())+",'"+sectionName +"',"+
+                QString::number(section->getId()) + ")";
+    }
+    
+    //query += " RETURNING rowid";
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "section_add", {
+        {"sql_operator", query}
+    }), [this, node, nodeType, sectionName](const Response& response)
+    {
+        std::unique_ptr<Section> section = std::make_unique<Section>();
+        Section* sectionPtr = section.get();
+        section->setName(sectionName);
+        
+        if (nodeType == CourseNode::Type::COURSE) {
+            reinterpret_cast<Course*>(node)->addSection(std::move(section));
+        }
+        else {
+            reinterpret_cast<Section*>(node)->addSubsection(std::move(section));
+        }
+        
+        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
+        m_courseTreeController->selectCourseNode(sectionPtr);
+        m_sectionEditController->setSection(sectionPtr); 
+    });
+}
+
+void MainWindow::addTask()
+{
+    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+    if (node == nullptr || node->getType() != CourseNode::Type::SECTION) {
+        return;
+    }
+    
+    Section* section = reinterpret_cast<Section*>(node);
+    
+    QString taskName = "Новая задача " + QString::number(section->getTaskCount() + 1);
+    
+    QString query = "INSERT INTO task_c (task_c_name, section_id) VALUES ('" + taskName + "', " + QString::number(section->getId()) + ")";
+    //query += " RETURNING rowid";
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
+        {"sql_operator", query}
+    }), [this, section, taskName](const Response& response)
+    {
+        std::unique_ptr<Task> task = std::make_unique<Task>();
+        Task* taskPtr = task.get();
+        task->setName(taskName);
+        
+        section->addTask(std::move(task));
+        
+        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
+        m_courseTreeController->selectCourseNode(taskPtr);
+        m_taskEditController->setTask(taskPtr); 
+    });
+}
+
+void MainWindow::addTest()
+{
+    
 }

@@ -1,55 +1,69 @@
 #include "NetworkManager.h"
 
+#include <QObject>
+
 #include "Log.h"
 
-NetworkManager::NetworkManager(const QString& url, QObject* parent) :
-    QObject(parent)
+std::unique_ptr<QWebSocket> NetworkManager::m_socket = nullptr;
+std::unique_ptr<QEventLoop> NetworkManager::m_synchronizationLoop = nullptr;
+std::map<size_t, std::function<void(const Response&)>> NetworkManager::m_responseHandlers;
+
+void NetworkManager::init(const QString& url)
 {
-    connect(&m_socket, &QWebSocket::connected, this, [this]() {
-        if (m_synchronizationLoop.isRunning()) {
-            m_synchronizationLoop.exit();
+    m_socket = std::make_unique<QWebSocket>();
+    m_synchronizationLoop = std::make_unique<QEventLoop>();
+    
+    QObject::connect(m_socket.get(), &QWebSocket::connected, []() {
+        if (m_synchronizationLoop && m_synchronizationLoop->isRunning()) {
+            m_synchronizationLoop->exit();
+            m_synchronizationLoop.reset();
         }
         Log::write("Successfully connected to server");
     });
     
-    connect(&m_socket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError error)>(&QWebSocket::error), this, 
-            [this](QAbstractSocket::SocketError error)
+    QObject::connect(m_socket.get(), static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError error)>(&QWebSocket::error), 
+            [](QAbstractSocket::SocketError error)
     {
-        throw SocketErrorException(m_socket.errorString(), this);
+        throw SocketErrorException(m_socket->errorString());
     });
     
-    connect(&m_socket, &QWebSocket::disconnected, this, [this]() {
-        if (m_synchronizationLoop.isRunning()) {
-            m_synchronizationLoop.exit();;
+    QObject::connect(m_socket.get(), &QWebSocket::disconnected, []() {
+        if (m_synchronizationLoop && m_synchronizationLoop->isRunning()) {
+            m_synchronizationLoop->exit();
+            m_synchronizationLoop.reset();
         }
         Log::write("Disconnected from server");
     });
     
-    connect(&m_socket, &QWebSocket::binaryMessageReceived, this, &NetworkManager::binaryMessageHandler);
+    QObject::connect(m_socket.get(), &QWebSocket::binaryMessageReceived, &NetworkManager::binaryMessageHandler);
     
-    connect(&m_socket, &QWebSocket::textMessageReceived, this, &NetworkManager::textMessageHandler);
+    QObject::connect(m_socket.get(), &QWebSocket::textMessageReceived, &NetworkManager::textMessageHandler);
     
-    m_socket.open(QUrl(url));
+    m_socket->open(QUrl(url));
     Log::write("Connecting to server...");
     
-    m_synchronizationLoop.exec();
+    m_synchronizationLoop->exec();
 }
 
-NetworkManager::~NetworkManager()
+void NetworkManager::close()
 {
-    m_socket.close();
+    Log::write("Closing connection...");
+    m_socket->close();
+    Log::write("Connection closed...");
+    m_socket.reset();
+    m_synchronizationLoop.reset();   
 }
 
 void NetworkManager::send(const Request& request)
 {
-    Log::write("Send request to server. [id:", request.getTaskId(), "]");
-    m_socket.sendTextMessage(request.getData());
+    Log::write("Send request to server [id:", request.getTaskId(), "]");
+    m_socket->sendTextMessage(request.getData());
 }
 
 void NetworkManager::send(const Request& request, std::function<void (const Response&)> f)
 {
-    Log::write("Send request to server. [id:", request.getTaskId(), "]");
-    m_socket.sendTextMessage(request.getData());
+    Log::write("Send request to server [id:", request.getTaskId(), "]");
+    m_socket->sendTextMessage(request.getData());
     
     m_responseHandlers[request.getTaskId()] = f;
 }
@@ -61,6 +75,8 @@ void NetworkManager::binaryMessageHandler(const QByteArray& message)
 
 void NetworkManager::textMessageHandler(const QString& message)
 {
+    //qDebug() << message;
+    
     Response response(message);
     Log::write("Got response from server. [id:", response.getTaskId(), "]");
     
