@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget* parent) :
     
     connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, &MainWindow::addTask);
     
+    connect(m_testsTableController.get(), &TestsTableController::addTestButtonPressed, this, &MainWindow::addTest);
+    
     // Actions: info panel ui logic
     connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, [this]() {
         CourseNode* node = m_infoPanelController->getCurrentCourseNode();
@@ -159,16 +161,11 @@ MainWindow::MainWindow(QWidget* parent) :
        m_taskEditController->propose(); 
     });
     
-    Log::write("Controllers initialization finished");
-    
-    /*
-    NetworkManager::send(Request(SQL_OPERATOR, "remove_trash", {
-        {"sql_operator", "DELETE FROM section *"}
-    }), [this](const Response& response) 
-    {
-        qDebug() << "asd" << response.getError();
+    connect(m_testEditController.get(), &TestEditController::changesCanceled, this, [this]() {
+       m_testsTableController->propose(); 
     });
-    */
+    
+    Log::write("Controllers initialization finished");
     
     ModelManager::init(this);
 }
@@ -283,5 +280,25 @@ void MainWindow::addTask()
 
 void MainWindow::addTest()
 {
+    Task* task = m_testsTableController->getCurrentTask();
+    if (task == nullptr) {
+        return;
+    }
     
+    QString query = "INSERT INTO test_c (test_c_score, is_required, task_c_id) VALUES (0, FALSE, " + QString::number(task->getId()) + ")";
+    //query += " RETURNING rowid";
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
+        {"sql_operator", query}
+    }), [this, task](const Response& response)
+    {        
+        std::unique_ptr<Test> test = std::make_unique<Test>();
+        Test* testPtr = test.get();
+        
+        task->addTest(std::move(test));
+        
+        ModelManager::getTestsTableModel(task)->update();
+        m_testsTableController->selectTest(testPtr);
+        m_testEditController->setTest(testPtr); 
+    });
 }

@@ -3,7 +3,7 @@
 #include "Task.h"
 
 Test::Test() :
-    m_id(0), m_isRequired(true), m_score(0), m_task(nullptr)
+    m_id(0), m_score(0), m_isRequired(false), m_isSample(false), m_task(nullptr)
 {   
 }
 
@@ -61,12 +61,12 @@ bool Test::isSample() const
     return m_isSample;
 }
 
-void Test::setScore(unsigned int score)
+void Test::setScore(size_t score)
 {
     m_score = score;
 }
 
-unsigned int Test::getScore() const
+size_t Test::getScore() const
 {
     return m_score;
 }

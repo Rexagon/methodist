@@ -4,14 +4,20 @@
 
 #include "../stuff/ModelManager.h"
 
+#include "../stuff/Log.h"
+
 TestsTableController::TestsTableController(Ui::MainWindow* ui, QObject* parent) :
     Controller(ui, parent), m_currentTask(nullptr), m_selectedTest(nullptr)
 {
     connect(m_ui->testsTable, &QTableView::pressed, [this](const QModelIndex& index) {
-       Test* test = reinterpret_cast<Test*>(index.internalPointer()); 
-       m_selectedTest = test;
-       emit testSelected(test);
+        Test* test = m_currentTask->getTest(static_cast<size_t>(index.row()));
+        
+        if (test != nullptr) {
+            emit testSelected(test);
+        }
     });
+    
+    connect(m_ui->addTestButton, &QPushButton::pressed, this, &TestsTableController::addTestButtonPressed);
     
     connect(m_ui->closeTestsButton, &QPushButton::pressed, this, &TestsTableController::backButtonPressed);
 }
@@ -26,6 +32,11 @@ void TestsTableController::propose()
     m_ui->workspace->setCurrentIndex(WORKSPACE_TESTS);
     m_ui->infoPanelPages->setCurrentIndex(INFO_PANEL_EMPTY);
     m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_TESTS_TABLE);
+}
+
+Task* TestsTableController::getCurrentTask()
+{
+    return m_currentTask;
 }
 
 Test* TestsTableController::getSelectedTest()
@@ -47,4 +58,21 @@ void TestsTableController::setTask(Task* task)
     m_currentTask = task;
     
     propose();
+}
+
+void TestsTableController::selectTest(Test* test)
+{
+    TestsTableModel* model = ModelManager::getTestsTableModel(m_currentTask);
+    int index = model->getTestIndex(test);
+    if (index != -1) {
+        m_ui->testsTable->selectionModel()->select(model->index(index, 0), 
+                QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+        
+        emit testSelected(test);
+    }
+}
+
+void TestsTableController::deselectAll()
+{
+    m_ui->testsTable->selectionModel()->clearSelection();
 }

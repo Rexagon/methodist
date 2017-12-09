@@ -20,14 +20,14 @@ public:
     void setOutputData(const QString& data);
     QString getOutputData() const;
     
+    void setScore(size_t score);
+    size_t getScore() const;
+    
     void setRequired(bool required);
     bool isRequired() const;
     
     void setSample(bool sample);
     bool isSample() const;
-
-    void setScore(unsigned int score);
-    unsigned int getScore() const;
     
     void setTask(Task* task);
     Task* getTask() const;
@@ -38,9 +38,9 @@ private:
     QString m_inputData;
     QString m_outputData;
 
+    size_t m_score;
     bool m_isRequired;
     bool m_isSample;
-    unsigned int m_score;
     
     Task* m_task;
 };

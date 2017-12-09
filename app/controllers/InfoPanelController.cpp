@@ -44,7 +44,10 @@ void InfoPanelController::propose()
     
     // Test properties
     m_ui->testEditInputData->setEnabled(false);
+    m_ui->testEditOutputData->setEnabled(false);
     m_ui->testEditScore->setEnabled(false);
+    m_ui->testEditRequired->setEnabled(false);
+    m_ui->testEditSample->setEnabled(false);
     
     setVisible(true);
 }

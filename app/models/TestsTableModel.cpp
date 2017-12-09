@@ -1,5 +1,7 @@
 #include "TestsTableModel.h"
 
+#include "../stuff/Log.h"
+
 TestsTableModel::TestsTableModel(QObject* parent) :
     QAbstractTableModel(parent), m_task(nullptr)
 {
@@ -9,9 +11,14 @@ TestsTableModel::~TestsTableModel()
 {
 }
 
+void TestsTableModel::update()
+{
+    emit layoutChanged();
+}
+
 int TestsTableModel::rowCount(const QModelIndex& parent) const
 {
-    return m_task->getChildCount();
+    return m_task->getTestCount();
 }
 
 int TestsTableModel::columnCount(const QModelIndex& parent) const
@@ -71,9 +78,19 @@ QVariant TestsTableModel::headerData(int section, Qt::Orientation orientation, i
 void TestsTableModel::setTask(Task* task)
 {
     m_task = task;
+    emit layoutChanged();
 }
 
 Task* TestsTableModel::getTask() const
 {
     return m_task;
+}
+
+int TestsTableModel::getTestIndex(const Test* test) const
+{
+    if (m_task == nullptr) {
+        return -1;
+    }
+    
+    return m_task->getTestIndex(test);
 }

@@ -21,7 +21,10 @@ void TestEditController::propose()
     m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_TEST);
     
     m_ui->testEditInputData->setEnabled(true);
+    m_ui->testEditOutputData->setEnabled(true);
     m_ui->testEditScore->setEnabled(true);
+    m_ui->testEditRequired->setEnabled(true);
+    m_ui->testEditSample->setEnabled(true);
 }
 
 void TestEditController::setTest(Test* test)
@@ -34,7 +37,10 @@ void TestEditController::setTest(Test* test)
     
     m_ui->nodeType->setText("Тест");
     m_ui->testEditInputData->setPlainText(test->getInputData());
+    m_ui->testEditOutputData->setPlainText(test->getOutputData());
     m_ui->testEditScore->setValue(test->getScore());
+    m_ui->testEditRequired->setChecked(test->isRequired());
+    m_ui->testEditSample->setChecked(test->isSample());
     
     propose();
 }

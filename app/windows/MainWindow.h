@@ -40,8 +40,6 @@ private:
     std::unique_ptr<TestsTableController> m_testsTableController;
     
     std::unique_ptr<Ui::MainWindow> m_ui;
-    
-    
 };
 
 #endif // MAINWINDOW_H

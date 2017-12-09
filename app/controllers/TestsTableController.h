@@ -14,13 +14,17 @@ public:
     
     void propose() override;
     
+    Task* getCurrentTask();
     Test* getSelectedTest();
     
 public slots:
     void setTask(Task* task);
+    void selectTest(Test* test);
+    void deselectAll();
     
 signals:
     void testSelected(Test* test);
+    void addTestButtonPressed();
     void backButtonPressed();
     
 private:

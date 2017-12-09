@@ -32,6 +32,7 @@ void TaskEditController::propose()
     m_ui->taskEditScore->setEnabled(true);
     
     ModelManager::getSamplesTableModel()->fill(m_currentTask);
+    ModelManager::getTestsTableModel(m_currentTask)->setTask(m_currentTask);
 }
 
 Task* TaskEditController::getCurrentTask()

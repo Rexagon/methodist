@@ -27,6 +27,8 @@ public:
         
         double asDouble() const { return m_data.toDouble(); }
         
+        bool asBool() const { return m_data == "true"; }
+        
         QString asString() const { return m_data; }
         
     private:

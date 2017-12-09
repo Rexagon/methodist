@@ -33,11 +33,11 @@ public:
     void setOutputData(const QString& text);
     QString getOutputData() const;
     
-    void setSource(const QString& code);
+    void setSource(const QString& source);
     QString getSource() const;
     
-    void setScore(unsigned int score);
-    unsigned int getScore() const;
+    void setScore(size_t score);
+    size_t getScore() const;
     
     void setCourse(Course* course);
     Course* getCourse() const;
@@ -47,9 +47,9 @@ public:
     
     
     void addTest(std::unique_ptr<Test> test);
-    void removeTest(Test* test);
+    void removeTest(const Test* test);
     Test* getTest(size_t n) const;
-    int getTestIndex(Test* test) const;
+    int getTestIndex(const Test* test) const;
     size_t getTestCount() const;
     
 private:
@@ -59,9 +59,9 @@ private:
     QString m_text;
     QString m_inputData;
     QString m_outputData;
-    QString m_code;
+    QString m_source;
     
-    unsigned int m_score;
+    size_t m_score;
     
     Course* m_course;
     Section* m_section;

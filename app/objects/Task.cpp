@@ -63,22 +63,22 @@ QString Task::getOutputData() const
     return m_outputData;
 }
 
-void Task::setSource(const QString& code)
+void Task::setSource(const QString& source)
 {
-    m_code = code;
+    m_source = source;
 }
 
 QString Task::getSource() const
 {
-    return m_code;
+    return m_source;
 }
 
-void Task::setScore(unsigned int score)
+void Task::setScore(size_t score)
 {
     m_score = score;
 }
 
-unsigned int Task::getScore() const
+size_t Task::getScore() const
 {
     return m_score;
 }
@@ -88,7 +88,7 @@ void Task::addTest(std::unique_ptr<Test> test)
     m_tests.push_back(std::move(test));
 }
 
-void Task::removeTest(Test* test)
+void Task::removeTest(const Test* test)
 {
     for (auto it = m_tests.begin(); it != m_tests.end(); ++it) {
         if (it->get() == test) {
@@ -108,7 +108,7 @@ Test* Task::getTest(size_t n) const
     }
 }
 
-int Task::getTestIndex(Test* test) const
+int Task::getTestIndex(const Test* test) const
 {
     for (size_t i = 0; i < m_tests.size(); ++i) {
         if (m_tests[i].get() == test) {

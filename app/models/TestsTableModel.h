@@ -11,6 +11,8 @@ public:
     TestsTableModel(QObject* parent = nullptr);
     ~TestsTableModel();
 
+    void update();
+    
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
@@ -19,6 +21,8 @@ public:
 
     void setTask(Task* task);
     Task* getTask() const;
+    
+    int getTestIndex(const Test* test) const;
 
 private:
     Task* m_task;

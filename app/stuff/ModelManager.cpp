@@ -17,7 +17,7 @@ QEventLoop ModelManager::m_synchronizationLoop;
 struct CourseData;
 struct SectionData;
 struct TaskData;
-//struct TestData;
+struct TestData;
 
 struct CourseData
 {
@@ -58,6 +58,18 @@ struct TaskData
     
     std::unique_ptr<Task> object;
 };
+
+struct TestData
+{
+    void init()
+    {
+        object = std::make_unique<Test>();
+    }
+    
+    size_t taskIndex;
+    
+    std::unique_ptr<Test> object;
+};
 // END OF HELPER STRUCTS
 
 
@@ -81,6 +93,7 @@ void ModelManager::update()
     std::map<size_t, CourseData> coursesData;
     std::map<size_t, SectionData> sectionsData;
     std::map<size_t, TaskData> tasksData;
+    std::map<size_t, TestData> testsData;
     
     Async::Functions requests;
     
@@ -171,10 +184,44 @@ void ModelManager::update()
         });
     });
     
-    Async::parallel(requests, [&coursesData, &sectionsData, &tasksData](const Async::Error& error) {        
+    // Getting tests
+    requests.push_back([&testsData](Async::Callback callback) {
+        NetworkManager::send(Request(SQL_QUERY_XML, "select_tests", {
+            {"sql_select", "SELECT * FROM test_c ORDER BY rowid ASC"}
+        }), [&testsData, callback](const Response& tests)
+        {
+            for (size_t i = 0; i < tests.getRowCount(); ++i) {
+                Response::Row rowData = tests.getRow(i);
+                
+                TestData test;
+                
+                test.init();
+                test.object->setId(rowData.get("rowid").asUInt());
+                test.object->setInputData(rowData.get("test_c_input_data").asString());
+                test.object->setOutputData(rowData.get("test_c_output_data").asString());
+                test.object->setRequired(rowData.get("is_required").asBool());
+                test.object->setScore(rowData.get("test_c_score").asUInt());
+                
+                test.taskIndex = rowData.get("task_c_id").asUInt();
+                
+                testsData[test.object->getId()] = std::move(test);
+            }
+            
+            callback(Async::Error());
+        });
+    });
+    
+    Async::parallel(requests, [&coursesData, &sectionsData, &tasksData, &testsData](const Async::Error& error) {        
         if (!error.isNull()) {
             m_synchronizationLoop.exit();
             throw std::runtime_error(error.getMessage());
+        }
+        
+        for (auto& it : testsData) {
+            auto taskIt = tasksData.find(it.second.taskIndex);
+            if (taskIt != tasksData.end()) {
+                taskIt->second.object->addTest(std::move(it.second.object));
+            }
         }
         
         for (auto& it : tasksData) {
@@ -242,126 +289,6 @@ void ModelManager::update()
     });
     
     m_synchronizationLoop.exec();
-    
-    /*NetworkManager::send(Request(SQL_QUERY_XML, "select_courses", 
-    {
-        {"sql_select", "SELECT * FROM course ORDER BY rowid ASC"}
-    }), [](const Response& courses) 
-    {
-        courses.map([](size_t i, const Response::Row& courseData) {           
-            NetworkManager::send(Request(SQL_QUERY_XML, "select_course_sections", 
-            {
-                {"sql_select", "SELECT * FROM section WHERE course_id=" + courseData.get("rowid").asString() }
-            }), [courseData](const Response& sectionsData)
-            {
-                std::unique_ptr<Course> course = std::make_unique<Course>();
-                
-                course->setId(courseData.get("rowid").asUInt());
-                course->setName(courseData.get("course_name").asString());
-                course->setLectureHourCount(courseData.get("lecture_hours").asUInt());
-                course->setPracticeHourCount(courseData.get("pracrice_hours").asUInt());
-                course->setLaboratoryHourCount(courseData.get("laboratory_hours").asInt());
-                
-                //TODO: optimize this shit
-                
-                struct SectionData
-                {
-                    void init()
-                    {
-                        sectionObject = std::make_unique<Section>();
-                        sectionObject->setId(id);
-                        sectionObject->setName(name);
-                        sectionObject->setCourse(course);
-                    }
-                    
-                    size_t id;
-                    QString name;
-                    Course* course;
-                    
-                    bool hasParent;
-                    size_t parentIndex;
-                    std::list<SectionData*> subsections;
-                    
-                    std::unique_ptr<Section> sectionObject;
-                };
-                
-                std::map<size_t, SectionData> sectionDataToId;
-                                
-                for (size_t i = 0; i < sectionsData.getRowCount(); ++i) {
-                    Response::Row rowData = sectionsData.getRow(i);
-                    Response::Cell parentSection = rowData.get("parent_section_id");
-                    
-                    SectionData sectionData;
-                    sectionData.id = rowData.get("rowid").asUInt();
-                    sectionData.name = rowData.get("section_name").asString();
-                    sectionData.course = course.get();
-                    
-                    sectionData.hasParent = !parentSection.isNull();
-                    if (sectionData.hasParent) {
-                        sectionData.parentIndex = parentSection.asUInt();
-                    }
-                    else {
-                        sectionData.parentIndex = 0;
-                    }
-                    
-                    sectionDataToId[sectionData.id] = std::move(sectionData);
-                }
-                
-                std::vector<SectionData*> sections;
-                
-                for (auto& it : sectionDataToId) {
-                    if (it.second.hasParent) {
-                        auto parentIt = sectionDataToId.find(it.second.parentIndex);
-                        if (parentIt != sectionDataToId.end()) {
-                            parentIt->second.subsections.push_back(&it.second);
-                        }
-                    }
-                    else {
-                        it.second.init();
-                        sections.push_back(&it.second);
-                    }
-                }
-                
-                std::reverse(sections.begin(), sections.end());
-                
-                while (!sections.empty()) {
-                    SectionData* sectionData = sections.back();
-                    
-                    if (sectionData->subsections.empty()) {
-                        if (sectionData->hasParent) {
-                            auto parentIt = sectionDataToId.find(sectionData->parentIndex);
-                            if (parentIt != sectionDataToId.end()) {
-                                auto& subsections = parentIt->second.subsections;
-                                
-                                for (auto it = subsections.begin(); it != subsections.end(); ++it) {
-                                    if ((*it)->id == sectionData->id) {
-                                        sectionData->init();
-                                        parentIt->second.sectionObject->addSubsection(std::move(sectionData->sectionObject));
-                                        subsections.erase(it);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            course->addSection(std::move(sectionData->sectionObject));
-                        }
-                        
-                        sections.pop_back();
-                        continue;
-                    }
-                    
-                    for (auto it = sectionData->subsections.rbegin(); it != sectionData->subsections.rend(); ++it) {
-                        sections.push_back(*it);
-                    }
-                }
-                
-                // end of shit
-                
-                m_coursesListModel->addCourse(std::move(course));
-            });
-        });
-    });*/
 }
 
 CoursesListModel* ModelManager::getCoursesListModel()
@@ -385,7 +312,7 @@ CourseTreeModel* ModelManager::getCourseTreeModel(Course* course)
 
 TestsTableModel* ModelManager::getTestsTableModel(Task* task)
 {
-    if (m_testsTableModel == nullptr || m_testsTableModel->getTask() == task) {
+    if (m_testsTableModel == nullptr || m_testsTableModel->getTask() != task) {
         m_testsTableModel = std::make_unique<TestsTableModel>(m_parent);
         m_testsTableModel->setTask(task);
     }
