@@ -13,16 +13,13 @@ Response::Response(const QString& message)
     m_task = document.elementsByTagName("arm_task").at(0).firstChild().nodeValue();
     m_taskId = document.elementsByTagName("arm_task_id").at(0).firstChild().nodeValue().toUInt();
     m_error = document.elementsByTagName("error_text").at(0).firstChild().nodeValue();
-        
-    Log::write(document.toString(4).toLatin1().toStdString());
     
     QDomNodeList xmlData = document.elementsByTagName("sql_xml");
     
     if (xmlData.size() != 0) {
         QDomDocument data("XML");
         data.setContent(xmlData.at(0).firstChild().nodeValue());
-        
-        
+                
         QDomNodeList rowsData = data.firstChild().childNodes();
         for (int i = 0; i < rowsData.size(); ++i) {
             QDomNode rowData = rowsData.item(i);

@@ -1,6 +1,8 @@
 #ifndef MODELMANAGER_H
 #define MODELMANAGER_H
 
+#include <QEventLoop>
+
 #include "../models/CoursesListModel.h"
 #include "../models/CourseTreeModel.h"
 #include "../models/TestsTableModel.h"
@@ -30,6 +32,8 @@ private:
     static std::unique_ptr<CourseTreeModel> m_courseTreeModel;
     static std::unique_ptr<TestsTableModel> m_testsTableModel;
     static std::unique_ptr<SamplesTableModel> m_samplesTableModel;
+    
+    static QEventLoop m_synchronizationLoop;
 };
 
 #endif // MODELMANAGER_H

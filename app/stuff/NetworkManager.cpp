@@ -4,19 +4,17 @@
 
 #include "Log.h"
 
+QEventLoop NetworkManager::m_synchronizationLoop;
 std::unique_ptr<QWebSocket> NetworkManager::m_socket = nullptr;
-std::unique_ptr<QEventLoop> NetworkManager::m_synchronizationLoop = nullptr;
 std::map<size_t, std::function<void(const Response&)>> NetworkManager::m_responseHandlers;
 
 void NetworkManager::init(const QString& url)
 {
     m_socket = std::make_unique<QWebSocket>();
-    m_synchronizationLoop = std::make_unique<QEventLoop>();
     
     QObject::connect(m_socket.get(), &QWebSocket::connected, []() {
-        if (m_synchronizationLoop && m_synchronizationLoop->isRunning()) {
-            m_synchronizationLoop->exit();
-            m_synchronizationLoop.reset();
+        if (m_synchronizationLoop.isRunning()) {
+            m_synchronizationLoop.exit();
         }
         Log::write("Successfully connected to server");
     });
@@ -28,9 +26,8 @@ void NetworkManager::init(const QString& url)
     });
     
     QObject::connect(m_socket.get(), &QWebSocket::disconnected, []() {
-        if (m_synchronizationLoop && m_synchronizationLoop->isRunning()) {
-            m_synchronizationLoop->exit();
-            m_synchronizationLoop.reset();
+        if (m_synchronizationLoop.isRunning()) {
+            m_synchronizationLoop.exit();
         }
         Log::write("Disconnected from server");
     });
@@ -42,7 +39,7 @@ void NetworkManager::init(const QString& url)
     m_socket->open(QUrl(url));
     Log::write("Connecting to server...");
     
-    m_synchronizationLoop->exec();
+    m_synchronizationLoop.exec();
 }
 
 void NetworkManager::close()
@@ -51,7 +48,6 @@ void NetworkManager::close()
     m_socket->close();
     Log::write("Connection closed...");
     m_socket.reset();
-    m_synchronizationLoop.reset();   
 }
 
 void NetworkManager::send(const Request& request)
