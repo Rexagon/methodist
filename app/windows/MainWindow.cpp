@@ -56,91 +56,17 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(m_testsTableController.get(), &TestsTableController::addTestButtonPressed, this, &MainWindow::addTest);
     
     // Actions: info panel ui logic
-    connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, [this]() {
-        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-        if (node == nullptr) {
-            return;
-        }
-        
-        switch (node->getType()) {
-        case CourseNode::Type::COURSE:
-            m_courseEditController->setCourse(reinterpret_cast<Course*>(node));
-            break;
-            
-        case CourseNode::Type::SECTION:
-            m_sectionEditController->setSection(reinterpret_cast<Section*>(node));
-            break;
-            
-        case CourseNode::Type::TASK:
-            m_taskEditController->setTask(reinterpret_cast<Task*>(node));
-            break;
-        }
-    });
+    connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, &MainWindow::editNode);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, [this]() {
-        CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-        if (node == nullptr) {
-            return;
-        }
-        
-        Course* currentCourse = m_courseTreeController->getCurrentCourse();
-        CourseNode::Type type = node->getType();
-        
-        switch (type) {
-            case CourseNode::Type::COURSE:
-            {
-                NetworkManager::send(Request(SQL_OPERATOR, "course_delete", {
-                    {"sql_operator", "DELETE FROM course WHERE rowid=" + QString::number(currentCourse->getId())}
-                }), [this, currentCourse](const Response& response)
-                {
-                    ModelManager::getCoursesListModel()->removeCourse(currentCourse);
-                    m_sideMenuController->deselectAll();
-                    m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);                    
-                });
-                
-                break;
-            }
-                
-            case CourseNode::Type::SECTION:
-            {
-                Section* section = reinterpret_cast<Section*>(node);
-                CourseNode* parent = section->getParent();
-                
-                m_courseTreeController->selectCourseNode(parent);
-                
-                if (parent->getType() == CourseNode::Type::COURSE) {
-                    currentCourse->removeSection(section);
-                }
-                else {
-                    reinterpret_cast<Section*>(parent)->removeSubsection(section);
-                }
-                
-                break;
-            }
-                
-            case CourseNode::Type::TASK:
-            {
-                Task* task = reinterpret_cast<Task*>(node);
-                Section* parent = task->getSection();
-                
-                m_courseTreeController->selectCourseNode(parent);
-                
-                parent->removeTask(task);
-                
-                break;
-            }
-        }
-        
-        if (type != CourseNode::Type::COURSE) {
-            ModelManager::getCourseTreeModel(currentCourse)->update();
-        }
-    });
-    
+    connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, &MainWindow::deleteNode);
+
+    // Actions: save edit
     connect(m_courseEditController.get(), &CourseEditController::changesSaved, this, [this]() {
         m_courseEditController->saveChanges();
         m_infoPanelController->propose();
     });
-    
+
+    // Actions: cancel edit
     connect(m_courseEditController.get(), &CourseEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
     });
@@ -148,10 +74,15 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(m_sectionEditController.get(), &SectionEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
     });
-    
+
     connect(m_taskEditController.get(), &TaskEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
     });
+
+    connect(m_testEditController.get(), &TestEditController::changesCanceled, this, [this]() {
+       m_testsTableController->propose();
+    });
+
     
     connect(m_taskEditController.get(), &TaskEditController::testsOpened, this, [this]() {
        m_testsTableController->setTask(m_taskEditController->getCurrentTask()); 
@@ -161,9 +92,6 @@ MainWindow::MainWindow(QWidget* parent) :
        m_taskEditController->propose(); 
     });
     
-    connect(m_testEditController.get(), &TestEditController::changesCanceled, this, [this]() {
-       m_testsTableController->propose(); 
-    });
     
     Log::write("Controllers initialization finished");
     
@@ -301,4 +229,97 @@ void MainWindow::addTest()
         m_testsTableController->selectTest(testPtr);
         m_testEditController->setTest(testPtr); 
     });
+}
+
+void MainWindow::editNode()
+{
+    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+    if (node == nullptr) {
+        return;
+    }
+
+    switch (node->getType()) {
+    case CourseNode::Type::COURSE:
+        m_courseEditController->setCourse(reinterpret_cast<Course*>(node));
+        break;
+
+    case CourseNode::Type::SECTION:
+        m_sectionEditController->setSection(reinterpret_cast<Section*>(node));
+        break;
+
+    case CourseNode::Type::TASK:
+        m_taskEditController->setTask(reinterpret_cast<Task*>(node));
+        break;
+    }
+}
+
+void MainWindow::deleteNode()
+{
+    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
+    if (node == nullptr) {
+        return;
+    }
+
+    Course* currentCourse = m_courseTreeController->getCurrentCourse();
+    CourseNode::Type type = node->getType();
+
+    switch (type) {
+        case CourseNode::Type::COURSE:
+        {
+            NetworkManager::send(Request(SQL_OPERATOR, "course_delete", {
+                {"sql_operator", "DELETE FROM course WHERE rowid=" + QString::number(currentCourse->getId())}
+            }), [this, currentCourse](const Response& response)
+            {
+                ModelManager::getCoursesListModel()->removeCourse(currentCourse);
+                m_sideMenuController->deselectAll();
+                m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
+            });
+
+            break;
+        }
+
+        case CourseNode::Type::SECTION:
+        {
+            Section* section = reinterpret_cast<Section*>(node);
+
+            NetworkManager::send(Request(SQL_OPERATOR, "section_delete", {
+                {"sql_operator", "DELETE FROM section WHERE rowid=" + QString::number(section->getId())}
+            }), [this, section, currentCourse](const Response& response)
+            {
+                CourseNode* parent = section->getParent();
+
+                m_courseTreeController->selectCourseNode(parent);
+
+                if (parent->getType() == CourseNode::Type::COURSE) {
+                    currentCourse->removeSection(section);
+                }
+                else {
+                    reinterpret_cast<Section*>(parent)->removeSubsection(section);
+                }
+                ModelManager::getCourseTreeModel(currentCourse)->update();
+            });
+
+            break;
+        }
+
+        case CourseNode::Type::TASK:
+        {
+            Task* task = reinterpret_cast<Task*>(node);
+
+            NetworkManager::send(Request(SQL_OPERATOR, "task_delete", {
+                {"sql_operator", "DELETE FROM task_c WHERE rowid=" + QString::number(task->getId())}
+            }), [this, task, currentCourse](const Response& response)
+            {
+                Section* parent = task->getSection();
+
+                m_courseTreeController->selectCourseNode(parent);
+
+                parent->removeTask(task);
+
+                ModelManager::getCourseTreeModel(currentCourse)->update();
+            });
+
+            break;
+        }
+    }
 }

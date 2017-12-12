@@ -42,7 +42,7 @@ QVariant TestsTableModel::data(const QModelIndex& index, int role) const
             return test->isRequired();
 
         case 3:
-            return test->getScore();
+            return static_cast<unsigned int>(test->getScore());
         }
     }
 

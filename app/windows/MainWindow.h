@@ -29,6 +29,9 @@ private:
     void addSection();
     void addTask();
     void addTest();
+
+    void editNode();
+    void deleteNode();
     
     std::unique_ptr<CourseTreeController> m_courseTreeController;
     std::unique_ptr<InfoPanelController> m_infoPanelController;
