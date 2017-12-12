@@ -33,6 +33,11 @@ MainWindow::MainWindow(QWidget* parent) :
     m_testEditController = std::make_unique<TestEditController>(m_ui.get(), this);
     m_testsTableController = std::make_unique<TestsTableController>(m_ui.get(), this);
     
+    // Actions: side menu
+    connect(m_sideMenuController.get(), &SideMenuController::coursesRefreshed, this, [this]() {
+       ModelManager::update(); 
+    });
+    
     // Actions: select elements
     connect(m_sideMenuController.get(), &SideMenuController::courseSelected, this, [this](Course* course) {
         m_courseTreeController->setCourse(course);
@@ -63,6 +68,16 @@ MainWindow::MainWindow(QWidget* parent) :
     // Actions: save edit
     connect(m_courseEditController.get(), &CourseEditController::changesSaved, this, [this]() {
         m_courseEditController->saveChanges();
+        m_infoPanelController->propose();
+    });
+    
+    connect(m_sectionEditController.get(), &SectionEditController::changesSaved, this, [this]() {
+        m_sectionEditController->saveChanges();
+        m_infoPanelController->propose();
+    });
+    
+    connect(m_taskEditController.get(), &TaskEditController::changesSaved, this, [this]() {
+        m_taskEditController->saveChanges();
         m_infoPanelController->propose();
     });
 

@@ -2,6 +2,7 @@
 
 #include <ui_MainWindow.h>
 
+#include "../stuff/ModelManager.h"
 #include "../stuff/NetworkManager.h"
 
 CourseEditController::CourseEditController(Ui::MainWindow* ui, QObject* parent) :
@@ -21,29 +22,36 @@ void CourseEditController::saveChanges()
         return;
     }
     
+    Course* course = m_currentCourse;
+    DeletionMark deletionMark = course->getDeletionMark();
+    
     QString name = m_ui->courseEditName->toPlainText();
     size_t lectureHours = m_ui->courseEditLectureHours->value();
     size_t practiceHours = m_ui->courseEditPracticeHours->value();
     size_t laboratoryHours = m_ui->courseEditLaboratoryHours->value();
     
-    NetworkManager::send(Request(SQL_OPERATOR, "course_edit", 
+    QString query = "UPDATE course SET "
+                    "course_name='" + name + "', "
+                    "lecture_hours=" + QString::number(lectureHours) + ", "
+                    "pracrice_hours=" + QString::number(practiceHours) + ", "
+                    "laboratore_hours=" + QString::number(laboratoryHours) + " "
+                    "WHERE rowid=" + QString::number(course->getId());
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_edit", {
+        {"sql_operator", query}
+    }), [this, course, deletionMark, name, lectureHours, practiceHours, laboratoryHours](const Response& response)
     {
-        {"sql_operator", "UPDATE course SET "
-         "course_name='" +          name + "', "
-         "lecture_hours=" + QString::number(lectureHours) + ", "
-         "pracrice_hours=" + QString::number(practiceHours) + ", "
-         "laboratore_hours=" + QString::number(laboratoryHours) + " "
-         "WHERE rowid=" + QString::number(m_currentCourse->getId())}
-    }), [this, name, lectureHours, practiceHours, laboratoryHours](const Response& response)
-    {
-        if (m_currentCourse == nullptr) {
-            throw std::runtime_error("Course deleted, while updating");
+        if (*deletionMark == true) {
+            return;
         }
         
-        m_currentCourse->setName(name);
-        m_currentCourse->setLectureHourCount(lectureHours);
-        m_currentCourse->setPracticeHourCount(practiceHours);
-        m_currentCourse->setLaboratoryHourCount(laboratoryHours);
+        course->setName(name);
+        course->setLectureHourCount(lectureHours);
+        course->setPracticeHourCount(practiceHours);
+        course->setLaboratoryHourCount(laboratoryHours);
+        
+        ModelManager::getCoursesListModel()->update();
+        ModelManager::getCourseTreeModel(course)->update();
     });
 }
 

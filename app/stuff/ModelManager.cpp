@@ -169,11 +169,11 @@ void ModelManager::update()
                 task.init();
                 task.object->setId(rowData.get("rowid").asUInt());
                 task.object->setName(rowData.get("task_c_name").asString());
+                task.object->setScore(rowData.get("task_c_score").asUInt());
                 task.object->setText(rowData.get("task_c_text").asString());
                 //task.object->setInputData(inputData);
                 //task.object->setOutputData(outputData);
                 task.object->setSource(rowData.get("task_c_source").asString());
-                task.object->setScore(rowData.get("task_c_score").asUInt());
                 
                 task.sectionIndex = rowData.get("section_id").asUInt();
                 

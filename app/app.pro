@@ -36,7 +36,8 @@ SOURCES += \
     stuff/Log.cpp \
     stuff/Request.cpp \
     stuff/Response.cpp \
-    stuff/Async.cpp
+    stuff/Async.cpp \
+    stuff/Deletable.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -63,7 +64,8 @@ HEADERS	+= \
     stuff/Log.h \
     stuff/Request.h \
     stuff/Response.h \
-    stuff/Async.h
+    stuff/Async.h \
+    stuff/Deletable.h
 
 FORMS	+= \
     windows/MainWindow.ui

@@ -89,7 +89,6 @@ size_t Section::getSubsectionCount() const
 void Section::addTask(std::unique_ptr<Task> task)
 {
     task->setSection(this);
-    task->setCourse(m_course);
     addChild(task.get());
     m_tasks.push_back(std::move(task));
 }

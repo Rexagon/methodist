@@ -7,7 +7,9 @@
 #include "CourseNode.h"
 #include "Section.h"
 
-class Course : public CourseNode
+#include "../stuff/Deletable.h"
+
+class Course : public CourseNode, public Deletable
 {
 public:
     Course();

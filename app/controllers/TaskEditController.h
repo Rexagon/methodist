@@ -13,6 +13,7 @@ public:
     TaskEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~TaskEditController();
     
+    void saveChanges();
     void propose() override;
     
     Task* getCurrentTask();

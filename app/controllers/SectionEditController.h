@@ -12,6 +12,7 @@ public:
     SectionEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~SectionEditController();
     
+    void saveChanges();
     void propose() override;
     
 public slots:

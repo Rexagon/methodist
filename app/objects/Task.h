@@ -9,10 +9,12 @@
 #include "CourseNode.h"
 #include "Test.h"
 
+#include "../stuff/Deletable.h"
+
 class Course;
 class Section;
 
-class Task : public CourseNode
+class Task : public CourseNode, public Deletable
 {
 public:
     Task();
@@ -39,9 +41,6 @@ public:
     void setScore(size_t score);
     size_t getScore() const;
     
-    void setCourse(Course* course);
-    Course* getCourse() const;
-    
     void setSection(Section* section);
     Section* getSection();
     
@@ -63,7 +62,6 @@ private:
     
     size_t m_score;
     
-    Course* m_course;
     Section* m_section;
     
     std::vector<std::unique_ptr<Test>> m_tests;

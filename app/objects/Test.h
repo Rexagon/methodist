@@ -3,9 +3,11 @@
 
 #include <QString>
 
+#include "../stuff/Deletable.h"
+
 class Task;
 
-class Test
+class Test : public Deletable
 {
 public:
     Test();

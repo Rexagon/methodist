@@ -64,6 +64,20 @@ void NetworkManager::send(const Request& request, std::function<void (const Resp
     m_responseHandlers[request.getTaskId()] = f;
 }
 
+QString NetworkManager::escape(const QString& string)
+{    
+    QString result = string;
+    return result
+            //.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#39;")
+            .replace("/", "&&#x2F;")
+            .replace("`", "&#x60;")
+            .replace("=", "&#x3D;");
+}
+
 void NetworkManager::binaryMessageHandler(const QByteArray& message)
 {
     //TODO: handle binary messages

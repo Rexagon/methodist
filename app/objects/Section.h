@@ -9,9 +9,11 @@
 #include "CourseNode.h"
 #include "Task.h"
 
+#include "../stuff/Deletable.h"
+
 class Course;
 
-class Section : public CourseNode
+class Section : public CourseNode, public Deletable
 {
 public:
     Section();

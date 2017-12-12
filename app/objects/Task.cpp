@@ -5,7 +5,7 @@
 
 Task::Task() :
     CourseNode(CourseNode::Type::TASK),
-    m_id(0), m_score(0), m_course(nullptr), m_section(nullptr)
+    m_id(0), m_score(0), m_section(nullptr)
 {
 }
 
@@ -83,6 +83,16 @@ size_t Task::getScore() const
     return m_score;
 }
 
+void Task::setSection(Section* section)
+{
+    m_section = section;
+}
+
+Section* Task::getSection()
+{
+    return m_section;
+}
+
 void Task::addTest(std::unique_ptr<Test> test)
 {
     m_tests.push_back(std::move(test));
@@ -122,24 +132,4 @@ int Task::getTestIndex(const Test* test) const
 size_t Task::getTestCount() const
 {
     return m_tests.size();
-}
-
-void Task::setCourse(Course* course)
-{
-    m_course = course;
-}
-
-Course* Task::getCourse() const
-{
-    return m_course;
-}
-
-void Task::setSection(Section* section)
-{
-    m_section = section;
-}
-
-Section* Task::getSection()
-{
-    return m_section;
 }

@@ -37,6 +37,8 @@ public:
     static void send(const Request& request);
     static void send(const Request& request, std::function<void(const Response&)> f);
     
+    static QString escape(const QString& string);
+    
 private:
     static void binaryMessageHandler(const QByteArray& message);
     static void textMessageHandler(const QString& message);

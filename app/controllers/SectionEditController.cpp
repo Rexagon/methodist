@@ -2,6 +2,9 @@
 
 #include <ui_MainWindow.h>
 
+#include "../stuff/ModelManager.h"
+#include "../stuff/NetworkManager.h"
+
 SectionEditController::SectionEditController(Ui::MainWindow* ui, QObject* parent) :
     Controller(ui, parent), m_currentSection(nullptr)
 {
@@ -11,6 +14,35 @@ SectionEditController::SectionEditController(Ui::MainWindow* ui, QObject* parent
 
 SectionEditController::~SectionEditController()
 {
+}
+
+void SectionEditController::saveChanges()
+{
+    if (m_currentSection == nullptr) {
+        return;
+    }
+    
+    Section* section = m_currentSection;
+    DeletionMark deletionMark = section->getDeletionMark();
+    
+    QString name = m_ui->sectionEditName->toPlainText();
+    
+    QString query = "UPDATE section SET "
+                    "section_name='" + name + "' "
+                    "WHERE rowid=" + QString::number(section->getId());
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "section_edit", {
+        {"sql_operator", query}
+    }), [this, section, deletionMark, name](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        section->setName(name);
+        
+        ModelManager::getCourseTreeModel(section->getCourse())->update();
+    });
 }
 
 void SectionEditController::propose()

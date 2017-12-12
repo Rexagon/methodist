@@ -3,6 +3,10 @@
 #include <ui_MainWindow.h>
 
 #include "../stuff/ModelManager.h"
+#include "../stuff/NetworkManager.h"
+
+#include "../stuff/Log.h"
+#include <QDebug>
 
 TaskEditController::TaskEditController(Ui::MainWindow* ui, QObject* parent) :
     Controller(ui, parent), m_currentTask(nullptr)
@@ -19,6 +23,52 @@ TaskEditController::TaskEditController(Ui::MainWindow* ui, QObject* parent) :
 
 TaskEditController::~TaskEditController()
 {
+}
+
+void TaskEditController::saveChanges()
+{
+    if (m_currentTask == nullptr) {
+        return;
+    }
+    
+    Task* task = m_currentTask;
+    DeletionMark deletionMark = task->getDeletionMark();
+    
+    QString name = m_ui->taskEditName->toPlainText();
+    size_t score = m_ui->taskEditScore->value();
+    QString text = NetworkManager::escape(m_ui->taskEditText->toHtml());
+    QString inputData = NetworkManager::escape(m_ui->taskEditInputData->toHtml().toHtmlEscaped());
+    QString outputData = NetworkManager::escape(m_ui->taskEditOutputData->toHtml().toHtmlEscaped());
+    QString source = NetworkManager::escape(m_ui->taskEditSource->toHtml().toHtmlEscaped());
+    
+    QString query = "UPDATE task_c SET "
+                    "task_c_name='" + name + "', "
+                    "task_c_score=" + QString::number(score) + ", "
+                    "task_c_text='" + text + "', "
+                    //"task_c_input='" + inputData + "', "
+                    //"task_c_output='" + outputData + "', "
+                    "task_c_source='" + source + "' "
+                    "WHERE rowid=" + QString::number(task->getId());
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_edit", {
+        {"sql_operator", query}
+    }), [this, task, deletionMark, name, score, text, inputData, outputData, source](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        task->setName(name);
+        task->setScore(score);
+        task->setText(text);
+        task->setInputData(inputData);
+        task->setOutputData(outputData);
+        task->setSource(source);
+        
+        qDebug() << response.getError();
+        
+        ModelManager::getCourseTreeModel(task->getSection()->getCourse())->update();
+    });
 }
 
 void TaskEditController::propose()
@@ -51,10 +101,10 @@ void TaskEditController::setTask(Task* task)
     m_ui->nodeType->setText("Задача");
     m_ui->taskEditName->setPlainText(task->getName());
     m_ui->taskEditScore->setValue(task->getScore());
-    m_ui->taskEditText->setPlainText(task->getText());
-    m_ui->taskEditInputData->setPlainText(task->getInputData());
-    m_ui->taskEditOutputData->setPlainText(task->getOutputData());
-    m_ui->taskEditSource->setPlainText(task->getSource());
+    m_ui->taskEditText->setHtml(task->getText());
+    m_ui->taskEditInputData->setHtml(task->getInputData());
+    m_ui->taskEditOutputData->setHtml(task->getOutputData());
+    m_ui->taskEditSource->setHtml(task->getSource());
     
     propose();
 }
