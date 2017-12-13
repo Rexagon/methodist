@@ -112,7 +112,7 @@ void ModelManager::update()
                 course.object->setId(rowData.get("rowid").asUInt());
                 course.object->setName(rowData.get("course_name").asString());
                 course.object->setLectureHourCount(rowData.get("lecture_hours").asUInt());
-                course.object->setPracticeHourCount(rowData.get("pracrice_hours").asUInt());
+                course.object->setPracticeHourCount(rowData.get("practice_hours").asUInt());
                 course.object->setLaboratoryHourCount(rowData.get("laboratory_hours").asUInt());
                                 
                 coursesData[course.object->getId()] = std::move(course);

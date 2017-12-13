@@ -68,12 +68,12 @@ QString NetworkManager::escape(const QString& string)
 {    
     QString result = string;
     return result
-            //.replace("&", "&amp;")
+            .replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace("\"", "&quot;")
             .replace("'", "&#39;")
-            .replace("/", "&&#x2F;")
+            .replace("/", "&#x2F;")
             .replace("`", "&#x60;")
             .replace("=", "&#x3D;");
 }
