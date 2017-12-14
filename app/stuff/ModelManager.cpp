@@ -171,8 +171,8 @@ void ModelManager::update()
                 task.object->setName(rowData.get("task_c_name").asString());
                 task.object->setScore(rowData.get("task_c_score").asUInt());
                 task.object->setText(rowData.get("task_c_text").asString());
-                //task.object->setInputData(inputData);
-                //task.object->setOutputData(outputData);
+                task.object->setInputData(rowData.get("task_c_input").asString());
+                task.object->setOutputData(rowData.get("task_c_output").asString());
                 task.object->setSource(rowData.get("task_c_source").asString());
                 
                 task.sectionIndex = rowData.get("section_id").asUInt();
@@ -200,6 +200,7 @@ void ModelManager::update()
                 test.object->setInputData(rowData.get("test_c_input_data").asString());
                 test.object->setOutputData(rowData.get("test_c_output_data").asString());
                 test.object->setRequired(rowData.get("is_required").asBool());
+                test.object->setSample(rowData.get("is_sample").asBool());
                 test.object->setScore(rowData.get("test_c_score").asUInt());
                 
                 test.taskIndex = rowData.get("task_c_id").asUInt();

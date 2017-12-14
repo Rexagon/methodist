@@ -33,8 +33,8 @@ void CourseEditController::saveChanges()
     QString query = "UPDATE course SET "
                     "course_name='" + name + "', "
                     "lecture_hours=" + QString::number(lectureHours) + ", "
-                    "pracrice_hours=" + QString::number(practiceHours) + ", "
-                    "laboratore_hours=" + QString::number(laboratoryHours) + " "
+                    "practice_hours=" + QString::number(practiceHours) + ", "
+                    "laboratory_hours=" + QString::number(laboratoryHours) + " "
                     "WHERE rowid=" + QString::number(course->getId());
     
     NetworkManager::send(Request(SQL_OPERATOR, "course_edit", {

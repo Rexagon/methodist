@@ -7,6 +7,7 @@
 #include <memory>
 #include <map>
 
+#include "Query.h"
 #include "Async.h"
 #include "Request.h"
 #include "Response.h"
@@ -37,14 +38,14 @@ public:
     static void send(const Request& request);
     static void send(const Request& request, std::function<void(const Response&)> f);
     
-    static QString escape(const QString& string);
-    
 private:
+    static void exitSynchronizationLoop();
+    
     static void binaryMessageHandler(const QByteArray& message);
     static void textMessageHandler(const QString& message);
     
-    static QEventLoop m_synchronizationLoop;
     static std::unique_ptr<QWebSocket> m_socket;
+    static std::unique_ptr<QEventLoop> m_synchronizationLoop;
     
     static std::map<size_t, std::function<void(const Response&)>> m_responseHandlers;
 };

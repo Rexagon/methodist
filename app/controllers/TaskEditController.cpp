@@ -36,17 +36,17 @@ void TaskEditController::saveChanges()
     
     QString name = m_ui->taskEditName->toPlainText();
     size_t score = m_ui->taskEditScore->value();
-    QString text = NetworkManager::escape(m_ui->taskEditText->toHtml());
-    QString inputData = NetworkManager::escape(m_ui->taskEditInputData->toHtml().toHtmlEscaped());
-    QString outputData = NetworkManager::escape(m_ui->taskEditOutputData->toHtml().toHtmlEscaped());
-    QString source = NetworkManager::escape(m_ui->taskEditSource->toHtml().toHtmlEscaped());
+    QString text = Query::escapeHTML(m_ui->taskEditText->toHtml());
+    QString inputData = Query::escapeHTML(m_ui->taskEditInputData->toHtml());
+    QString outputData = Query::escapeHTML(m_ui->taskEditOutputData->toHtml());
+    QString source = Query::escapeHTML(m_ui->taskEditSource->toHtml());
     
     QString query = "UPDATE task_c SET "
                     "task_c_name='" + name + "', "
                     "task_c_score=" + QString::number(score) + ", "
                     "task_c_text='" + text + "', "
-                    //"task_c_input='" + inputData + "', "
-                    //"task_c_output='" + outputData + "', "
+                    "task_c_input='" + inputData + "', "
+                    "task_c_output='" + outputData + "', "
                     "task_c_source='" + source + "' "
                     "WHERE rowid=" + QString::number(task->getId());
     
@@ -101,10 +101,10 @@ void TaskEditController::setTask(Task* task)
     m_ui->nodeType->setText("Задача");
     m_ui->taskEditName->setPlainText(task->getName());
     m_ui->taskEditScore->setValue(task->getScore());
-    m_ui->taskEditText->setHtml(task->getText());
-    m_ui->taskEditInputData->setHtml(task->getInputData());
-    m_ui->taskEditOutputData->setHtml(task->getOutputData());
-    m_ui->taskEditSource->setHtml(task->getSource());
+    m_ui->taskEditText->setHtml(Query::unescapeHTML(task->getText()));
+    m_ui->taskEditInputData->setHtml(Query::unescapeHTML(task->getInputData()));
+    m_ui->taskEditOutputData->setHtml(Query::unescapeHTML(task->getOutputData()));
+    m_ui->taskEditSource->setHtml(Query::unescapeHTML(task->getSource()));
     
     propose();
 }

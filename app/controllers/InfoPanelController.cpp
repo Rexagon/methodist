@@ -73,6 +73,7 @@ void InfoPanelController::setCourseNode(CourseNode* node)
             m_ui->courseEditName->setPlainText(course->getName());
             m_ui->courseEditLectureHours->setValue(course->getLectureHourCount());
             m_ui->courseEditPracticeHours->setValue(course->getPracticeHourCount());
+            m_ui->courseEditLaboratoryHours->setValue(course->getLaboratoryHourCount());
 
             m_ui->addSectionButton->setVisible(true);
             m_ui->addTaskButton->setVisible(false);

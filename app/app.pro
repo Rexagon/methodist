@@ -37,7 +37,8 @@ SOURCES += \
     stuff/Request.cpp \
     stuff/Response.cpp \
     stuff/Async.cpp \
-    stuff/Deletable.cpp
+    stuff/Deletable.cpp \
+    stuff/Query.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -65,7 +66,8 @@ HEADERS	+= \
     stuff/Request.h \
     stuff/Response.h \
     stuff/Async.h \
-    stuff/Deletable.h
+    stuff/Deletable.h \
+    stuff/Query.h
 
 FORMS	+= \
     windows/MainWindow.ui

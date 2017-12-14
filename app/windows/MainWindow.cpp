@@ -127,12 +127,14 @@ void MainWindow::addCourse()
     QString courseName = "Новый курс " + QString::number(model->getCourseCount() + 1);
     
     QString query = "INSERT INTO course (course_name) VALUES ('" + courseName + "')";
-    //query += " RETURNING rowid";
+    query += " RETURNING rowid";
     
     NetworkManager::send(Request(SQL_OPERATOR, "course_add", {
         {"sql_operator", query}
     }), [this, model, courseName](const Response& response)
     {
+        qDebug() << response.getRowCount();
+        
         std::unique_ptr<Course> course = std::make_unique<Course>();       
         Course* coursePtr = course.get();
         course->setName(courseName);
@@ -228,13 +230,16 @@ void MainWindow::addTest()
         return;
     }
     
-    QString query = "INSERT INTO test_c (test_c_score, is_required, task_c_id) VALUES (0, FALSE, " + QString::number(task->getId()) + ")";
-    //query += " RETURNING rowid";
+    QString query = "INSERT INTO test_c (test_c_score, is_required, is_sample, task_c_id) VALUES "
+                    "(0, FALSE, FALSE, " + QString::number(task->getId()) + ") "
+                    "RETURNING rowid";
     
     NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
         {"sql_operator", query}
     }), [this, task](const Response& response)
-    {        
+    {
+        Log::write(response.getRowCount());
+        
         std::unique_ptr<Test> test = std::make_unique<Test>();
         Test* testPtr = test.get();
         
