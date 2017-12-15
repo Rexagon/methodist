@@ -1247,7 +1247,7 @@ QPushButton:pressed {
              <item row="3" column="0">
               <widget class="QStackedWidget" name="infoPanelButtons">
                <property name="currentIndex">
-                <number>5</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="defaultButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_4">

@@ -1,29 +1,28 @@
 #include "Query.h"
 
-QString Query::escapeHTML(const QString& html)
+QString Query::escape(const QString& string)
 {
-    QString result = html;
-    return result
-            .replace("&", "&#x26;")
-            .replace("<", "&#x3C;")
-            .replace(">", "&#x3E;")
-            .replace("\"", "&#x22;")
-            .replace("'", "&#39;")
-            .replace("/", "&#x2F;")
-            .replace("`", "&#x60;")
-            .replace("=", "&#x3D;");
+    QString result = string;
+    result.replace(QLatin1Char('\''), QLatin1String("''"));
+    
+    return result;
 }
 
-QString Query::unescapeHTML(const QString& html)
+QString Query::create(const QString& sql, const std::vector<QString>& args)
 {
-    QString result = html;
-    return result
-            .replace("&#x26;", "&")
-            .replace("&#x3C;", "<")
-            .replace("&#x3E;", ">")
-            .replace("&#x22;", "\"")
-            .replace("&#39;", "'")
-            .replace("&#x2F;", "/")
-            .replace("&#x60;", "`")
-            .replace("&#x3D;", "=");
+    QString result = sql;
+    
+    size_t currentArg = 0;
+    
+    for (int i = 0; i < result.size() - 1 && currentArg < args.size(); ++i) {
+        if (result[i] == '?' && result[i + 1] == '?') {
+            result.remove(i, 2);
+            
+            QString arg = escape(args[currentArg++]);
+            result.insert(i, arg);
+            i += arg.size() - 1;
+        }
+    }
+    
+    return result;
 }
