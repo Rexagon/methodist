@@ -14,8 +14,10 @@ InfoPanelController::InfoPanelController(Ui::MainWindow* ui, QObject* parent) :
     
     connect(m_ui->addTaskButton, &QPushButton::pressed, this, &InfoPanelController::addTaskButtonPressed);
     connect(m_ui->addSectionButton, &QPushButton::pressed, this, &InfoPanelController::addSectionButtonPressed);
+    connect(m_ui->addTestButton, &QPushButton::pressed, this, &InfoPanelController::addTestButtonPressed);
     connect(m_ui->editNodeButton, &QPushButton::pressed, this, &InfoPanelController::editNodeButtonPressed);
     connect(m_ui->deleteNodeButton, &QPushButton::pressed, this, &InfoPanelController::deleteNodeButtonPressed);
+    connect(m_ui->exitNodeButton, &QPushButton::pressed, this, &InfoPanelController::exitNodeButtonPressed);
 }
 
 InfoPanelController::~InfoPanelController()
@@ -25,7 +27,7 @@ InfoPanelController::~InfoPanelController()
 void InfoPanelController::propose()
 {
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_COURSE);
-    m_ui->workspace->setCurrentIndex(WORKSPACE_TREE);
+    //m_ui->workspace->setCurrentIndex(WORKSPACE_TREE);
     m_ui->infoPanelPages->setCurrentIndex(static_cast<int>(m_currentCourseNode->getType()));
     m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_DEFAULT);
     
@@ -77,6 +79,10 @@ void InfoPanelController::setCourseNode(CourseNode* node)
 
             m_ui->addSectionButton->setVisible(true);
             m_ui->addTaskButton->setVisible(false);
+            m_ui->addTestButton->setVisible(false);
+            m_ui->editNodeButton->setVisible(true);
+            m_ui->deleteNodeButton->setVisible(true);
+            m_ui->exitNodeButton->setVisible(false);
             break;
         }
             
@@ -89,6 +95,10 @@ void InfoPanelController::setCourseNode(CourseNode* node)
 
             m_ui->addSectionButton->setVisible(true);
             m_ui->addTaskButton->setVisible(true);
+            m_ui->addTestButton->setVisible(false);
+            m_ui->editNodeButton->setVisible(true);
+            m_ui->deleteNodeButton->setVisible(true);
+            m_ui->exitNodeButton->setVisible(false);
             break;
         }
             
@@ -102,6 +112,29 @@ void InfoPanelController::setCourseNode(CourseNode* node)
 
             m_ui->addSectionButton->setVisible(false);
             m_ui->addTaskButton->setVisible(false);
+            m_ui->addTestButton->setVisible(false);
+            m_ui->editNodeButton->setVisible(true);
+            m_ui->deleteNodeButton->setVisible(true);
+            m_ui->exitNodeButton->setVisible(false);
+            break;
+        }
+        
+        case CourseNode::Type::TEST:
+        {
+            Test* test = reinterpret_cast<Test*>(node);
+            m_ui->nodeType->setText("Тест");
+            m_ui->testEditInputData->setPlainText(test->getInputData());
+            m_ui->testEditOutputData->setPlainText(test->getOutputData());
+            m_ui->testEditScore->setValue(test->getScore());
+            m_ui->testEditRequired->setChecked(test->isRequired());
+            m_ui->testEditSample->setChecked(test->isSample());
+            
+            m_ui->addSectionButton->setVisible(false);
+            m_ui->addTaskButton->setVisible(false);
+            m_ui->addTestButton->setVisible(true);
+            m_ui->editNodeButton->setVisible(true);
+            m_ui->deleteNodeButton->setVisible(true);
+            m_ui->exitNodeButton->setVisible(true);
             break;
         }
     }

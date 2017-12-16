@@ -1,11 +1,11 @@
 #include "Task.h"
 
+#include "../stuff/NetworkManager.h"
 #include "Course.h"
 #include "Section.h"
 
 Task::Task() :
-    CourseNode(CourseNode::Type::TASK),
-    m_id(0), m_score(0), m_section(nullptr)
+    CourseNode(CourseNode::Type::TASK)
 {
 }
 
@@ -13,84 +13,94 @@ Task::~Task()
 {
 }
 
-void Task::setId(unsigned int id)
+void Task::setId(size_t id)
 {
-    m_id = id;
+    m_data.id = id;
 }
 
-unsigned int Task::getId() const
+size_t Task::getId() const
 {
-    return m_id;
+    return m_data.id;
 }
 
 void Task::setName(const QString& name)
 {
-    m_name = name;
+    m_data.name = name;
 }
 
 QString Task::getName() const
 {
-    return m_name;
+    return m_data.name;
 }
 
 void Task::setText(const QString& text)
 {
-    m_text = text;
+    m_data.text = text;
 }
 
 QString Task::getText() const
 {
-    return m_text;
+    return m_data.text;
 }
 
 void Task::setInputData(const QString& text)
 {
-    m_inputData = text;
+    m_data.inputData = text;
 }
 
 QString Task::getInputData() const
 {
-    return m_inputData;
+    return m_data.inputData;
 }
 
 void Task::setOutputData(const QString& text)
 {
-    m_outputData = text;
+    m_data.outputData = text;
 }
 
 QString Task::getOutputData() const
 {
-    return m_outputData;
+    return m_data.outputData;
 }
 
 void Task::setSource(const QString& source)
 {
-    m_source = source;
+    m_data.source = source;
 }
 
 QString Task::getSource() const
 {
-    return m_source;
+    return m_data.source;
 }
 
 void Task::setScore(size_t score)
 {
-    m_score = score;
+    m_data.score = score;
 }
 
 size_t Task::getScore() const
 {
-    return m_score;
+    return m_data.score;
 }
 
 void Task::setSection(Section* section)
 {
-    m_section = section;
+    m_data.section = section;
 }
 
 Section* Task::getSection()
 {
-    return m_section;
+    return m_data.section;
+}
+
+void Task::setData(const Task::Data& data)
+{
+    m_data = data;
+}
+
+Task::Data Task::getData() const
+{
+    return m_data;
 }
 
 void Task::addTest(std::unique_ptr<Test> test)
@@ -132,4 +142,108 @@ int Task::getTestIndex(const Test* test) const
 size_t Task::getTestCount() const
 {
     return m_tests.size();
+}
+
+void Task::dbCreate(const Task::Data& data, std::function<void (std::unique_ptr<Task>)> callback)
+{
+    if (data.section == nullptr) {
+        return;
+    }
+    
+    std::vector<QString> arguments = {
+        data.name,
+        data.text,
+        data.inputData,
+        data.outputData,
+        data.source,
+        QString::number(data.score),
+        QString::number(data.section->getId())
+    };
+    
+    QString query = Query::create("INSERT INTO task_c (task_c_name, task_c_text, task_c_input, "
+                                  "task_c_output, task_c_source, task_c_score, section_id) "
+                                  "VALUES ('@@','@@','@@','@@','@@',@@,@@) RETURNING rowid", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
+        {"sql_operator", query}
+    }), [data, callback](const Response& response)
+    {        
+        std::unique_ptr<Task> task = std::make_unique<Task>();
+        task->setData(data);
+        
+        callback(std::move(task));
+    });
+}
+
+void Task::dbUpdate(Task* task, const Task::Data& data, std::function<void ()> callback)
+{
+    if (task == nullptr || data.section == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = task->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        data.name,
+        data.text,
+        data.inputData,
+        data.outputData,
+        data.source,
+        QString::number(data.score),
+        QString::number(data.section->getId()),
+        QString::number(task->getId())
+    };
+    
+    QString query = Query::create("UPDATE task_c SET task_c_name='@@', task_c_text='@@', "
+                                  "task_c_input='@@', task_c_output='@@', task_c_source='@@', "
+                                  "task_c_score=@@, section_id=@@ WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_edit", {
+        {"sql_operator", query}
+    }), [task, deletionMark, data, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        task->setData(data);
+        
+        callback();
+    });
+}
+
+void Task::dbDelete(Task* task, std::function<void ()> callback)
+{
+    if (task == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = task->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        QString::number(task->getId())
+    };
+    QString query = Query::create("DELETE FROM task_c WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_delete", {
+        {"sql_operator", query}
+    }), [deletionMark, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        callback();
+    });
+}
+
+
+Task::Data::Data() :
+    id(0), score(0), section(nullptr)
+{
+}
+
+Task::Data::Data(const QString& name, Section* section) :
+    id(0), name(name), section(section)
+{
 }

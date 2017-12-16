@@ -9,19 +9,35 @@
 #include "CourseNode.h"
 #include "Test.h"
 
-#include "../stuff/Deletable.h"
-
 class Course;
 class Section;
 
-class Task : public CourseNode, public Deletable
+class Task : public CourseNode
 {
 public:
+    struct Data
+    {
+        Data();
+        Data(const QString& name, Section* section);
+        
+        size_t id;
+        
+        QString name;
+        QString text;
+        QString inputData;
+        QString outputData;
+        QString source;
+        
+        size_t score;
+        
+        Section* section;
+    };
+    
     Task();
     ~Task();
     
-    void setId(unsigned int id);
-    unsigned int getId() const;
+    void setId(size_t id);
+    size_t getId() const;
     
     void setName(const QString& name);
     QString getName() const;
@@ -44,6 +60,9 @@ public:
     void setSection(Section* section);
     Section* getSection();
     
+    void setData(const Data& data);
+    Data getData() const;    
+    
     
     void addTest(std::unique_ptr<Test> test);
     void removeTest(const Test* test);
@@ -51,18 +70,12 @@ public:
     int getTestIndex(const Test* test) const;
     size_t getTestCount() const;
     
+    static void dbCreate(const Data& data, std::function<void(std::unique_ptr<Task>)> callback);
+    static void dbUpdate(Task* task,const Data& data, std::function<void()> callback);
+    static void dbDelete(Task* task, std::function<void()> callback);
+    
 private:
-    unsigned int m_id;
-    
-    QString m_name;
-    QString m_text;
-    QString m_inputData;
-    QString m_outputData;
-    QString m_source;
-    
-    size_t m_score;
-    
-    Section* m_section;
+    Data m_data;
     
     std::vector<std::unique_ptr<Test>> m_tests;
 };

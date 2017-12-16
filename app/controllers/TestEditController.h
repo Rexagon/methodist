@@ -12,6 +12,7 @@ public:
     TestEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~TestEditController();
     
+    void saveChanges();
     void propose() override;
     
 public slots:

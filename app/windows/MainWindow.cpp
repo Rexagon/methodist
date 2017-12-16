@@ -32,11 +32,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_taskEditController = std::make_unique<TaskEditController>(m_ui.get(), this);
     m_testEditController = std::make_unique<TestEditController>(m_ui.get(), this);
     m_testsTableController = std::make_unique<TestsTableController>(m_ui.get(), this);
-    
-    // Actions: side menu
-    connect(m_sideMenuController.get(), &SideMenuController::coursesRefreshed, this, [this]() {
-       ModelManager::update(); 
-    });
+  
     
     // Actions: select elements
     connect(m_sideMenuController.get(), &SideMenuController::courseSelected, this, [this](Course* course) {
@@ -48,7 +44,7 @@ MainWindow::MainWindow(QWidget* parent) :
     });
     
     connect(m_testsTableController.get(), &TestsTableController::testSelected, this, [this](Test* test) {
-       m_testEditController->setTest(test); 
+       m_infoPanelController->setCourseNode(test); 
     });
 
     // Actions: add elements
@@ -58,13 +54,17 @@ MainWindow::MainWindow(QWidget* parent) :
     
     connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, &MainWindow::addTask);
     
-    connect(m_testsTableController.get(), &TestsTableController::addTestButtonPressed, this, &MainWindow::addTest);
+    connect(m_infoPanelController.get(), &InfoPanelController::addTestButtonPressed, this, &MainWindow::addTest);
     
     // Actions: info panel ui logic
     connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, &MainWindow::editNode);
     
     connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, &MainWindow::deleteNode);
 
+    connect(m_infoPanelController.get(), &InfoPanelController::exitNodeButtonPressed, this, [this]() {
+       m_taskEditController->propose();
+    });
+    
     // Actions: save edit
     connect(m_courseEditController.get(), &CourseEditController::changesSaved, this, [this]() {
         m_courseEditController->saveChanges();
@@ -84,29 +84,28 @@ MainWindow::MainWindow(QWidget* parent) :
     // Actions: cancel edit
     connect(m_courseEditController.get(), &CourseEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
+        m_courseTreeController->propose();
     });
     
     connect(m_sectionEditController.get(), &SectionEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
+        m_courseTreeController->propose();
     });
 
     connect(m_taskEditController.get(), &TaskEditController::changesCanceled, this, [this]() {
         m_infoPanelController->propose();
+        m_courseTreeController->propose();
     });
 
     connect(m_testEditController.get(), &TestEditController::changesCanceled, this, [this]() {
-       m_testsTableController->propose();
+        m_infoPanelController->propose();
     });
 
-    
+    // Actions: task edit ui logic
     connect(m_taskEditController.get(), &TaskEditController::testsOpened, this, [this]() {
-       m_testsTableController->setTask(m_taskEditController->getCurrentTask()); 
+        m_testsTableController->setTask(m_taskEditController->getCurrentTask());
     });
-    
-    connect(m_testsTableController.get(), &TestsTableController::backButtonPressed, this, [this]() {
-       m_taskEditController->propose(); 
-    });
-    
+        
     
     Log::write("Controllers initialization finished");
     
@@ -124,26 +123,15 @@ void MainWindow::addCourse()
 {
     CoursesListModel* model = ModelManager::getCoursesListModel();
     
-    QString courseName = "Новый курс " + QString::number(model->getCourseCount() + 1);
+    Course::Data courseData("Новый курс " + QString::number(model->getCourseCount() + 1));
     
-    QString query = "INSERT INTO course (course_name) VALUES ('" + courseName + "')";
-    query += " RETURNING rowid";
-    
-    NetworkManager::send(Request(SQL_OPERATOR, "course_add", {
-        {"sql_operator", query}
-    }), [this, model, courseName](const Response& response)
-    {
-        qDebug() << response.getRowCount();
-        
-        std::unique_ptr<Course> course = std::make_unique<Course>();       
+    Course::dbCreate(courseData, [this, model](std::unique_ptr<Course> course) {
         Course* coursePtr = course.get();
-        course->setName(courseName);
-        
         model->addCourse(std::move(course));
         
         m_sideMenuController->selectCourse(coursePtr);
-        m_courseEditController->setCourse(coursePtr); 
-    });
+        m_courseEditController->setCourse(coursePtr);  
+    });  
 }
 
 void MainWindow::addSection()
@@ -155,30 +143,22 @@ void MainWindow::addSection()
     
     CourseNode::Type nodeType = node->getType();
     
-    QString sectionName;
-    QString query = "INSERT INTO section ";
+    Section::Data sectionData;
     
     if (nodeType == CourseNode::Type::COURSE) {
         Course* course = reinterpret_cast<Course*>(node);
-        sectionName = "Новый раздел " + QString::number(course->getSectionCount() + 1);
-        query += "(course_id, section_name) VALUES ("+QString::number(course->getId())+",'"+sectionName +"')";
+        sectionData.name = "Новый раздел " + QString::number(course->getSectionCount() + 1);
+        sectionData.course = course;
     }
     else {
         Section* section = reinterpret_cast<Section*>(node);
-        sectionName = "Новый подраздел " + QString::number(section->getSubsectionCount() + 1);
-        query += "(course_id, section_name, parent_section_id) VALUES ("+QString::number(section->getCourse()->getId())+",'"+sectionName +"',"+
-                QString::number(section->getId()) + ")";
+        sectionData.name = "Новый подраздел " + QString::number(section->getSubsectionCount() + 1);
+        sectionData.course = section->getCourse();
+        sectionData.parentSection = section;
     }
     
-    //query += " RETURNING rowid";
-    
-    NetworkManager::send(Request(SQL_OPERATOR, "section_add", {
-        {"sql_operator", query}
-    }), [this, node, nodeType, sectionName](const Response& response)
-    {
-        std::unique_ptr<Section> section = std::make_unique<Section>();
+    Section::dbCreate(sectionData, [this, node, nodeType](std::unique_ptr<Section> section) {
         Section* sectionPtr = section.get();
-        section->setName(sectionName);
         
         if (nodeType == CourseNode::Type::COURSE) {
             reinterpret_cast<Course*>(node)->addSection(std::move(section));
@@ -202,18 +182,12 @@ void MainWindow::addTask()
     
     Section* section = reinterpret_cast<Section*>(node);
     
-    QString taskName = "Новая задача " + QString::number(section->getTaskCount() + 1);
+    Task::Data taskData;
+    taskData.name = "Новая задача " + QString::number(section->getTaskCount() + 1);
+    taskData.section = section;
     
-    QString query = "INSERT INTO task_c (task_c_name, section_id) VALUES ('" + taskName + "', " + QString::number(section->getId()) + ")";
-    //query += " RETURNING rowid";
-    
-    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
-        {"sql_operator", query}
-    }), [this, section, taskName](const Response& response)
-    {
-        std::unique_ptr<Task> task = std::make_unique<Task>();
-        Task* taskPtr = task.get();
-        task->setName(taskName);
+    Task::dbCreate(taskData, [this, section](std::unique_ptr<Task> task) {
+        Task* taskPtr = task.get();;
         
         section->addTask(std::move(task));
         
@@ -230,19 +204,11 @@ void MainWindow::addTest()
         return;
     }
     
-    QString query = "INSERT INTO test_c (test_c_score, is_required, is_sample, task_c_id) VALUES "
-                    "(0, FALSE, FALSE, " + QString::number(task->getId()) + ") "
-                    "RETURNING rowid";
+    Test::Data testData;
+    testData.task = task;
     
-    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
-        {"sql_operator", query}
-    }), [this, task](const Response& response)
-    {
-        Log::write(response.getRowCount());
-        
-        std::unique_ptr<Test> test = std::make_unique<Test>();
+    Test::dbCreate(testData, [this, task](std::unique_ptr<Test> test) {
         Test* testPtr = test.get();
-        
         task->addTest(std::move(test));
         
         ModelManager::getTestsTableModel(task)->update();
@@ -270,6 +236,10 @@ void MainWindow::editNode()
     case CourseNode::Type::TASK:
         m_taskEditController->setTask(reinterpret_cast<Task*>(node));
         break;
+        
+    case Course::Type::TEST:
+        m_testEditController->setTest(reinterpret_cast<Test*>(node));
+        break;
     }
 }
 
@@ -286,10 +256,7 @@ void MainWindow::deleteNode()
     switch (type) {
         case CourseNode::Type::COURSE:
         {
-            NetworkManager::send(Request(SQL_OPERATOR, "course_delete", {
-                {"sql_operator", "DELETE FROM course WHERE rowid=" + QString::number(currentCourse->getId())}
-            }), [this, currentCourse](const Response& response)
-            {
+            Course::dbDelete(currentCourse, [this, currentCourse]() {
                 ModelManager::getCoursesListModel()->removeCourse(currentCourse);
                 m_sideMenuController->deselectAll();
                 m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
@@ -302,10 +269,7 @@ void MainWindow::deleteNode()
         {
             Section* section = reinterpret_cast<Section*>(node);
 
-            NetworkManager::send(Request(SQL_OPERATOR, "section_delete", {
-                {"sql_operator", "DELETE FROM section WHERE rowid=" + QString::number(section->getId())}
-            }), [this, section, currentCourse](const Response& response)
-            {
+            Section::dbDelete(section, [this, section, currentCourse]() {
                 CourseNode* parent = section->getParent();
 
                 m_courseTreeController->selectCourseNode(parent);
@@ -326,10 +290,7 @@ void MainWindow::deleteNode()
         {
             Task* task = reinterpret_cast<Task*>(node);
 
-            NetworkManager::send(Request(SQL_OPERATOR, "task_delete", {
-                {"sql_operator", "DELETE FROM task_c WHERE rowid=" + QString::number(task->getId())}
-            }), [this, task, currentCourse](const Response& response)
-            {
+            Task::dbDelete(task, [this, task, currentCourse]() {
                 Section* parent = task->getSection();
 
                 m_courseTreeController->selectCourseNode(parent);
@@ -339,6 +300,23 @@ void MainWindow::deleteNode()
                 ModelManager::getCourseTreeModel(currentCourse)->update();
             });
 
+            break;
+        }
+        
+        case CourseNode::Type::TEST:
+        {
+            Test* test = reinterpret_cast<Test*>(node);
+            
+            Test::dbDelete(test, [this, test, currentCourse]() {
+               Task* parent = test->getTask();
+               
+               m_testsTableController->deselectAll();
+               
+               parent->removeTest(test);
+               
+               ModelManager::getTestsTableModel(parent)->update();
+            });
+        
             break;
         }
     }

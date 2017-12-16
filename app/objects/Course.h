@@ -1,22 +1,36 @@
 #ifndef COURSE_H
 #define COURSE_H
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 #include "CourseNode.h"
 #include "Section.h"
 
-#include "../stuff/Deletable.h"
-
-class Course : public CourseNode, public Deletable
+class Course : public CourseNode
 {
 public:
+    struct Data
+    {
+        Data();
+        Data(const QString &name, size_t lectureHourCount = 0, size_t practiceHourCount = 0, size_t laboratoryHourCount = 0);
+        Data(size_t id, const QString &name, size_t lectureHourCount = 0, size_t practiceHourCount = 0, size_t laboratoryHourCount = 0);
+        
+        size_t id;
+        
+        QString name;
+        
+        size_t lectureHourCount;
+        size_t practiceHourCount;
+        size_t laboratoryHourCount;
+    };
+    
     Course();
     ~Course();
 
-    void setId(unsigned int id);
-    unsigned int getId() const;
+    void setId(size_t id);
+    size_t getId() const;
     
     void setName(const QString& name);
     QString getName() const;
@@ -30,8 +44,8 @@ public:
     void setLaboratoryHourCount(size_t n);
     size_t getLaboratoryHourCount() const;
     
-    void setCreator(const QString& creator);
-    QString getCreator() const;
+    void setData(const Data& data);
+    Data getData() const;
     
     
     void addSection(std::unique_ptr<Section> section);
@@ -40,16 +54,12 @@ public:
     int getSectionIndex(const Section* section);
     size_t getSectionCount() const;
     
+    static void dbCreate(const Data& data, std::function<void(std::unique_ptr<Course>)> callback);
+    static void dbUpdate(Course* course,const Data& data, std::function<void()> callback);
+    static void dbDelete(Course* course, std::function<void()> callback);
+    
 private:
-    unsigned int m_id;
-    
-    QString m_name;
-    
-    size_t m_lectureHourCount;
-    size_t m_practiceHourCount;
-    size_t m_laboratoryHourCount;
-    
-    QString m_creator;
+    Data m_data;
     
     std::vector<std::unique_ptr<Section>> m_sections;
 };

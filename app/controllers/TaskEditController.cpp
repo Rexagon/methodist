@@ -32,37 +32,16 @@ void TaskEditController::saveChanges()
     }
     
     Task* task = m_currentTask;
-    DeletionMark deletionMark = task->getDeletionMark();
     
-    QString name = m_ui->taskEditName->toPlainText();
-    size_t score = m_ui->taskEditScore->value();
-    QString text = m_ui->taskEditText->toHtml();
-    QString inputData = m_ui->taskEditInputData->toHtml();
-    QString outputData = m_ui->taskEditOutputData->toHtml();
-    QString source = m_ui->taskEditSource->toHtml();
+    Task::Data taskData = task->getData();
+    taskData.name = m_ui->taskEditName->toPlainText();
+    taskData.text = m_ui->taskEditText->toHtml();
+    taskData.inputData = m_ui->taskEditInputData->toHtml();
+    taskData.outputData = m_ui->taskEditOutputData->toHtml();
+    taskData.source = m_ui->taskEditSource->toHtml();
+    taskData.score = m_ui->taskEditScore->value();
     
-    QString query = Query::create("UPDATE task_c SET "
-                                  "task_c_name='??', task_c_score=??, task_c_text='??', task_c_input='??', task_c_output='??', task_c_source='??' WHERE rowid=??", {
-                                      name, QString::number(score), text, inputData, outputData, source, QString::number(task->getId())
-                                  });
-    
-    NetworkManager::send(Request(SQL_OPERATOR, "task_edit", {
-        {"sql_operator", query}
-    }), [this, task, deletionMark, name, score, text, inputData, outputData, source](const Response& response)
-    {
-        if (*deletionMark == true) {
-            return;
-        }
-        
-        task->setName(name);
-        task->setScore(score);
-        task->setText(text);
-        task->setInputData(inputData);
-        task->setOutputData(outputData);
-        task->setSource(source);
-        
-        qDebug() << response.getError();
-        
+    Task::dbUpdate(task, taskData, [this, task]() {
         ModelManager::getCourseTreeModel(task->getSection()->getCourse())->update();
     });
 }

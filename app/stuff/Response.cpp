@@ -19,8 +19,6 @@ Response::Response(const QString& message)
     if (xmlData.size() != 0) {
         QDomDocument data("XML");
         data.setContent(xmlData.at(0).firstChild().nodeValue());
-        
-        //qDebug() << data.toString();
                 
         QDomNodeList rowsData = data.firstChild().childNodes();
         for (int i = 0; i < rowsData.size(); ++i) {

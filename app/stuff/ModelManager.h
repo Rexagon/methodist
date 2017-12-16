@@ -8,10 +8,6 @@
 #include "../models/TestsTableModel.h"
 #include "../models/SamplesTableModel.h"
 
-//NOTE: It's a temp class which provides access to models for all
-//      controllers. Later it will be transformed into class, which
-//      synchronize models with server
-
 class ModelManager
 {
 public:
@@ -26,6 +22,8 @@ public:
     static SamplesTableModel* getSamplesTableModel();
     
 private:
+    static void exitSynchronizationLoop();
+    
     static QObject* m_parent;
     
     static std::unique_ptr<CoursesListModel> m_coursesListModel;
@@ -33,7 +31,7 @@ private:
     static std::unique_ptr<TestsTableModel> m_testsTableModel;
     static std::unique_ptr<SamplesTableModel> m_samplesTableModel;
     
-    static QEventLoop m_synchronizationLoop;
+    static std::unique_ptr<QEventLoop> m_synchronizationLoop;
 };
 
 #endif // MODELMANAGER_H

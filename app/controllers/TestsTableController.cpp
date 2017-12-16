@@ -16,10 +16,6 @@ TestsTableController::TestsTableController(Ui::MainWindow* ui, QObject* parent) 
             emit testSelected(test);
         }
     });
-    
-    connect(m_ui->addTestButton, &QPushButton::pressed, this, &TestsTableController::addTestButtonPressed);
-    
-    connect(m_ui->closeTestsButton, &QPushButton::pressed, this, &TestsTableController::backButtonPressed);
 }
 
 TestsTableController::~TestsTableController()
@@ -31,7 +27,14 @@ void TestsTableController::propose()
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_COURSE);
     m_ui->workspace->setCurrentIndex(WORKSPACE_TESTS);
     m_ui->infoPanelPages->setCurrentIndex(INFO_PANEL_EMPTY);
-    m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_TESTS_TABLE);
+    m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_DEFAULT);
+    
+    m_ui->addSectionButton->setVisible(false);
+    m_ui->addTaskButton->setVisible(false);
+    m_ui->addTestButton->setVisible(true);
+    m_ui->editNodeButton->setVisible(false);
+    m_ui->deleteNodeButton->setVisible(false);
+    m_ui->exitNodeButton->setVisible(true);
 }
 
 Task* TestsTableController::getCurrentTask()
@@ -69,6 +72,9 @@ void TestsTableController::selectTest(Test* test)
                 QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
         
         emit testSelected(test);
+    }
+    else {
+        deselectAll();
     }
 }
 

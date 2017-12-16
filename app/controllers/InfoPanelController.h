@@ -22,8 +22,10 @@ public slots:
 signals:
     void addTaskButtonPressed();
     void addSectionButtonPressed();
+    void addTestButtonPressed();
     void editNodeButtonPressed();
     void deleteNodeButtonPressed();
+    void exitNodeButtonPressed();
     
 private:
     void setVisible(bool visible);

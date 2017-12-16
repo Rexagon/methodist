@@ -65,6 +65,7 @@ void SamplesTableModel::fill(Task* task)
 {
     m_samples.clear();
     if (task == nullptr) {
+        emit layoutChanged();
         return;
     }
     

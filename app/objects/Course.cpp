@@ -1,8 +1,9 @@
 #include "Course.h"
 
+#include "../stuff/NetworkManager.h"
+
 Course::Course() :
-    CourseNode(CourseNode::Type::COURSE),
-    m_id(0), m_lectureHourCount(0), m_practiceHourCount(0)
+    CourseNode(CourseNode::Type::COURSE)
 {
 }
 
@@ -11,64 +12,64 @@ Course::~Course()
     m_sections.clear();
 }
 
-void Course::setId(unsigned int id)
+void Course::setId(size_t id)
 {
-    m_id = id;
+    m_data.id = id;
 }
 
-unsigned int Course::getId() const
+size_t Course::getId() const
 {
-    return m_id;
+    return m_data.id;
 }
 
 void Course::setName(const QString& name)
 {
-    m_name = name;
+    m_data.name = name;
 }
 
 QString Course::getName() const
 {
-    return m_name;
+    return m_data.name;
 }
 
 void Course::setLectureHourCount(size_t n)
 {
-    m_lectureHourCount = n;
+    m_data.lectureHourCount = n;
 }
 
 size_t Course::getLectureHourCount() const
 {
-    return m_lectureHourCount;
+    return m_data.lectureHourCount;
 }
 
 void Course::setPracticeHourCount(size_t n)
 {
-    m_practiceHourCount = n;
+    m_data.practiceHourCount = n;
 }
 
 size_t Course::getPracticeHourCount() const
 {
-    return m_practiceHourCount;
+    return m_data.practiceHourCount;
 }
 
 void Course::setLaboratoryHourCount(size_t n)
 {
-    m_laboratoryHourCount = n;
+    m_data.laboratoryHourCount = n;
 }
 
 size_t Course::getLaboratoryHourCount() const
 {
-    return m_laboratoryHourCount;
+    return m_data.laboratoryHourCount;
 }
 
-void Course::setCreator(const QString& creator)
+void Course::setData(const Course::Data& data)
 {
-    m_creator = creator;
+    m_data = data;
 }
 
-QString Course::getCreator() const
+Course::Data Course::getData() const
 {
-    return m_creator;
+    return m_data;
 }
 
 void Course::addSection(std::unique_ptr<Section> section)
@@ -112,4 +113,106 @@ int Course::getSectionIndex(const Section* section)
 size_t Course::getSectionCount() const
 {
     return m_sections.size();
+}
+
+void Course::dbCreate(const Course::Data& data, std::function<void (std::unique_ptr<Course>)> callback)
+{
+    std::vector<QString> arguments = {
+        data.name, 
+        QString::number(data.lectureHourCount), 
+        QString::number(data.practiceHourCount),
+        QString::number(data.laboratoryHourCount)
+    };
+    
+    QString query = Query::create("INSERT INTO course (course_name, lecture_hours, practice_hours, laboratory_hours) "
+                                  "VALUES ('@@', @@, @@, @@) RETURNING rowid", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_add", {
+        {"sql_operator", query}
+    }), [data, callback](const Response& response)
+    {
+        qDebug() << response.getRowCount() << "|";
+        qDebug() << response.getRow(0).get("rowid").asUInt();
+        
+        std::unique_ptr<Course> course = std::make_unique<Course>();
+        course->setData(data);
+        
+        callback(std::move(course));
+    });
+}
+
+void Course::dbUpdate(Course* course, const Course::Data& data, std::function<void()> callback)
+{
+    if (course == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = course->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        data.name, 
+        QString::number(data.lectureHourCount), 
+        QString::number(data.practiceHourCount),
+        QString::number(data.laboratoryHourCount),
+        QString::number(data.id)
+    };
+    
+    QString query = Query::create("UPDATE course SET course_name='@@', lecture_hours=@@, practice_hours=@@, "
+                                  "laboratory_hours=@@ WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_edit", {
+        {"sql_operator", query}
+    }), [course, deletionMark, data, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        course->setData(data);
+        
+        callback();
+    });
+}
+
+void Course::dbDelete(Course* course, std::function<void ()> callback)
+{
+    if (course == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = course->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        QString::number(course->getId())
+    };
+    QString query = Query::create("DELETE FROM course WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "course_delete", {
+        {"sql_operator", query}
+    }), [deletionMark, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        callback();
+    });
+}
+
+
+Course::Data::Data() :
+    id(0), lectureHourCount(0), practiceHourCount(0), laboratoryHourCount(0)
+{
+}
+
+Course::Data::Data(const QString& name, size_t lectureHourCount, size_t practiceHourCount, size_t laboratoryHourCount) :
+    id(0), name(name), lectureHourCount(lectureHourCount), practiceHourCount(practiceHourCount), 
+    laboratoryHourCount(laboratoryHourCount)
+{
+}
+
+Course::Data::Data(size_t id, const QString& name, size_t lectureHourCount, size_t practiceHourCount, size_t laboratoryHourCount) :
+    id(id), name(name), lectureHourCount(lectureHourCount), practiceHourCount(practiceHourCount), 
+    laboratoryHourCount(laboratoryHourCount)
+{
 }

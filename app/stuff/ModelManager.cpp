@@ -11,7 +11,7 @@ std::unique_ptr<CoursesListModel> ModelManager::m_coursesListModel = nullptr;
 std::unique_ptr<CourseTreeModel> ModelManager::m_courseTreeModel = nullptr;
 std::unique_ptr<TestsTableModel> ModelManager::m_testsTableModel = nullptr;
 std::unique_ptr<SamplesTableModel> ModelManager::m_samplesTableModel = nullptr;
-QEventLoop ModelManager::m_synchronizationLoop;
+std::unique_ptr<QEventLoop> ModelManager::m_synchronizationLoop;
 
 // HELPER STRUCTS
 struct CourseData;
@@ -214,7 +214,7 @@ void ModelManager::update()
     
     Async::parallel(requests, [&coursesData, &sectionsData, &tasksData, &testsData](const Async::Error& error) {        
         if (!error.isNull()) {
-            m_synchronizationLoop.exit();
+            exitSynchronizationLoop();
             throw std::runtime_error(error.getMessage());
         }
         
@@ -286,10 +286,11 @@ void ModelManager::update()
             m_coursesListModel->addCourse(std::move(it.second.object));
         }
         
-        m_synchronizationLoop.exit();
+        exitSynchronizationLoop();
     });
     
-    m_synchronizationLoop.exec();
+    m_synchronizationLoop = std::make_unique<QEventLoop>();
+    m_synchronizationLoop->exec();
 }
 
 CoursesListModel* ModelManager::getCoursesListModel()
@@ -328,4 +329,12 @@ SamplesTableModel* ModelManager::getSamplesTableModel()
     }
     
     return m_samplesTableModel.get();
+}
+
+void ModelManager::exitSynchronizationLoop()
+{
+    if (m_synchronizationLoop != nullptr && m_synchronizationLoop->isRunning()) {
+        m_synchronizationLoop->exit();
+        m_synchronizationLoop.reset();
+    }
 }

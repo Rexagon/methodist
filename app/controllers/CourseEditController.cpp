@@ -23,33 +23,15 @@ void CourseEditController::saveChanges()
     }
     
     Course* course = m_currentCourse;
-    DeletionMark deletionMark = course->getDeletionMark();
     
-    QString name = m_ui->courseEditName->toPlainText();
-    size_t lectureHours = m_ui->courseEditLectureHours->value();
-    size_t practiceHours = m_ui->courseEditPracticeHours->value();
-    size_t laboratoryHours = m_ui->courseEditLaboratoryHours->value();
+    Course::Data courseData = course->getData();
     
-    QString query = "UPDATE course SET "
-                    "course_name='" + name + "', "
-                    "lecture_hours=" + QString::number(lectureHours) + ", "
-                    "practice_hours=" + QString::number(practiceHours) + ", "
-                    "laboratory_hours=" + QString::number(laboratoryHours) + " "
-                    "WHERE rowid=" + QString::number(course->getId());
+    courseData.name = m_ui->courseEditName->toPlainText();
+    courseData.lectureHourCount = m_ui->courseEditLectureHours->value();
+    courseData.practiceHourCount = m_ui->courseEditPracticeHours->value();
+    courseData.laboratoryHourCount = m_ui->courseEditLaboratoryHours->value();
     
-    NetworkManager::send(Request(SQL_OPERATOR, "course_edit", {
-        {"sql_operator", query}
-    }), [this, course, deletionMark, name, lectureHours, practiceHours, laboratoryHours](const Response& response)
-    {
-        if (*deletionMark == true) {
-            return;
-        }
-        
-        course->setName(name);
-        course->setLectureHourCount(lectureHours);
-        course->setPracticeHourCount(practiceHours);
-        course->setLaboratoryHourCount(laboratoryHours);
-        
+    Course::dbUpdate(course, courseData, [this, course]() {
         ModelManager::getCoursesListModel()->update();
         ModelManager::getCourseTreeModel(course)->update();
     });

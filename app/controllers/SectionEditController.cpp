@@ -23,24 +23,12 @@ void SectionEditController::saveChanges()
     }
     
     Section* section = m_currentSection;
-    DeletionMark deletionMark = section->getDeletionMark();
     
-    QString name = m_ui->sectionEditName->toPlainText();
+    Section::Data sectionData = section->getData();
     
-    QString query = "UPDATE section SET "
-                    "section_name='" + name + "' "
-                    "WHERE rowid=" + QString::number(section->getId());
+    sectionData.name = m_ui->sectionEditName->toPlainText();
     
-    NetworkManager::send(Request(SQL_OPERATOR, "section_edit", {
-        {"sql_operator", query}
-    }), [this, section, deletionMark, name](const Response& response)
-    {
-        if (*deletionMark == true) {
-            return;
-        }
-        
-        section->setName(name);
-        
+    Section::dbUpdate(section, sectionData, [this, section]() {
         ModelManager::getCourseTreeModel(section->getCourse())->update();
     });
 }

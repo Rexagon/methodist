@@ -2,6 +2,9 @@
 
 #include <ui_MainWindow.h>
 
+#include "../stuff/ModelManager.h"
+#include "../stuff/NetworkManager.h"
+
 TestEditController::TestEditController(Ui::MainWindow* ui, QObject* parent) :
     Controller(ui, parent), m_currentTest(nullptr)
 {
@@ -11,6 +14,27 @@ TestEditController::TestEditController(Ui::MainWindow* ui, QObject* parent) :
 
 TestEditController::~TestEditController()
 {
+}
+
+void TestEditController::saveChanges()
+{
+    if (m_currentTest == nullptr) {
+        return;
+    }
+    
+    Test* test = m_currentTest;
+    
+    Test::Data testData = test->getData();
+    testData.inputData = m_ui->testEditInputData->toPlainText();
+    testData.outputData = m_ui->testEditOutputData->toPlainText();
+    testData.score = m_ui->testEditScore->value();
+    testData.isRequired = m_ui->testEditRequired->isChecked();
+    testData.isSample = m_ui->testEditSample->isChecked();
+    
+    Test::dbUpdate(test, testData, [this, test]() {
+        ModelManager::getSamplesTableModel()->fill(test->getTask());
+        ModelManager::getTestsTableModel(test->getTask())->update();
+    });
 }
 
 void TestEditController::propose()

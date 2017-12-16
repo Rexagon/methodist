@@ -1,20 +1,40 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include <functional>
+
 #include <QString>
 
-#include "../stuff/Deletable.h"
+#include "CourseNode.h"
 
 class Task;
 
-class Test : public Deletable
+class Test : public CourseNode
 {
 public:
+    struct Data
+    {
+        Data();
+        Data(const QString& inputData, const QString& outputData, 
+             size_t score, bool isRequired, bool isSample, Task* task);
+        
+        size_t id;
+        
+        QString inputData;
+        QString outputData;
+    
+        size_t score;
+        bool isRequired;
+        bool isSample;
+        
+        Task* task;
+    };
+    
     Test();
     ~Test();
     
-    void setId(unsigned int id);
-    unsigned int getId() const;
+    void setId(size_t id);
+    size_t getId() const;
     
     void setInputData(const QString& data);
     QString getInputData() const;
@@ -34,17 +54,15 @@ public:
     void setTask(Task* task);
     Task* getTask() const;
     
+    void setData(Data data);
+    Data getData() const;
+    
+    static void dbCreate(const Data& data, std::function<void(std::unique_ptr<Test>)> callback);
+    static void dbUpdate(Test* test,const Data& data, std::function<void()> callback);
+    static void dbDelete(Test* test, std::function<void()> callback);
+    
 private:
-    unsigned int m_id;
-    
-    QString m_inputData;
-    QString m_outputData;
-
-    size_t m_score;
-    bool m_isRequired;
-    bool m_isSample;
-    
-    Task* m_task;
+    Data m_data;
 };
 
 #endif // TEST_H

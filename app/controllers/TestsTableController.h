@@ -24,8 +24,6 @@ public slots:
     
 signals:
     void testSelected(Test* test);
-    void addTestButtonPressed();
-    void backButtonPressed();
     
 private:
     Task* m_currentTask;

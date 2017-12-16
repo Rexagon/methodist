@@ -18,7 +18,6 @@ public slots:
     
 signals:
     void courseAdded();
-    void coursesRefreshed();
     void courseSelected(Course* course);
 };
 

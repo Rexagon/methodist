@@ -165,24 +165,6 @@ QListView::item:selected {
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="refreshCoursesButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normalon>:/images/reload.png</normalon>
-           </iconset>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="coursesListTitle">
           <property name="font">
@@ -223,12 +205,21 @@ QListView::item:selected {
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>false</bool>
+          </property>
+          <property name="layoutMode">
+           <enum>QListView::Batched</enum>
+          </property>
           <property name="wordWrap">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="3">
          <widget class="QPushButton" name="addCourseButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -849,7 +840,7 @@ QPushButton:pressed {
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">
@@ -1265,6 +1256,13 @@ QPushButton:pressed {
                   </spacer>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="addTestButton">
+                   <property name="text">
+                    <string>Добавить тест</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QPushButton" name="addTaskButton">
                    <property name="text">
                     <string>Добавить задание</string>
@@ -1292,6 +1290,13 @@ QPushButton:pressed {
                   <widget class="QPushButton" name="deleteNodeButton">
                    <property name="text">
                     <string>Удалить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="exitNodeButton">
+                   <property name="text">
+                    <string>Назад</string>
                    </property>
                   </widget>
                  </item>
@@ -1423,37 +1428,6 @@ QPushButton:pressed {
                   <widget class="QPushButton" name="cancelTestChangesButton">
                    <property name="text">
                     <string>Отменить</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="testsTableButtons">
-                <layout class="QVBoxLayout" name="verticalLayout_8">
-                 <item>
-                  <spacer name="verticalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="addTestButton">
-                   <property name="text">
-                    <string>Добавить тест</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="closeTestsButton">
-                   <property name="text">
-                    <string>Назад</string>
                    </property>
                   </widget>
                  </item>
