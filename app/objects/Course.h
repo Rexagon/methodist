@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+#include "../stuff/NetworkManager.h"
 #include "CourseNode.h"
 #include "Section.h"
 
@@ -14,6 +15,7 @@ public:
     struct Data
     {
         Data();
+        Data(const Response::Row& row);
         Data(const QString &name, size_t lectureHourCount = 0, size_t practiceHourCount = 0, size_t laboratoryHourCount = 0);
         Data(size_t id, const QString &name, size_t lectureHourCount = 0, size_t practiceHourCount = 0, size_t laboratoryHourCount = 0);
         

@@ -5,6 +5,7 @@
 
 #include <QString>
 
+#include "../stuff/NetworkManager.h"
 #include "CourseNode.h"
 
 class Task;
@@ -15,6 +16,7 @@ public:
     struct Data
     {
         Data();
+        Data(const Response::Row& row);
         Data(const QString& inputData, const QString& outputData, 
              size_t score, bool isRequired, bool isSample, Task* task);
         

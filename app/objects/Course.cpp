@@ -1,7 +1,5 @@
 #include "Course.h"
 
-#include "../stuff/NetworkManager.h"
-
 Course::Course() :
     CourseNode(CourseNode::Type::COURSE)
 {
@@ -203,6 +201,15 @@ void Course::dbDelete(Course* course, std::function<void ()> callback)
 Course::Data::Data() :
     id(0), lectureHourCount(0), practiceHourCount(0), laboratoryHourCount(0)
 {
+}
+
+Course::Data::Data(const Response::Row& row)
+{
+    id = row.get("rowid").asUInt();
+    name = row.get("course_name").asString();
+    lectureHourCount = row.get("lecture_hours").asUInt();
+    practiceHourCount = row.get("practice_hours").asUInt();
+    laboratoryHourCount = row.get("laboratory_hours").asUInt();
 }
 
 Course::Data::Data(const QString& name, size_t lectureHourCount, size_t practiceHourCount, size_t laboratoryHourCount) :

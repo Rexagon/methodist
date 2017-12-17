@@ -6,6 +6,7 @@
 
 #include <QString>
 
+#include "../stuff/NetworkManager.h"
 #include "CourseNode.h"
 #include "Task.h"
 
@@ -17,6 +18,7 @@ public:
     struct Data
     {
         Data();
+        Data(const Response::Row& row);
         Data(const QString& name, Course* course = nullptr, Section* parentSection = nullptr);
         Data(size_t id, const QString &name, Course* course = nullptr, Section* parentSection = nullptr);
         

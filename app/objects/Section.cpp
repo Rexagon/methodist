@@ -2,7 +2,6 @@
 
 #include <stack>
 
-#include "../stuff/NetworkManager.h"
 #include "Course.h"
 
 Section::Section() :
@@ -267,6 +266,13 @@ void Section::dbDelete(Section* section, std::function<void ()> callback)
 Section::Data::Data() :
     id(0), course(nullptr), parentSection(nullptr)
 {
+}
+
+Section::Data::Data(const Response::Row& row) :
+    course(nullptr), parentSection(nullptr)
+{
+    id = row.get("rowid").asUInt();
+    name = row.get("section_name").asString();
 }
 
 Section::Data::Data(const QString &name, Course* course, Section* parentSection) :

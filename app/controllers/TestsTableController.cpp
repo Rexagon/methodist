@@ -17,9 +17,10 @@ TestsTableController::TestsTableController(Ui::MainWindow* ui, QObject* parent) 
         }
     });
     
-    for (int c = 0; c < m_ui->testsTable->horizontalHeader()->count(); ++c) {
-        ui->testsTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::ResizeToContents);
-    }
+    m_ui->testsTable->resizeColumnsToContents();
+    /*for (int c = 0; c < m_ui->testsTable->horizontalHeader()->count(); ++c) {
+        m_ui->testsTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::ResizeToContents);
+    }*/
 }
 
 TestsTableController::~TestsTableController()

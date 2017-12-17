@@ -104,16 +104,12 @@ void ModelManager::update()
         }), [&coursesData, callback](const Response& courses)
         {
             for (size_t i = 0; i < courses.getRowCount(); ++i) {
-                Response::Row rowData = courses.getRow(i);
+                Response::Row row = courses.getRow(i);
                 
                 CourseData course;
                 
                 course.init();
-                course.object->setId(rowData.get("rowid").asUInt());
-                course.object->setName(rowData.get("course_name").asString());
-                course.object->setLectureHourCount(rowData.get("lecture_hours").asUInt());
-                course.object->setPracticeHourCount(rowData.get("practice_hours").asUInt());
-                course.object->setLaboratoryHourCount(rowData.get("laboratory_hours").asUInt());
+                course.object->setData(Course::Data(row));
                                 
                 coursesData[course.object->getId()] = std::move(course);
             }
@@ -129,17 +125,16 @@ void ModelManager::update()
         }), [&sectionsData, callback](const Response& sections)
         {
             for (size_t i = 0; i < sections.getRowCount(); ++i) {
-                Response::Row rowData = sections.getRow(i);
+                Response::Row row = sections.getRow(i);
                 
                 SectionData section;
                 
                 section.init();
-                section.object->setId(rowData.get("rowid").asUInt());
-                section.object->setName(rowData.get("section_name").asString());
+                section.object->setData(Section::Data(row));
                 
-                section.courseIndex = rowData.get("course_id").asUInt();
+                section.courseIndex = row.get("course_id").asUInt();
                 
-                Response::Cell parentSection = rowData.get("parent_section_id");
+                Response::Cell parentSection = row.get("parent_section_id");
                 section.hasParent = !parentSection.isNull();
                 if (section.hasParent) {
                     section.parentIndex = parentSection.asUInt();
@@ -162,20 +157,14 @@ void ModelManager::update()
         }), [&tasksData, callback](const Response& tasks)
         {
             for (size_t i = 0; i < tasks.getRowCount(); ++i) {
-                Response::Row rowData = tasks.getRow(i);
+                Response::Row row = tasks.getRow(i);
                 
                 TaskData task;
                 
                 task.init();
-                task.object->setId(rowData.get("rowid").asUInt());
-                task.object->setName(rowData.get("task_c_name").asString());
-                task.object->setScore(rowData.get("task_c_score").asUInt());
-                task.object->setText(rowData.get("task_c_text").asString());
-                task.object->setInputData(rowData.get("task_c_input").asString());
-                task.object->setOutputData(rowData.get("task_c_output").asString());
-                task.object->setSource(rowData.get("task_c_source").asString());
+                task.object->setData(Task::Data(row));
                 
-                task.sectionIndex = rowData.get("section_id").asUInt();
+                task.sectionIndex = row.get("section_id").asUInt();
                 
                 tasksData[task.object->getId()] = std::move(task);
             }
@@ -191,19 +180,14 @@ void ModelManager::update()
         }), [&testsData, callback](const Response& tests)
         {
             for (size_t i = 0; i < tests.getRowCount(); ++i) {
-                Response::Row rowData = tests.getRow(i);
+                Response::Row row = tests.getRow(i);
                 
                 TestData test;
                 
                 test.init();
-                test.object->setId(rowData.get("rowid").asUInt());
-                test.object->setInputData(rowData.get("test_c_input_data").asString());
-                test.object->setOutputData(rowData.get("test_c_output_data").asString());
-                test.object->setRequired(rowData.get("is_required").asBool());
-                test.object->setSample(rowData.get("is_sample").asBool());
-                test.object->setScore(rowData.get("test_c_score").asUInt());
+                test.object->setData(Test::Data(row));
                 
-                test.taskIndex = rowData.get("task_c_id").asUInt();
+                test.taskIndex = row.get("task_c_id").asUInt();
                 
                 testsData[test.object->getId()] = std::move(test);
             }

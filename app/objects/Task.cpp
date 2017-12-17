@@ -1,6 +1,5 @@
 #include "Task.h"
 
-#include "../stuff/NetworkManager.h"
 #include "Course.h"
 #include "Section.h"
 
@@ -242,6 +241,18 @@ void Task::dbDelete(Task* task, std::function<void ()> callback)
 Task::Data::Data() :
     id(0), score(0), section(nullptr)
 {
+}
+
+Task::Data::Data(const Response::Row& row) :
+    section(nullptr)
+{
+    id = row.get("rowid").asUInt();
+    name = row.get("task_c_name").asString();
+    score = row.get("task_c_score").asUInt();
+    text = row.get("task_c_text").asString();
+    inputData = row.get("task_c_input").asString();
+    outputData = row.get("task_c_output").asString();
+    source = row.get("task_c_source").asString();
 }
 
 Task::Data::Data(const QString& name, Section* section) :

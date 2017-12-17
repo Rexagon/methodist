@@ -1,6 +1,5 @@
 #include "Test.h"
 
-#include "../stuff/NetworkManager.h"
 #include "Task.h"
 
 Test::Test() :
@@ -190,6 +189,17 @@ Test::Data::Data() :
     id(0), score(0), isRequired(false), isSample(false), task(nullptr)
 {
     
+}
+
+Test::Data::Data(const Response::Row& row) :
+    task(nullptr)
+{
+    id = row.get("rowid").asUInt();
+    inputData = row.get("test_c_input_data").asString();
+    outputData = row.get("test_c_output_data").asString();
+    isRequired = row.get("is_required").asBool();
+    isSample = row.get("is_sample").asBool();
+    score = row.get("test_c_score").asUInt();
 }
 
 Test::Data::Data(const QString& inputData, const QString& outputData, 

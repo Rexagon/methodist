@@ -39,10 +39,10 @@ QVariant TestsTableModel::data(const QModelIndex& index, int role) const
             return test->getOutputData();
 
         case 2:
-            return test->isRequired();
+            return (test->isRequired() ? QString("Да") : QString("Нет"));
             
         case 3:
-            return test->isSample();
+            return (test->isSample() ? QString("Да") : QString("Нет"));
 
         case 4:
             return static_cast<unsigned int>(test->getScore());

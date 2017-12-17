@@ -6,6 +6,7 @@
 
 #include <QString>
 
+#include "../stuff/NetworkManager.h"
 #include "CourseNode.h"
 #include "Test.h"
 
@@ -18,6 +19,7 @@ public:
     struct Data
     {
         Data();
+        Data(const Response::Row& row);
         Data(const QString& name, Section* section);
         
         size_t id;
