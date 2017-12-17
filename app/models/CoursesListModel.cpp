@@ -12,6 +12,9 @@ CoursesListModel::~CoursesListModel()
 
 void CoursesListModel::update()
 {
+    std::stable_sort(m_courses.begin(), m_courses.end(), [](const std::unique_ptr<Course>& a, const std::unique_ptr<Course>& b) {
+        return a->getName() < b->getName(); 
+    });
     emit layoutChanged();
 }
 

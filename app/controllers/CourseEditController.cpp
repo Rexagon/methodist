@@ -40,11 +40,6 @@ void CourseEditController::saveCurrentCourse()
     });
 }
 
-void CourseEditController::deleteCurrentCourse()
-{
-    
-}
-
 void CourseEditController::propose()
 {
     m_ui->infoPanel->setVisible(true);

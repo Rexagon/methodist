@@ -1,6 +1,8 @@
 #ifndef SECTIONEDITCONTROLLER_H
 #define SECTIONEDITCONTROLLER_H
 
+#include <functional>
+
 #include "Controller.h"
 #include "../objects/Section.h"
 
@@ -17,7 +19,6 @@ public:
     bool isEditable() const;
     
     void saveCurrentSection();
-    void deleteCurrentSection();
     
     void setSection(Section* section);
     Section* getCurrentSection() const;

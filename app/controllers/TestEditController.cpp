@@ -41,11 +41,6 @@ void TestEditController::saveCurrentTest()
     });
 }
 
-void TestEditController::deleteCurrentTest()
-{
-    
-}
-
 void TestEditController::propose()
 {
     m_ui->infoPanel->setVisible(true);

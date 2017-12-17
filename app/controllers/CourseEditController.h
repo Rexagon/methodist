@@ -1,6 +1,8 @@
 #ifndef COURSEEDITCONTROLLER_H
 #define COURSEEDITCONTROLLER_H
 
+#include <functional>
+
 #include "Controller.h"
 #include "../objects/Course.h"
 
@@ -17,7 +19,6 @@ public:
     bool isEditable() const;
     
     void saveCurrentCourse();
-    void deleteCurrentCourse();
     
     void setCourse(Course* course);
     Course* getCurrentCourse() const;

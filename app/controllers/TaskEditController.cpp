@@ -48,11 +48,6 @@ void TaskEditController::saveCurrentTask()
     });
 }
 
-void TaskEditController::deleteCurrentTask()
-{
-    
-}
-
 void TaskEditController::propose()
 {
     m_ui->infoPanel->setVisible(true);

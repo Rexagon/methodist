@@ -17,7 +17,6 @@ public:
     bool isEditable() const;
     
     void saveCurrentTest();
-    void deleteCurrentTest();
     
     void setTest(Test* test);
     Test* getCurrentTest() const;

@@ -37,11 +37,6 @@ void SectionEditController::saveCurrentSection()
     });
 }
 
-void SectionEditController::deleteCurrentSection()
-{
-    
-}
-
 void SectionEditController::propose()
 {
     m_ui->infoPanel->setVisible(true);

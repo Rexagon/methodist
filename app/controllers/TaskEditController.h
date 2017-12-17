@@ -17,8 +17,7 @@ public:
     void setEditable(bool editable);
     bool isEditable() const;
     
-    void saveCurrentTask();
-    void deleteCurrentTask();    
+    void saveCurrentTask(); 
     
     void setTask(Task* task);
     Task* getCurrentTask();
