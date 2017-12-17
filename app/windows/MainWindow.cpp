@@ -24,13 +24,13 @@ MainWindow::MainWindow(QWidget* parent) :
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
     m_ui->workspace->setCurrentIndex(WORKSPACE_TREE);
     
-    m_courseTreeController = std::make_unique<CourseTreeController>(m_ui.get(), this);
-    m_infoPanelController = std::make_unique<InfoPanelController>(m_ui.get(), this);
-    m_sideMenuController = std::make_unique<SideMenuController>(m_ui.get(), this);
     m_courseEditController = std::make_unique<CourseEditController>(m_ui.get(), this);
     m_sectionEditController = std::make_unique<SectionEditController>(m_ui.get(), this);
     m_taskEditController = std::make_unique<TaskEditController>(m_ui.get(), this);
     m_testEditController = std::make_unique<TestEditController>(m_ui.get(), this);
+    
+    m_courseTreeController = std::make_unique<CourseTreeController>(m_ui.get(), this);
+    m_sideMenuController = std::make_unique<SideMenuController>(m_ui.get(), this);
     m_testsTableController = std::make_unique<TestsTableController>(m_ui.get(), this);
   
     
@@ -39,71 +39,108 @@ MainWindow::MainWindow(QWidget* parent) :
         m_courseTreeController->setCourse(course);
     });
     
-    connect(m_courseTreeController.get(), &CourseTreeController::courseNodeSelected, this, [this](CourseNode* node) {
-        m_infoPanelController->setCourseNode(node);
-    });
+    connect(m_courseTreeController.get(), &CourseTreeController::courseNodeSelected, this, &MainWindow::selectNode);
     
     connect(m_testsTableController.get(), &TestsTableController::testSelected, this, [this](Test* test) {
-       m_infoPanelController->setCourseNode(test); 
+       m_testEditController->setTest(test);
     });
 
     // Actions: add elements
     connect(m_sideMenuController.get(), &SideMenuController::courseAdded, this, &MainWindow::addCourse);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::addSectionButtonPressed, this, &MainWindow::addSection);
+    connect(m_courseEditController.get(), &CourseEditController::addSectionButtonPressed, this, &MainWindow::addSection);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::addTaskButtonPressed, this, &MainWindow::addTask);
+    connect(m_sectionEditController.get(), &SectionEditController::addSubsectionButtonPressed, this, &MainWindow::addSubsection);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::addTestButtonPressed, this, &MainWindow::addTest);
+    connect(m_sectionEditController.get(), &SectionEditController::addTaskButtonPressed, this, &MainWindow::addTask);
     
-    // Actions: info panel ui logic
-    connect(m_infoPanelController.get(), &InfoPanelController::editNodeButtonPressed, this, &MainWindow::editNode);
+    connect(m_testEditController.get(), &TestEditController::addTestButtonPressed, this, &MainWindow::addTest);
     
-    connect(m_infoPanelController.get(), &InfoPanelController::deleteNodeButtonPressed, this, &MainWindow::deleteNode);
-
-    connect(m_infoPanelController.get(), &InfoPanelController::exitNodeButtonPressed, this, [this]() {
-       m_taskEditController->propose();
+    // Actions: edit nodes
+    connect(m_courseEditController.get(), &CourseEditController::editButtonPressed, this, [this]() {
+        m_courseEditController->setEditable(true);
+        m_courseEditController->propose();
     });
+    
+    connect(m_sectionEditController.get(), &SectionEditController::editButtonPressed, this, [this]() {
+        m_sectionEditController->setEditable(true);
+        m_sectionEditController->propose();
+    });
+    
+    connect(m_taskEditController.get(), &TaskEditController::editButtonPressed, this, [this]() {
+        m_taskEditController->setEditable(true);
+        m_taskEditController->propose();
+    });
+    
+    connect(m_testEditController.get(), &TestEditController::editButtonPressed, this, [this]() {
+        m_testEditController->setEditable(true);
+        m_testEditController->propose();
+    });
+    
+    // Actions: delete nodes
+    connect(m_courseEditController.get(), &CourseEditController::deleteButtonPressed, this, &MainWindow::deleteCourse);
+    
+    connect(m_sectionEditController.get(), &SectionEditController::deleteButtonPressed, this, &MainWindow::deleteSection);
+    
+    connect(m_taskEditController.get(), &TaskEditController::deleteButtonPressed, this, &MainWindow::deleteTask);
+    
+    connect(m_testEditController.get(), &TestEditController::deleteButtonPressed, this, &MainWindow::deleteTest);
     
     // Actions: save edit
-    connect(m_courseEditController.get(), &CourseEditController::changesSaved, this, [this]() {
-        m_courseEditController->saveChanges();
-        m_infoPanelController->propose();
+    connect(m_courseEditController.get(), &CourseEditController::saveChangesButtonPressed, this, [this]() {
+        m_courseEditController->saveCurrentCourse();
+        m_courseEditController->setEditable(false);
+        m_courseEditController->propose();
     });
     
-    connect(m_sectionEditController.get(), &SectionEditController::changesSaved, this, [this]() {
-        m_sectionEditController->saveChanges();
-        m_infoPanelController->propose();
+    connect(m_sectionEditController.get(), &SectionEditController::saveChangesButtonPressed, this, [this]() {
+        m_sectionEditController->saveCurrentSection();
+        m_sectionEditController->setEditable(false);
+        m_sectionEditController->propose();
     });
     
-    connect(m_taskEditController.get(), &TaskEditController::changesSaved, this, [this]() {
-        m_taskEditController->saveChanges();
-        m_infoPanelController->propose();
+    connect(m_taskEditController.get(), &TaskEditController::saveChangesButtonPressed, this, [this]() {
+        m_taskEditController->saveCurrentTask();
+        m_taskEditController->setEditable(false);
+        m_taskEditController->propose();
+    });
+    
+    connect(m_testEditController.get(), &TestEditController::saveChangesButtonPressed, this, [this]() {
+        m_testEditController->saveCurrentTest();
+        m_testEditController->setEditable(false);
+        m_testEditController->propose();
     });
 
     // Actions: cancel edit
-    connect(m_courseEditController.get(), &CourseEditController::changesCanceled, this, [this]() {
-        m_infoPanelController->propose();
-        m_courseTreeController->propose();
+    connect(m_courseEditController.get(), &CourseEditController::cancelChangesButtonPressed, this, [this]() {
+        m_courseEditController->setEditable(false);
+        m_courseEditController->propose();
     });
     
-    connect(m_sectionEditController.get(), &SectionEditController::changesCanceled, this, [this]() {
-        m_infoPanelController->propose();
-        m_courseTreeController->propose();
+    connect(m_sectionEditController.get(), &SectionEditController::cancelChangesButtonPressed, this, [this]() {
+        m_sectionEditController->setEditable(false);
+        m_sectionEditController->propose();
     });
 
-    connect(m_taskEditController.get(), &TaskEditController::changesCanceled, this, [this]() {
-        m_infoPanelController->propose();
-        m_courseTreeController->propose();
+    connect(m_taskEditController.get(), &TaskEditController::cancelChangesButtonPressed, this, [this]() {
+        m_taskEditController->setEditable(false);
+        m_taskEditController->propose();
     });
 
-    connect(m_testEditController.get(), &TestEditController::changesCanceled, this, [this]() {
-        m_infoPanelController->propose();
+    connect(m_testEditController.get(), &TestEditController::cancelChangesButtonPressed, this, [this]() {
+        m_testEditController->setEditable(false);
+        m_testEditController->propose();
     });
 
-    // Actions: task edit ui logic
-    connect(m_taskEditController.get(), &TaskEditController::testsOpened, this, [this]() {
+    // Actions: tests table
+    connect(m_taskEditController.get(), &TaskEditController::openTestsButtonPressed, this, [this]() {
         m_testsTableController->setTask(m_taskEditController->getCurrentTask());
+        m_testEditController->setEditable(false);
+        m_testEditController->setTest(nullptr);
+    });
+    
+    connect(m_testEditController.get(), &TestEditController::exitTestsButtonPressed, this, [this]() {
+        m_taskEditController->propose();
     });
         
     
@@ -117,6 +154,35 @@ MainWindow::~MainWindow()
     ModelManager::close();
     NetworkManager::close();
     m_ui.reset(nullptr);
+}
+
+void MainWindow::selectNode(CourseNode* node)
+{
+    if (node == nullptr) {
+        return;
+    }
+    
+    switch (node->getType()) {
+    case CourseNode::Type::COURSE:
+        m_courseEditController->setEditable(false);
+        m_courseEditController->setCourse(reinterpret_cast<Course*>(node));
+        break;
+        
+    case CourseNode::Type::SECTION:
+        m_sectionEditController->setEditable(false);
+        m_sectionEditController->setSection(reinterpret_cast<Section*>(node));
+        break;
+        
+    case CourseNode::Type::TASK:
+        m_taskEditController->setEditable(false);
+        m_taskEditController->setTask(reinterpret_cast<Task*>(node));
+        break;
+        
+    case CourseNode::Type::TEST:
+        m_testEditController->setEditable(false);
+        m_testEditController->setTest(reinterpret_cast<Test*>(node));
+        break;
+    }
 }
 
 void MainWindow::addCourse()
@@ -134,53 +200,90 @@ void MainWindow::addCourse()
     });  
 }
 
+void MainWindow::deleteCourse()
+{
+    Course* course = m_courseEditController->getCurrentCourse();
+    
+    Course::dbDelete(course, [this, course]() {
+        ModelManager::getCoursesListModel()->removeCourse(course);
+        
+        m_sideMenuController->deselectAll();
+        m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
+    });
+}
+
 void MainWindow::addSection()
 {
-    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-    if (node == nullptr || node->getType() == CourseNode::Type::TASK) {
+    Course* course = m_courseEditController->getCurrentCourse();
+    if (course == nullptr) {
         return;
     }
     
-    CourseNode::Type nodeType = node->getType();
-    
     Section::Data sectionData;
+    sectionData.name = "Новый раздел " + QString::number(course->getSectionCount() + 1);
+    sectionData.course = course;
     
-    if (nodeType == CourseNode::Type::COURSE) {
-        Course* course = reinterpret_cast<Course*>(node);
-        sectionData.name = "Новый раздел " + QString::number(course->getSectionCount() + 1);
-        sectionData.course = course;
-    }
-    else {
-        Section* section = reinterpret_cast<Section*>(node);
-        sectionData.name = "Новый подраздел " + QString::number(section->getSubsectionCount() + 1);
-        sectionData.course = section->getCourse();
-        sectionData.parentSection = section;
-    }
-    
-    Section::dbCreate(sectionData, [this, node, nodeType](std::unique_ptr<Section> section) {
+    Section::dbCreate(sectionData, [this, course](std::unique_ptr<Section> section) {
         Section* sectionPtr = section.get();
         
-        if (nodeType == CourseNode::Type::COURSE) {
-            reinterpret_cast<Course*>(node)->addSection(std::move(section));
-        }
-        else {
-            reinterpret_cast<Section*>(node)->addSubsection(std::move(section));
-        }
+        course->addSection(std::move(section));
         
-        ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
+        ModelManager::getCourseTreeModel(course)->update();
         m_courseTreeController->selectCourseNode(sectionPtr);
         m_sectionEditController->setSection(sectionPtr); 
     });
 }
 
-void MainWindow::addTask()
+void MainWindow::addSubsection()
 {
-    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-    if (node == nullptr || node->getType() != CourseNode::Type::SECTION) {
+    Section* section = m_sectionEditController->getCurrentSection();
+    if (section == nullptr) {
         return;
     }
     
-    Section* section = reinterpret_cast<Section*>(node);
+    Section::Data subsectionData;
+    subsectionData.name = "Новый подраздел " + QString::number(section->getSubsectionCount() + 1);
+    subsectionData.course = section->getCourse();
+    subsectionData.parentSection = section;
+    
+    Section::dbCreate(subsectionData, [this, section](std::unique_ptr<Section> subsection) {
+        Section* subsectionPtr = subsection.get();
+        
+        section->addSubsection(std::move(subsection));
+        
+        ModelManager::getCourseTreeModel(section->getCourse())->update();
+        m_courseTreeController->selectCourseNode(subsectionPtr);
+        m_sectionEditController->setSection(subsectionPtr); 
+    });
+}
+
+void MainWindow::deleteSection()
+{
+    Section* section = m_sectionEditController->getCurrentSection();
+    
+    Section::dbDelete(section, [this, section]() {
+        CourseNode* parent = section->getParent();
+        Course* course = section->getCourse();
+
+        m_courseTreeController->selectCourseNode(parent);
+
+        if (course == parent) {
+            course->removeSection(section);
+        }
+        else {
+            reinterpret_cast<Section*>(parent)->removeSubsection(section);
+        }
+        
+        ModelManager::getCourseTreeModel(course)->update();
+    });
+}
+
+void MainWindow::addTask()
+{
+    Section* section = m_sectionEditController->getCurrentSection();
+    if (section == nullptr) {
+        return;
+    }
     
     Task::Data taskData;
     taskData.name = "Новая задача " + QString::number(section->getTaskCount() + 1);
@@ -194,6 +297,22 @@ void MainWindow::addTask()
         ModelManager::getCourseTreeModel(m_courseTreeController->getCurrentCourse())->update();
         m_courseTreeController->selectCourseNode(taskPtr);
         m_taskEditController->setTask(taskPtr); 
+    });
+}
+
+void MainWindow::deleteTask()
+{
+    Task* task = m_taskEditController->getCurrentTask();
+    
+    Task::dbDelete(task, [this, task]() {
+        Section* parent = task->getSection();
+        Course* course = parent->getCourse();
+
+        m_courseTreeController->selectCourseNode(parent);
+
+        parent->removeTask(task);
+
+        ModelManager::getCourseTreeModel(course)->update();
     });
 }
 
@@ -217,107 +336,20 @@ void MainWindow::addTest()
     });
 }
 
-void MainWindow::editNode()
+void MainWindow::deleteTest()
 {
-    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-    if (node == nullptr) {
-        return;
-    }
-
-    switch (node->getType()) {
-    case CourseNode::Type::COURSE:
-        m_courseEditController->setCourse(reinterpret_cast<Course*>(node));
-        break;
-
-    case CourseNode::Type::SECTION:
-        m_sectionEditController->setSection(reinterpret_cast<Section*>(node));
-        break;
-
-    case CourseNode::Type::TASK:
-        m_taskEditController->setTask(reinterpret_cast<Task*>(node));
-        break;
-        
-    case Course::Type::TEST:
-        m_testEditController->setTest(reinterpret_cast<Test*>(node));
-        break;
-    }
+    Test* test = m_testEditController->getCurrentTest();
+    
+    Test::dbDelete(test, [this, test]() {
+       Task* parent = test->getTask();
+       
+       m_testsTableController->deselectAll();
+       
+       parent->removeTest(test);
+       
+       ModelManager::getTestsTableModel(parent)->update();
+       
+       m_testsTableController->propose();
+    });
 }
 
-void MainWindow::deleteNode()
-{
-    CourseNode* node = m_infoPanelController->getCurrentCourseNode();
-    if (node == nullptr) {
-        return;
-    }
-
-    Course* currentCourse = m_courseTreeController->getCurrentCourse();
-    CourseNode::Type type = node->getType();
-
-    switch (type) {
-        case CourseNode::Type::COURSE:
-        {
-            Course::dbDelete(currentCourse, [this, currentCourse]() {
-                ModelManager::getCoursesListModel()->removeCourse(currentCourse);
-                m_sideMenuController->deselectAll();
-                m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_DEFAULT);
-            });
-
-            break;
-        }
-
-        case CourseNode::Type::SECTION:
-        {
-            Section* section = reinterpret_cast<Section*>(node);
-
-            Section::dbDelete(section, [this, section, currentCourse]() {
-                CourseNode* parent = section->getParent();
-
-                m_courseTreeController->selectCourseNode(parent);
-
-                if (parent->getType() == CourseNode::Type::COURSE) {
-                    currentCourse->removeSection(section);
-                }
-                else {
-                    reinterpret_cast<Section*>(parent)->removeSubsection(section);
-                }
-                ModelManager::getCourseTreeModel(currentCourse)->update();
-            });
-
-            break;
-        }
-
-        case CourseNode::Type::TASK:
-        {
-            Task* task = reinterpret_cast<Task*>(node);
-
-            Task::dbDelete(task, [this, task, currentCourse]() {
-                Section* parent = task->getSection();
-
-                m_courseTreeController->selectCourseNode(parent);
-
-                parent->removeTask(task);
-
-                ModelManager::getCourseTreeModel(currentCourse)->update();
-            });
-
-            break;
-        }
-        
-        case CourseNode::Type::TEST:
-        {
-            Test* test = reinterpret_cast<Test*>(node);
-            
-            Test::dbDelete(test, [this, test, currentCourse]() {
-               Task* parent = test->getTask();
-               
-               m_testsTableController->deselectAll();
-               
-               parent->removeTest(test);
-               
-               ModelManager::getTestsTableModel(parent)->update();
-            });
-        
-            break;
-        }
-    }
-}

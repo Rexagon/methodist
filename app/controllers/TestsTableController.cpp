@@ -16,6 +16,10 @@ TestsTableController::TestsTableController(Ui::MainWindow* ui, QObject* parent) 
             emit testSelected(test);
         }
     });
+    
+    for (int c = 0; c < m_ui->testsTable->horizontalHeader()->count(); ++c) {
+        ui->testsTable->horizontalHeader()->setSectionResizeMode(c, QHeaderView::ResizeToContents);
+    }
 }
 
 TestsTableController::~TestsTableController()
@@ -26,15 +30,7 @@ void TestsTableController::propose()
 {
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_COURSE);
     m_ui->workspace->setCurrentIndex(WORKSPACE_TESTS);
-    m_ui->infoPanelPages->setCurrentIndex(INFO_PANEL_EMPTY);
-    m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_DEFAULT);
-    
-    m_ui->addSectionButton->setVisible(false);
-    m_ui->addTaskButton->setVisible(false);
-    m_ui->addTestButton->setVisible(true);
-    m_ui->editNodeButton->setVisible(false);
-    m_ui->deleteNodeButton->setVisible(false);
-    m_ui->exitNodeButton->setVisible(true);
+    m_ui->infoPanelPages->setCurrentIndex(INFO_PANEL_TESTS_TABLE);
 }
 
 Task* TestsTableController::getCurrentTask()

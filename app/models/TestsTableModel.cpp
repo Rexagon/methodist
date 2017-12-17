@@ -23,7 +23,7 @@ int TestsTableModel::rowCount(const QModelIndex& parent) const
 
 int TestsTableModel::columnCount(const QModelIndex& parent) const
 {
-    return 4;
+    return 5;
 }
 
 QVariant TestsTableModel::data(const QModelIndex& index, int role) const
@@ -40,8 +40,11 @@ QVariant TestsTableModel::data(const QModelIndex& index, int role) const
 
         case 2:
             return test->isRequired();
-
+            
         case 3:
+            return test->isSample();
+
+        case 4:
             return static_cast<unsigned int>(test->getScore());
         }
     }
@@ -62,8 +65,11 @@ QVariant TestsTableModel::headerData(int section, Qt::Orientation orientation, i
 
             case 2:
                 return QString("Обязателен");
-
+                
             case 3:
+                return QString("Пример");
+
+            case 4:
                 return QString("Баллы");
             }
         }

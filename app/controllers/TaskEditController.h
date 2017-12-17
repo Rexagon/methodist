@@ -13,21 +13,26 @@ public:
     TaskEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~TaskEditController();
     
-    void saveChanges();
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
+    void saveCurrentTask();
+    void deleteCurrentTask();    
+    
+    void setTask(Task* task);
     Task* getCurrentTask();
     
-public slots:
-    void setTask(Task* task);
-    
 signals:
-    void testsOpened();
-    void changesSaved();
-    void changesCanceled();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void openTestsButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Task* m_currentTask;
+    bool m_isEditable;
 };
 
 #endif // TASKEDITCONTROLLER_H

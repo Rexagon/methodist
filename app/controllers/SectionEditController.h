@@ -12,18 +12,27 @@ public:
     SectionEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~SectionEditController();
     
-    void saveChanges();
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
-public slots:
+    void saveCurrentSection();
+    void deleteCurrentSection();
+    
     void setSection(Section* section);
+    Section* getCurrentSection() const;
     
 signals:
-    void changesSaved();
-    void changesCanceled();
+    void addSubsectionButtonPressed();
+    void addTaskButtonPressed();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Section* m_currentSection;
+    bool m_isEditable;
 };
 
 #endif // SECTIONEDITCONTROLLER_H

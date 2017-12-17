@@ -105,6 +105,7 @@ Task::Data Task::getData() const
 
 void Task::addTest(std::unique_ptr<Test> test)
 {
+    test->setTask(this);
     m_tests.push_back(std::move(test));
 }
 

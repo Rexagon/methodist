@@ -25,7 +25,6 @@ SOURCES += \
     controllers/CourseTreeController.cpp \
     controllers/Controller.cpp \
     stuff/ModelManager.cpp \
-    controllers/InfoPanelController.cpp \
     controllers/CourseEditController.cpp \
     controllers/SectionEditController.cpp \
     controllers/TaskEditController.cpp \
@@ -53,7 +52,6 @@ HEADERS	+= \
     controllers/CourseTreeController.h \
     controllers/Controller.h \
     stuff/ModelManager.h \
-    controllers/InfoPanelController.h \
     controllers/CourseEditController.h \
     controllers/SectionEditController.h \
     controllers/TaskEditController.h \

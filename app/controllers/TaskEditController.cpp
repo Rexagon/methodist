@@ -9,11 +9,13 @@
 #include <QDebug>
 
 TaskEditController::TaskEditController(Ui::MainWindow* ui, QObject* parent) :
-    Controller(ui, parent), m_currentTask(nullptr)
+    Controller(ui, parent), m_currentTask(nullptr), m_isEditable(true)
 {
-    connect(m_ui->openTestsButton, &QPushButton::pressed, this, &TaskEditController::testsOpened);
-    connect(m_ui->saveTaskChangesButton, &QPushButton::pressed, this, &TaskEditController::changesSaved);
-    connect(m_ui->cancelTaskChangesButton, &QPushButton::pressed, this, &TaskEditController::changesCanceled);
+    connect(m_ui->editTaskButton, &QPushButton::pressed, this, &TaskEditController::editButtonPressed);
+    connect(m_ui->deleteTaskButton, &QPushButton::pressed, this, &TaskEditController::deleteButtonPressed);
+    connect(m_ui->openTestsButton, &QPushButton::pressed, this, &TaskEditController::openTestsButtonPressed);
+    connect(m_ui->saveTaskChangesButton, &QPushButton::pressed, this, &TaskEditController::saveChangesButtonPressed);
+    connect(m_ui->cancelTaskChangesButton, &QPushButton::pressed, this, &TaskEditController::cancelChangesButtonPressed);
 
     m_ui->taskEditSamplesTable->setModel(ModelManager::getSamplesTableModel());
     for (int c = 0; c < m_ui->taskEditSamplesTable->horizontalHeader()->count(); ++c) {
@@ -25,7 +27,7 @@ TaskEditController::~TaskEditController()
 {
 }
 
-void TaskEditController::saveChanges()
+void TaskEditController::saveCurrentTask()
 {
     if (m_currentTask == nullptr) {
         return;
@@ -46,23 +48,48 @@ void TaskEditController::saveChanges()
     });
 }
 
+void TaskEditController::deleteCurrentTask()
+{
+    
+}
+
 void TaskEditController::propose()
 {
+    m_ui->infoPanel->setVisible(true);
+    
     m_ui->mainWorkspace->setCurrentIndex(MAIN_WORKSPACE_COURSE);
-    m_ui->workspace->setCurrentIndex(WORKSPACE_TASK);
+    if (m_isEditable) {
+        m_ui->workspace->setCurrentIndex(WORKSPACE_TASK);
+    }
+    else {
+        m_ui->workspace->setCurrentIndex(WORKSPACE_TREE);
+    }
     m_ui->infoPanelPages->setCurrentIndex(INFO_PANEL_TASK);
     m_ui->infoPanelButtons->setCurrentIndex(INFO_PANEL_BUTTONS_TASK);
     
-    m_ui->taskEditName->setEnabled(true);
-    m_ui->taskEditScore->setEnabled(true);
+    m_ui->taskEditName->setEnabled(m_isEditable);
+    m_ui->taskEditScore->setEnabled(m_isEditable);
     
-    ModelManager::getSamplesTableModel()->fill(m_currentTask);
-    ModelManager::getTestsTableModel(m_currentTask)->setTask(m_currentTask);
+    m_ui->editTaskButton->setVisible(!m_isEditable);
+    m_ui->deleteTaskButton->setVisible(!m_isEditable);
+    m_ui->openTestsButton->setVisible(m_isEditable);
+    m_ui->saveTaskChangesButton->setVisible(m_isEditable);
+    m_ui->cancelTaskChangesButton->setVisible(m_isEditable);
+    
+    if (m_isEditable) {
+        ModelManager::getSamplesTableModel()->fill(m_currentTask);
+        ModelManager::getTestsTableModel(m_currentTask)->setTask(m_currentTask);
+    }
 }
 
-Task* TaskEditController::getCurrentTask()
+void TaskEditController::setEditable(bool editable)
 {
-    return m_currentTask;
+    m_isEditable = editable;
+}
+
+bool TaskEditController::isEditable() const
+{
+    return m_isEditable;
 }
 
 void TaskEditController::setTask(Task* task)
@@ -73,7 +100,6 @@ void TaskEditController::setTask(Task* task)
     
     m_currentTask = task;
     
-    m_ui->nodeType->setText("Задача");
     m_ui->taskEditName->setPlainText(task->getName());
     m_ui->taskEditScore->setValue(task->getScore());
     m_ui->taskEditText->setHtml(task->getText());
@@ -82,4 +108,9 @@ void TaskEditController::setTask(Task* task)
     m_ui->taskEditSource->setHtml(task->getSource());
     
     propose();
+}
+
+Task* TaskEditController::getCurrentTask()
+{
+    return m_currentTask;
 }

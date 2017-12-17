@@ -12,18 +12,27 @@ public:
     TestEditController(Ui::MainWindow* ui, QObject* parent = nullptr);
     ~TestEditController();
     
-    void saveChanges();
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
-public slots:
+    void saveCurrentTest();
+    void deleteCurrentTest();
+    
     void setTest(Test* test);
+    Test* getCurrentTest() const;
     
 signals:
-    void changesSaved();
-    void changesCanceled();
+    void addTestButtonPressed();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void exitTestsButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Test* m_currentTest;
+    bool m_isEditable;
 };
 
 #endif // TESTEDITCONTROLLER_H

@@ -142,14 +142,14 @@ void Test::dbUpdate(Test* test, const Test::Data& data, std::function<void ()> c
         QString::number(data.id)
     };
     
-    QString query = Query::create("UPDATE course SET test_c_input_data='@@', test_c_output_data='@@', "
+    QString query = Query::create("UPDATE test_c SET test_c_input_data='@@', test_c_output_data='@@', "
                                   "is_required=@@, is_sample=@@, test_c_score=@@, task_c_id=@@ "
                                   "WHERE rowid=@@", arguments);
     
     NetworkManager::send(Request(SQL_OPERATOR, "test_edit", {
         {"sql_operator", query}
     }), [test, deletionMark, data, callback](const Response& response)
-    {
+    {        
         if (*deletionMark == true) {
             return;
         }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1007</width>
-    <height>624</height>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -385,7 +385,7 @@ QScrollBar::sub-page:horizontal {
 }</string>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="workspaceTree">
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -750,7 +750,7 @@ QTableView
                  <number>160</number>
                 </attribute>
                 <attribute name="horizontalHeaderStretchLastSection">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
@@ -815,25 +815,6 @@ QPushButton:pressed {
 </string>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
-             <item row="0" column="0">
-              <widget class="QLabel" name="nodeType">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QStackedWidget" name="infoPanelPages">
                <property name="styleSheet">
@@ -856,6 +837,28 @@ QPushButton:pressed {
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
+                 <item>
+                  <widget class="QLabel" name="courseNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Курс</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="courseEditNameLabel">
                    <property name="text">
@@ -981,6 +984,28 @@ QPushButton:pressed {
                   <number>0</number>
                  </property>
                  <item>
+                  <widget class="QLabel" name="sectionNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Раздел</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QLabel" name="sectionEditNameLabel">
                    <property name="text">
                     <string>Название</string>
@@ -1044,6 +1069,28 @@ QPushButton:pressed {
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
+                 <item>
+                  <widget class="QLabel" name="taskNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Задача</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_3">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="taskEditNameLabel">
                    <property name="text">
@@ -1122,6 +1169,28 @@ QPushButton:pressed {
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
+                 <item>
+                  <widget class="QLabel" name="testNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Тест</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="testEditInputDataLabel">
                    <property name="text">
@@ -1232,77 +1301,68 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="emptyInfo"/>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QStackedWidget" name="infoPanelButtons">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <widget class="QWidget" name="defaultButtons">
-                <layout class="QVBoxLayout" name="verticalLayout_4">
+               <widget class="QWidget" name="testsTableInfo">
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
-                  <spacer name="verticalSpacer_8">
+                  <widget class="QLabel" name="testsTableLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Тесты</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_5">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>20</width>
-                     <height>16777215</height>
+                     <height>40</height>
                     </size>
                    </property>
                   </spacer>
                  </item>
-                 <item>
-                  <widget class="QPushButton" name="addTestButton">
-                   <property name="text">
-                    <string>Добавить тест</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="addTaskButton">
-                   <property name="text">
-                    <string>Добавить задание</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="addSectionButton">
-                   <property name="text">
-                    <string>Добавить раздел</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="editNodeButton">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string>Изменить</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="deleteNodeButton">
-                   <property name="text">
-                    <string>Удалить</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="exitNodeButton">
-                   <property name="text">
-                    <string>Назад</string>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="courseEditButtons">
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QStackedWidget" name="infoPanelButtons">
+               <property name="currentIndex">
+                <number>3</number>
+               </property>
+               <widget class="QWidget" name="courseButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -1316,6 +1376,27 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addSectionButton">
+                   <property name="text">
+                    <string>Добавить раздел</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editCourseButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteCourseButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="saveCourseChangesButton">
@@ -1333,7 +1414,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="sectionEditButtons">
+               <widget class="QWidget" name="sectionButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_11">
                  <item>
                   <spacer name="verticalSpacer_6">
@@ -1347,6 +1428,34 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addSubsectionButton">
+                   <property name="text">
+                    <string>Добавить раздел</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addTaskButton">
+                   <property name="text">
+                    <string>Добавить задание</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editSectionButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteSectionButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="saveSectionChangesButton">
@@ -1364,7 +1473,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="taskEditButtons">
+               <widget class="QWidget" name="taskButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_10">
                  <item>
                   <spacer name="verticalSpacer_7">
@@ -1378,6 +1487,20 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editTaskButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteTaskButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="openTestsButton">
@@ -1402,7 +1525,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="testEditButtons">
+               <widget class="QWidget" name="testButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_13">
                  <item>
                   <spacer name="verticalSpacer_10">
@@ -1416,6 +1539,34 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addTestButton">
+                   <property name="text">
+                    <string>Добавить тест</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editTestButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteTestButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="exitTestsButton">
+                   <property name="text">
+                    <string>Назад</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="saveTestChangesButton">
