@@ -1,5 +1,7 @@
 #include "Query.h"
 
+#include <QDebug>
+
 QString Query::escape(const QString& string)
 {
     QString result = string;

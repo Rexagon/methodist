@@ -129,12 +129,12 @@ void Course::dbCreate(const Course::Data& data, std::function<void (std::unique_
         {"sql_operator", query}
     }), [data, callback](const Response& response)
     {
-        qDebug() << response.getRowCount() << "|";
-        qDebug() << response.getRow(0).get("rowid").asUInt();
+        size_t id = response.getRow(0).get("rowid").asUInt();
         
         std::unique_ptr<Course> course = std::make_unique<Course>();
         course->setData(data);
-        
+        course->setId(id);
+                
         callback(std::move(course));
     });
 }

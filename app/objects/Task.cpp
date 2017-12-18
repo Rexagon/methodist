@@ -167,9 +167,12 @@ void Task::dbCreate(const Task::Data& data, std::function<void (std::unique_ptr<
     NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
         {"sql_operator", query}
     }), [data, callback](const Response& response)
-    {        
+    {
+        size_t id = response.getRow(0).get("rowid").asUInt();
+        
         std::unique_ptr<Task> task = std::make_unique<Task>();
         task->setData(data);
+        task->setId(id);
         
         callback(std::move(task));
     });

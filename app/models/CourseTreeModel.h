@@ -28,8 +28,7 @@ public:
     void setCourse(Course* course);
     Course* getCourse() const;    
     
-private:
-    
+private:    
     Course* m_course;
 };
 

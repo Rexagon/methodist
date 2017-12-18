@@ -3,8 +3,6 @@
 #include <QIcon>
 #include <QFont>
 
-#include <iostream>
-
 CourseTreeModel::CourseTreeModel(QObject* parent) :
     QAbstractItemModel(parent), m_course(nullptr)
 {    

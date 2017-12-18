@@ -114,10 +114,11 @@ void Test::dbCreate(const Test::Data& data, std::function<void (std::unique_ptr<
         {"sql_operator", query}
     }), [data, callback](const Response& response)
     {
-        qDebug() << response.getError();
+        size_t id = response.getRow(0).get("rowid").asUInt();
         
         std::unique_ptr<Test> test = std::make_unique<Test>();
         test->setData(data);
+        test->setId(id);
         
         callback(std::move(test));
     });

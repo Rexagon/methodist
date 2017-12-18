@@ -189,9 +189,12 @@ void Section::dbCreate(const Section::Data& data, std::function<void (std::uniqu
     NetworkManager::send(Request(SQL_OPERATOR, "section_add", {
         {"sql_operator", query}
     }), [data, callback](const Response& response)
-    {        
+    {
+        size_t id = response.getRow(0).get("rowid").asUInt();
+        
         std::unique_ptr<Section> section = std::make_unique<Section>();
         section->setData(data);
+        section->setId(id);
         
         callback(std::move(section));
     });
