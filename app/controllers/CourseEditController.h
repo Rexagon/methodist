@@ -1,6 +1,8 @@
 #ifndef COURSEEDITCONTROLLER_H
 #define COURSEEDITCONTROLLER_H
 
+#include <functional>
+
 #include "Controller.h"
 #include "../objects/Course.h"
 
@@ -13,16 +15,24 @@ public:
     ~CourseEditController();
     
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
-public slots:
+    void saveCurrentCourse();
+    
     void setCourse(Course* course);
+    Course* getCurrentCourse() const;
     
 signals:
-    void changesSaved();
-    void changesCanceled();
+    void addSectionButtonPressed();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Course* m_currentCourse;
+    bool m_isEditable;
 };
 
 #endif // COURSEEDITCONTROLLER_H

@@ -3,8 +3,6 @@
 #include <QIcon>
 #include <QFont>
 
-#include <iostream>
-
 CourseTreeModel::CourseTreeModel(QObject* parent) :
     QAbstractItemModel(parent), m_course(nullptr)
 {    
@@ -12,6 +10,11 @@ CourseTreeModel::CourseTreeModel(QObject* parent) :
 
 CourseTreeModel::~CourseTreeModel()
 {
+}
+
+void CourseTreeModel::update()
+{
+    emit layoutChanged();
 }
 
 int CourseTreeModel::rowCount(const QModelIndex& parent) const
@@ -59,6 +62,15 @@ QModelIndex CourseTreeModel::parent(const QModelIndex& child) const
     else {
         return QModelIndex();
     }
+}
+
+QModelIndex CourseTreeModel::getIndex(CourseNode* node)
+{
+    if (node == nullptr) {
+        return QModelIndex();
+    }
+    
+    return createIndex(node->getRelativeNumber(), 0, node);
 }
 
 QVariant CourseTreeModel::data(const QModelIndex& index, int role) const

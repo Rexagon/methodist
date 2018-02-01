@@ -13,16 +13,25 @@ public:
     ~TestEditController();
     
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
-public slots:
+    void saveCurrentTest();
+    
     void setTest(Test* test);
+    Test* getCurrentTest() const;
     
 signals:
-    void changesSaved();
-    void changesCanceled();
+    void addTestButtonPressed();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void exitTestsButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Test* m_currentTest;
+    bool m_isEditable;
 };
 
 #endif // TESTEDITCONTROLLER_H

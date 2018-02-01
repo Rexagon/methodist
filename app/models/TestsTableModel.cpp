@@ -1,5 +1,7 @@
 #include "TestsTableModel.h"
 
+#include "../stuff/Log.h"
+
 TestsTableModel::TestsTableModel(QObject* parent) :
     QAbstractTableModel(parent), m_task(nullptr)
 {
@@ -9,14 +11,19 @@ TestsTableModel::~TestsTableModel()
 {
 }
 
+void TestsTableModel::update()
+{
+    emit layoutChanged();
+}
+
 int TestsTableModel::rowCount(const QModelIndex& parent) const
 {
-    return m_task->getChildCount();
+    return m_task->getTestCount();
 }
 
 int TestsTableModel::columnCount(const QModelIndex& parent) const
 {
-    return 4;
+    return 5;
 }
 
 QVariant TestsTableModel::data(const QModelIndex& index, int role) const
@@ -32,10 +39,13 @@ QVariant TestsTableModel::data(const QModelIndex& index, int role) const
             return test->getOutputData();
 
         case 2:
-            return test->isRequired();
-
+            return (test->isRequired() ? QString("Да") : QString("Нет"));
+            
         case 3:
-            return test->getScore();
+            return (test->isSample() ? QString("Да") : QString("Нет"));
+
+        case 4:
+            return static_cast<unsigned int>(test->getScore());
         }
     }
 
@@ -55,8 +65,11 @@ QVariant TestsTableModel::headerData(int section, Qt::Orientation orientation, i
 
             case 2:
                 return QString("Обязателен");
-
+                
             case 3:
+                return QString("Пример");
+
+            case 4:
                 return QString("Баллы");
             }
         }
@@ -71,9 +84,19 @@ QVariant TestsTableModel::headerData(int section, Qt::Orientation orientation, i
 void TestsTableModel::setTask(Task* task)
 {
     m_task = task;
+    emit layoutChanged();
 }
 
 Task* TestsTableModel::getTask() const
 {
     return m_task;
+}
+
+int TestsTableModel::getTestIndex(const Test* test) const
+{
+    if (m_task == nullptr) {
+        return -1;
+    }
+    
+    return m_task->getTestIndex(test);
 }

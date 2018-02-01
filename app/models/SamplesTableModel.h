@@ -1,17 +1,15 @@
-#ifndef TESTSTABLEMODEL_H
-#define TESTSTABLEMODEL_H
+#ifndef SAMPLESTABLEMODEL_H
+#define SAMPLESTABLEMODEL_H
 
 #include <QAbstractTableModel>
 
 #include "../objects/Task.h"
 
-class TestsTableModel : public QAbstractTableModel
+class SamplesTableModel : public QAbstractTableModel
 {
 public:
-    TestsTableModel(QObject* parent = nullptr);
-    ~TestsTableModel();
-
-    void update();
+    SamplesTableModel(QObject* parent = nullptr);
+    ~SamplesTableModel();
     
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -19,13 +17,10 @@ public:
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-    void setTask(Task* task);
-    Task* getTask() const;
-    
-    int getTestIndex(const Test* test) const;
+    void fill(Task* task);
 
 private:
-    Task* m_task;
+    std::vector<Test*> m_samples;    
 };
 
-#endif // TESTSTABLEMODEL_H
+#endif // SAMPLESTABLEMODEL_H

@@ -3,12 +3,14 @@
 #include <iostream>
 
 CourseNode::CourseNode(CourseNode::Type type) :
-    m_type(type), m_parent(nullptr)
+    m_type(type), m_parent(nullptr), m_isDeleted(nullptr)
 {
+    m_isDeleted = std::make_shared<bool>(false);
 }
 
 CourseNode::~CourseNode()
 {
+    *m_isDeleted = true;
 }
 
 CourseNode::Type CourseNode::getType() const
@@ -52,13 +54,6 @@ void CourseNode::removeChild(const CourseNode* child)
     }
 }
 
-void CourseNode::removeChild(size_t n)
-{
-    if (n < m_children.size()) {
-        m_children.erase(m_children.begin() + n);
-    }
-}
-
 CourseNode* CourseNode::getChild(size_t n) const
 {
     if (n < m_children.size()) {
@@ -88,4 +83,9 @@ size_t CourseNode::getChildCount() const
 std::vector<CourseNode*> CourseNode::getChildren() const
 {
     return m_children;
+}
+
+DeletionMark CourseNode::getDeletionMark() const
+{
+    return m_isDeleted;
 }

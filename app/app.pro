@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 TARGET	= methodist
-QT      += core gui widgets
+QT      += core gui widgets websockets xml
 CONFIG	+= c++14
 
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -25,12 +25,18 @@ SOURCES += \
     controllers/CourseTreeController.cpp \
     controllers/Controller.cpp \
     stuff/ModelManager.cpp \
-    controllers/InfoPanelController.cpp \
     controllers/CourseEditController.cpp \
     controllers/SectionEditController.cpp \
     controllers/TaskEditController.cpp \
     controllers/TestsTableController.cpp \
-    controllers/TestEditController.cpp
+    controllers/TestEditController.cpp \
+    stuff/NetworkManager.cpp \
+    models/SamplesTableModel.cpp \
+    stuff/Log.cpp \
+    stuff/Request.cpp \
+    stuff/Response.cpp \
+    stuff/Async.cpp \
+    stuff/Query.cpp
 
 HEADERS	+= \
     windows/MainWindow.h \
@@ -46,12 +52,18 @@ HEADERS	+= \
     controllers/CourseTreeController.h \
     controllers/Controller.h \
     stuff/ModelManager.h \
-    controllers/InfoPanelController.h \
     controllers/CourseEditController.h \
     controllers/SectionEditController.h \
     controllers/TaskEditController.h \
     controllers/TestsTableController.h \
-    controllers/TestEditController.h
+    controllers/TestEditController.h \
+    stuff/NetworkManager.h \
+    models/SamplesTableModel.h \
+    stuff/Log.h \
+    stuff/Request.h \
+    stuff/Response.h \
+    stuff/Async.h \
+    stuff/Query.h
 
 FORMS	+= \
     windows/MainWindow.ui

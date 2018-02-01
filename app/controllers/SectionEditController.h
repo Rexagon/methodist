@@ -1,6 +1,8 @@
 #ifndef SECTIONEDITCONTROLLER_H
 #define SECTIONEDITCONTROLLER_H
 
+#include <functional>
+
 #include "Controller.h"
 #include "../objects/Section.h"
 
@@ -13,16 +15,25 @@ public:
     ~SectionEditController();
     
     void propose() override;
+    void setEditable(bool editable);
+    bool isEditable() const;
     
-public slots:
+    void saveCurrentSection();
+    
     void setSection(Section* section);
+    Section* getCurrentSection() const;
     
 signals:
-    void changesSaved();
-    void changesCanceled();
+    void addSubsectionButtonPressed();
+    void addTaskButtonPressed();
+    void editButtonPressed();
+    void deleteButtonPressed();
+    void saveChangesButtonPressed();
+    void cancelChangesButtonPressed();
     
 private:
     Section* m_currentSection;
+    bool m_isEditable;
 };
 
 #endif // SECTIONEDITCONTROLLER_H

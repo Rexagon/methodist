@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1007</width>
-    <height>624</height>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,6 +83,7 @@ QScrollBar:vertical {
     border: 0px;
     background-color:rgb(161, 161, 161);
     margin: 0px;
+	width: 10px;
 }
 
 QScrollBar::handle:vertical {
@@ -164,24 +165,6 @@ QListView::item:selected {
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="addCourseButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normalon>:/images/reload.png</normalon>
-           </iconset>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="coursesListTitle">
           <property name="font">
@@ -222,13 +205,22 @@ QListView::item:selected {
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>false</bool>
+          </property>
+          <property name="layoutMode">
+           <enum>QListView::Batched</enum>
+          </property>
           <property name="wordWrap">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="refreshCoursesButton">
+        <item row="0" column="3">
+         <widget class="QPushButton" name="addCourseButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -425,7 +417,7 @@ QScrollBar::sub-page:horizontal {
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>12</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -455,7 +447,22 @@ QTreeView::item:selected {
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
                 <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="dragDropOverwriteMode">
+                 <bool>true</bool>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DragDrop</enum>
+                </property>
+                <property name="defaultDropAction">
+                 <enum>Qt::MoveAction</enum>
+                </property>
+                <property name="alternatingRowColors">
                  <bool>false</bool>
                 </property>
                 <property name="rootIsDecorated">
@@ -507,8 +514,8 @@ QTreeView::item:selected {
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>718</height>
+                   <width>110</width>
+                   <height>1066</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -539,10 +546,14 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                   <property name="bottomMargin">
                    <number>9</number>
                   </property>
-                  <item row="5" column="0" colspan="2">
-                   <widget class="QPlainTextEdit" name="taskEditInputPattern"/>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="taskEditTextLabel">
+                    <property name="text">
+                     <string>Текст задачи</string>
+                    </property>
+                   </widget>
                   </item>
-                  <item row="3" column="0" colspan="2">
+                  <item row="9" column="0" colspan="2">
                    <widget class="QTextEdit" name="taskEditSource">
                     <property name="minimumSize">
                      <size>
@@ -550,19 +561,17 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                       <height>300</height>
                      </size>
                     </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="taskEditSourceLabel">
-                    <property name="text">
-                     <string>Исходный код</string>
+                    <property name="font">
+                     <font>
+                      <family>Consolas</family>
+                     </font>
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="taskEditTextLabel">
+                  <item row="8" column="0">
+                   <widget class="QLabel" name="taskEditSourceLabel">
                     <property name="text">
-                     <string>Текст задачи</string>
+                     <string>Исходный код</string>
                     </property>
                    </widget>
                   </item>
@@ -571,7 +580,7 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
-                      <height>300</height>
+                      <height>200</height>
                      </size>
                     </property>
                     <property name="undoRedoEnabled">
@@ -582,10 +591,127 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="0" colspan="2">
-                   <widget class="QLabel" name="taskEditInputPatternLabel">
+                  <item row="7" column="0" colspan="2">
+                   <widget class="QTableView" name="taskEditSamplesTable">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>Consolas</family>
+                     </font>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QHeaderView::section {
+    background-color: white;
+    padding: 3px;
+    border-style: none;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+}
+
+QHeaderView::section:horizontal
+{
+    border-top: 1px solid gray;
+}
+
+QHeaderView::section:horizontal:first
+{
+	border-left: 1px solid gray;
+}
+
+QTableView
+{
+    gridline-color: gray;
+	outline: 0;
+}
+</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="sizeAdjustPolicy">
+                     <enum>QAbstractScrollArea::AdjustToContents</enum>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="tabKeyNavigation">
+                     <bool>false</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::NoSelection</enum>
+                    </property>
+                    <attribute name="horizontalHeaderHighlightSections">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderHighlightSections">
+                     <bool>false</bool>
+                    </attribute>
+                   </widget>
+                  </item>
+                  <item row="6" column="0" colspan="2">
+                   <widget class="QLabel" name="taskEditSamplesLabel">
                     <property name="text">
-                     <string>Шаблон входных данных</string>
+                     <string>Пример</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="2">
+                   <widget class="QLabel" name="taskEditInputDataLabel">
+                    <property name="text">
+                     <string>Входные данные</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="taskEditOutputDataLabel">
+                    <property name="text">
+                     <string>Выходные данные</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QTextBrowser" name="taskEditInputData">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>200</height>
+                     </size>
+                    </property>
+                    <property name="undoRedoEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="readOnly">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QTextBrowser" name="taskEditOutputData">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>200</height>
+                     </size>
+                    </property>
+                    <property name="undoRedoEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="readOnly">
+                     <bool>false</bool>
                     </property>
                    </widget>
                   </item>
@@ -614,13 +740,34 @@ QPlainTextEdit::disabled, QTextEdit, QLineEdit::disabled {
               </property>
               <item>
                <widget class="QTableView" name="testsTable">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="horizontalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
                 <attribute name="horizontalHeaderDefaultSectionSize">
                  <number>160</number>
+                </attribute>
+                <attribute name="horizontalHeaderHighlightSections">
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="horizontalHeaderMinimumSectionSize">
                  <number>160</number>
                 </attribute>
                 <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderHighlightSections">
                  <bool>true</bool>
                 </attribute>
                </widget>
@@ -680,32 +827,13 @@ QPushButton:pressed {
 </string>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
-             <item row="0" column="0">
-              <widget class="QLabel" name="nodeType">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QStackedWidget" name="infoPanelPages">
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="courseInfo">
                 <layout class="QVBoxLayout" name="verticalLayout">
@@ -721,6 +849,28 @@ QPushButton:pressed {
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
+                 <item>
+                  <widget class="QLabel" name="courseNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Курс</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="courseEditNameLabel">
                    <property name="text">
@@ -791,6 +941,29 @@ QPushButton:pressed {
                    <property name="buttonSymbols">
                     <enum>QAbstractSpinBox::NoButtons</enum>
                    </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="courseEditLaboratoryHoursLabel">
+                   <property name="text">
+                    <string>Кол-во лабораторных часов</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="courseEditLaboratoryHours">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="buttonSymbols">
+                    <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -822,6 +995,28 @@ QPushButton:pressed {
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
+                 <item>
+                  <widget class="QLabel" name="sectionNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Раздел</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="sectionEditNameLabel">
                    <property name="text">
@@ -887,6 +1082,28 @@ QPushButton:pressed {
                   <number>0</number>
                  </property>
                  <item>
+                  <widget class="QLabel" name="taskNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Задача</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_3">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QLabel" name="taskEditNameLabel">
                    <property name="text">
                     <string>Название</string>
@@ -949,10 +1166,47 @@ QPushButton:pressed {
                </widget>
                <widget class="QWidget" name="testInfo">
                 <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="testNodeLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Тест</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="testEditInputDataLabel">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>Входные данные</string>
                    </property>
                   </widget>
                  </item>
@@ -964,13 +1218,39 @@ QPushButton:pressed {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>48</height>
+                     <height>128</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>48</height>
+                     <height>180</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="testEditOutputDataLabel">
+                   <property name="text">
+                    <string>Выходные данные</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPlainTextEdit" name="testEditOutputData">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>128</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>128</height>
                     </size>
                    </property>
                   </widget>
@@ -978,7 +1258,7 @@ QPushButton:pressed {
                  <item>
                   <widget class="QLabel" name="testEditScoreLabel">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>Кол-во баллов</string>
                    </property>
                   </widget>
                  </item>
@@ -989,6 +1269,32 @@ QPushButton:pressed {
                    </property>
                    <property name="buttonSymbols">
                     <enum>QAbstractSpinBox::NoButtons</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="testEditRequired">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Обязательный тест</string>
+                   </property>
+                   <property name="tristate">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="testEditSample">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Показывать как пример</string>
                    </property>
                   </widget>
                  </item>
@@ -1007,63 +1313,68 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="emptyInfo"/>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QStackedWidget" name="infoPanelButtons">
-               <property name="currentIndex">
-                <number>5</number>
-               </property>
-               <widget class="QWidget" name="defaultButtons">
-                <layout class="QVBoxLayout" name="verticalLayout_4">
+               <widget class="QWidget" name="testsTableInfo">
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
-                  <spacer name="verticalSpacer_8">
+                  <widget class="QLabel" name="testsTableLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="text">
+                    <string>Тесты</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_5">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>20</width>
-                     <height>16777215</height>
+                     <height>40</height>
                     </size>
                    </property>
                   </spacer>
                  </item>
-                 <item>
-                  <widget class="QPushButton" name="addTaskButton">
-                   <property name="text">
-                    <string>Добавить задание</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="addSectionButton">
-                   <property name="text">
-                    <string>Добавить раздел</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="editNodeButton">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string>Изменить</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="deleteNodeButton">
-                   <property name="text">
-                    <string>Удалить</string>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="courseEditButtons">
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QStackedWidget" name="infoPanelButtons">
+               <property name="currentIndex">
+                <number>3</number>
+               </property>
+               <widget class="QWidget" name="courseButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -1077,6 +1388,27 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addSectionButton">
+                   <property name="text">
+                    <string>Добавить раздел</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editCourseButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteCourseButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="saveCourseChangesButton">
@@ -1094,7 +1426,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="sectionEditButtons">
+               <widget class="QWidget" name="sectionButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_11">
                  <item>
                   <spacer name="verticalSpacer_6">
@@ -1108,6 +1440,34 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addSubsectionButton">
+                   <property name="text">
+                    <string>Добавить раздел</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addTaskButton">
+                   <property name="text">
+                    <string>Добавить задание</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editSectionButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteSectionButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="saveSectionChangesButton">
@@ -1125,7 +1485,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="taskEditButtons">
+               <widget class="QWidget" name="taskButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_10">
                  <item>
                   <spacer name="verticalSpacer_7">
@@ -1139,6 +1499,20 @@ QPushButton:pressed {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editTaskButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteTaskButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="openTestsButton">
@@ -1163,7 +1537,7 @@ QPushButton:pressed {
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="testEditButtons">
+               <widget class="QWidget" name="testButtons">
                 <layout class="QVBoxLayout" name="verticalLayout_13">
                  <item>
                   <spacer name="verticalSpacer_10">
@@ -1179,6 +1553,34 @@ QPushButton:pressed {
                   </spacer>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="addTestButton">
+                   <property name="text">
+                    <string>Добавить тест</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editTestButton">
+                   <property name="text">
+                    <string>Изменить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="deleteTestButton">
+                   <property name="text">
+                    <string>Удалить</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="exitTestsButton">
+                   <property name="text">
+                    <string>Назад</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QPushButton" name="saveTestChangesButton">
                    <property name="text">
                     <string>Сохранить</string>
@@ -1189,37 +1591,6 @@ QPushButton:pressed {
                   <widget class="QPushButton" name="cancelTestChangesButton">
                    <property name="text">
                     <string>Отменить</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="testsTableButtons">
-                <layout class="QVBoxLayout" name="verticalLayout_8">
-                 <item>
-                  <spacer name="verticalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="addTestButton">
-                   <property name="text">
-                    <string>Добавить тест</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="closeTestsButton">
-                   <property name="text">
-                    <string>Назад</string>
                    </property>
                   </widget>
                  </item>

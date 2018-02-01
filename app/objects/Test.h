@@ -1,18 +1,42 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include <functional>
+
 #include <QString>
+
+#include "../stuff/NetworkManager.h"
+#include "CourseNode.h"
 
 class Task;
 
-class Test
+class Test : public CourseNode
 {
 public:
+    struct Data
+    {
+        Data();
+        Data(const Response::Row& row);
+        Data(const QString& inputData, const QString& outputData, 
+             size_t score, bool isRequired, bool isSample, Task* task);
+        
+        size_t id;
+        
+        QString inputData;
+        QString outputData;
+    
+        size_t score;
+        bool isRequired;
+        bool isSample;
+        
+        Task* task;
+    };
+    
     Test();
     ~Test();
     
-    void setId(unsigned int id);
-    unsigned int getId() const;
+    void setId(size_t id);
+    size_t getId() const;
     
     void setInputData(const QString& data);
     QString getInputData() const;
@@ -20,25 +44,27 @@ public:
     void setOutputData(const QString& data);
     QString getOutputData() const;
     
+    void setScore(size_t score);
+    size_t getScore() const;
+    
     void setRequired(bool required);
     bool isRequired() const;
-
-    void setScore(unsigned int score);
-    unsigned int getScore() const;
+    
+    void setSample(bool sample);
+    bool isSample() const;
     
     void setTask(Task* task);
     Task* getTask() const;
     
+    void setData(Data data);
+    Data getData() const;
+    
+    static void dbCreate(const Data& data, std::function<void(std::unique_ptr<Test>)> callback);
+    static void dbUpdate(Test* test,const Data& data, std::function<void()> callback);
+    static void dbDelete(Test* test, std::function<void()> callback);
+    
 private:
-    unsigned int m_id;
-    
-    QString m_inputData;
-    QString m_outputData;
-
-    bool m_isRequired;
-    unsigned int m_score;
-    
-    Task* m_task;
+    Data m_data;
 };
 
 #endif // TEST_H

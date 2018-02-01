@@ -19,16 +19,14 @@ enum InfoPanelPages {
     INFO_PANEL_SECTION,
     INFO_PANEL_TASK,
     INFO_PANEL_TEST,
-    INFO_PANEL_EMPTY
+    INFO_PANEL_TESTS_TABLE
 };
 
 enum InfoPanelButtons {
-    INFO_PANEL_BUTTONS_DEFAULT,
     INFO_PANEL_BUTTONS_COURSE,
     INFO_PANEL_BUTTONS_SECTION,
     INFO_PANEL_BUTTONS_TASK,
-    INFO_PANEL_BUTTONS_TEST,
-    INFO_PANEL_BUTTONS_TESTS_TABLE
+    INFO_PANEL_BUTTONS_TEST
 };
 
 namespace Ui {
@@ -40,12 +38,13 @@ class Controller : public QObject
     Q_OBJECT
     
 public:
-    Controller(Ui::MainWindow* ui, QObject* parent = nullptr);
     virtual ~Controller();
     
     virtual void propose();
     
 protected:
+    Controller(Ui::MainWindow* ui, QObject* parent = nullptr);
+    
     Ui::MainWindow* m_ui;
 };
 

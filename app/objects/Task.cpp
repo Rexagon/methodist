@@ -4,8 +4,7 @@
 #include "Section.h"
 
 Task::Task() :
-    CourseNode(CourseNode::Type::TASK),
-    m_id(0), m_score(0), m_course(nullptr), m_section(nullptr)
+    CourseNode(CourseNode::Type::TASK)
 {
 }
 
@@ -13,85 +12,109 @@ Task::~Task()
 {
 }
 
-void Task::setId(unsigned int id)
+void Task::setId(size_t id)
 {
-    m_id = id;
+    m_data.id = id;
 }
 
-unsigned int Task::getId() const
+size_t Task::getId() const
 {
-    return m_id;
+    return m_data.id;
 }
 
 void Task::setName(const QString& name)
 {
-    m_name = name;
+    m_data.name = name;
 }
 
 QString Task::getName() const
 {
-    return m_name;
+    return m_data.name;
 }
 
 void Task::setText(const QString& text)
 {
-    m_text = text;
+    m_data.text = text;
 }
 
 QString Task::getText() const
 {
-    return m_text;
+    return m_data.text;
 }
 
-void Task::setSource(const QString& code)
+void Task::setInputData(const QString& text)
 {
-    m_code = code;
+    m_data.inputData = text;
+}
+
+QString Task::getInputData() const
+{
+    return m_data.inputData;
+}
+
+void Task::setOutputData(const QString& text)
+{
+    m_data.outputData = text;
+}
+
+QString Task::getOutputData() const
+{
+    return m_data.outputData;
+}
+
+void Task::setSource(const QString& source)
+{
+    m_data.source = source;
 }
 
 QString Task::getSource() const
 {
-    return m_code;
+    return m_data.source;
 }
 
-void Task::setScore(unsigned int score)
+void Task::setScore(size_t score)
 {
-    m_score = score;
+    m_data.score = score;
 }
 
-unsigned int Task::getScore() const
+size_t Task::getScore() const
 {
-    return m_score;
+    return m_data.score;
 }
 
-void Task::setInputPattern(const QString& pattern)
+void Task::setSection(Section* section)
 {
-    m_inputPattern.setPattern(pattern);
+    m_data.section = section;
 }
 
-const QRegExp& Task::getInputRegexp() const
+Section* Task::getSection()
 {
-    return m_inputPattern;
+    return m_data.section;
+}
+
+void Task::setData(const Task::Data& data)
+{
+    m_data = data;
+}
+
+Task::Data Task::getData() const
+{
+    return m_data;
 }
 
 void Task::addTest(std::unique_ptr<Test> test)
 {
+    test->setTask(this);
     m_tests.push_back(std::move(test));
 }
 
-void Task::removeTest(Test* test)
+void Task::removeTest(const Test* test)
 {
     for (auto it = m_tests.begin(); it != m_tests.end(); ++it) {
         if (it->get() == test) {
             m_tests.erase(it);
             return;
         }
-    }
-}
-
-void Task::removeTest(size_t n)
-{
-    if (n < m_tests.size()) {
-        m_tests.erase(m_tests.begin() + n);
     }
 }
 
@@ -105,7 +128,7 @@ Test* Task::getTest(size_t n) const
     }
 }
 
-int Task::getTestIndex(Test* test) const
+int Task::getTestIndex(const Test* test) const
 {
     for (size_t i = 0; i < m_tests.size(); ++i) {
         if (m_tests[i].get() == test) {
@@ -116,22 +139,126 @@ int Task::getTestIndex(Test* test) const
     return -1;
 }
 
-void Task::setCourse(Course* course)
+size_t Task::getTestCount() const
 {
-    m_course = course;
+    return m_tests.size();
 }
 
-Course* Task::getCourse() const
+void Task::dbCreate(const Task::Data& data, std::function<void (std::unique_ptr<Task>)> callback)
 {
-    return m_course;
+    if (data.section == nullptr) {
+        return;
+    }
+    
+    std::vector<QString> arguments = {
+        data.name,
+        data.text,
+        data.inputData,
+        data.outputData,
+        data.source,
+        QString::number(data.score),
+        QString::number(data.section->getId())
+    };
+    
+    QString query = Query::create("INSERT INTO task_c (task_c_name, task_c_text, task_c_input, "
+                                  "task_c_output, task_c_source, task_c_score, section_id) "
+                                  "VALUES ('@@','@@','@@','@@','@@',@@,@@) RETURNING rowid", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_add", {
+        {"sql_operator", query}
+    }), [data, callback](const Response& response)
+    {
+        size_t id = response.getRow(0).get("rowid").asUInt();
+        
+        std::unique_ptr<Task> task = std::make_unique<Task>();
+        task->setData(data);
+        task->setId(id);
+        
+        callback(std::move(task));
+    });
 }
 
-void Task::setSection(Section* section)
+void Task::dbUpdate(Task* task, const Task::Data& data, std::function<void ()> callback)
 {
-    m_section = section;
+    if (task == nullptr || data.section == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = task->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        data.name,
+        data.text,
+        data.inputData,
+        data.outputData,
+        data.source,
+        QString::number(data.score),
+        QString::number(data.section->getId()),
+        QString::number(task->getId())
+    };
+    
+    QString query = Query::create("UPDATE task_c SET task_c_name='@@', task_c_text='@@', "
+                                  "task_c_input='@@', task_c_output='@@', task_c_source='@@', "
+                                  "task_c_score=@@, section_id=@@ WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_edit", {
+        {"sql_operator", query}
+    }), [task, deletionMark, data, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        task->setData(data);
+        
+        callback();
+    });
 }
 
-Section* Task::getSection()
+void Task::dbDelete(Task* task, std::function<void ()> callback)
 {
-    return m_section;
+    if (task == nullptr) {
+        return;
+    }
+    
+    DeletionMark deletionMark = task->getDeletionMark();
+    
+    std::vector<QString> arguments = {
+        QString::number(task->getId())
+    };
+    QString query = Query::create("DELETE FROM task_c WHERE rowid=@@", arguments);
+    
+    NetworkManager::send(Request(SQL_OPERATOR, "task_delete", {
+        {"sql_operator", query}
+    }), [deletionMark, callback](const Response& response)
+    {
+        if (*deletionMark == true) {
+            return;
+        }
+        
+        callback();
+    });
+}
+
+
+Task::Data::Data() :
+    id(0), score(0), section(nullptr)
+{
+}
+
+Task::Data::Data(const Response::Row& row) :
+    section(nullptr)
+{
+    id = row.get("rowid").asUInt();
+    name = row.get("task_c_name").asString();
+    score = row.get("task_c_score").asUInt();
+    text = row.get("task_c_text").asString();
+    inputData = row.get("task_c_input").asString();
+    outputData = row.get("task_c_output").asString();
+    source = row.get("task_c_source").asString();
+}
+
+Task::Data::Data(const QString& name, Section* section) :
+    id(0), name(name), section(section)
+{
 }
